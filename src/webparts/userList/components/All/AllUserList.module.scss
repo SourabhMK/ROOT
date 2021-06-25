@@ -1,8 +1,7 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.userList {
+.allUser {
   .container {
-    //display: flex;
     max-width: 700px;
     margin: 0px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
@@ -23,16 +22,9 @@
     @include ms-lgPush1;
   }
 
-  .rows {
-    content: "";
-    display: table;
-    clear: both;
-  }
-
-  .SetDisplay{
+  .trail{
     display: flex;
   }
-
   .title {
     @include ms-font-xl;
     @include ms-fontColor-white;
@@ -47,7 +39,31 @@
     @include ms-font-l;
     @include ms-fontColor-white;
   }
+/////////////////////////////////////////
+  .h1{
+    color: black;
+  }
 
+  .SetLeftMatter {
+    float: left;
+    width: 77%;
+}
+
+.SetTitleColor{
+  color: #398080;
+    margin-top: 5px;
+}
+
+.SetRightMatter {
+  float: right;
+  width: 23%;
+}
+
+.img-circle {
+  border-radius: 50%;
+}
+
+//////////////////////////////////////////
   .button {
     // Our button
     text-decoration: none;
