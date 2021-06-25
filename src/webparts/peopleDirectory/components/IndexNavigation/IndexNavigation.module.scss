@@ -1,0 +1,11 @@
+@import '~office-ui-fabric-react/dist/sass/References.scss';
+
+.indexNavigation {
+    margin-bottom: 1em;
+    ul{
+        white-space: normal !important;
+        button:last-child{
+            font-weight: 600;
+        }
+    }
+}

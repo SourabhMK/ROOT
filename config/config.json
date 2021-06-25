@@ -9,10 +9,20 @@
           "manifest": "./src/webparts/userList/UserListWebPart.manifest.json"
         }
       ]
+    },
+    "people-directory-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/peopleDirectory/PeopleDirectoryWebPart.js",
+          "manifest": "./src/webparts/peopleDirectory/PeopleDirectoryWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "UserListWebPartStrings": "lib/webparts/userList/loc/{locale}.js"
+    "UserListWebPartStrings": "lib/webparts/userList/loc/{locale}.js",
+    "PeopleDirectoryWebPartStrings": "lib/webparts/peopleDirectory/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }
