@@ -2,6 +2,8 @@
 logs
 *.log
 npm-debug.log*
+.yo-rc.json
+package-lock.json
 
 # Dependency directories
 node_modules
