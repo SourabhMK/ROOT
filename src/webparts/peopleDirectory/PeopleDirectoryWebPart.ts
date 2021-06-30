@@ -32,8 +32,9 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
         }
       }
     );
-
+      
     ReactDom.render(element, this.domElement);
+    
   }
 
   protected get dataVersion(): Version {

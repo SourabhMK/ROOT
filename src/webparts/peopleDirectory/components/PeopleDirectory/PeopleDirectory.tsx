@@ -20,6 +20,7 @@ import {
 import { IndexNavigation } from '../IndexNavigation';
 import { PeopleList } from '../PeopleList';
 import * as strings from 'PeopleDirectoryWebPartStrings';
+import Filter from '../Filter/Filter';
 
 export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeopleDirectoryState> {
   constructor(props: IPeopleDirectoryProps) {
@@ -228,6 +229,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           displayMode={this.props.displayMode}
           title={this.props.title}
           updateProperty={this.props.onTitleUpdate} />
+        <Filter description=""/>
         <IndexNavigation
           selectedIndex={selectedIndex}
           searchQuery={searchQuery}
