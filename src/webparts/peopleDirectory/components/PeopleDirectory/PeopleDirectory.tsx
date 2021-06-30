@@ -158,10 +158,11 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
 
         if (people.length > 0) {
           // notify the user that loading the data is finished and return the loaded information
+         // alert("people length in PeopleDirectory = " + people.length);
           this.setState({
             loading: false,
             people: people
-          });
+          },()=>alert("people = " + people));
         }
         else {
           // People collection could be reduced to zero, so no results

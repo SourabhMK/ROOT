@@ -21,7 +21,15 @@
     "description": { "default": "UserList description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "UserList"
+      "description": "UserList",
+      "title": "User List",
+      "nameFormatIndex": "0",
+      "isContactNumberDisplay":"false",
+      "isDateOfBirthDisplay":"false",
+      "isDateOfJoiningDisplay":"false",
+      "isWorkAnniversaryDisplay":"false",
+      "isFollowingDisplay":"true",
+      "isFollowerDisplay":"true"
     }
   }]
 }
