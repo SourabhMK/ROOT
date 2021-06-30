@@ -16,6 +16,7 @@ constructor(props){
   this.state = {
     Users:[],
     Followers:[],
+    Following:[],
     bgColorAll:"white",
     bgColorFollowers:"white",
     bgColorFollowing:"white",

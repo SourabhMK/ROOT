@@ -27,10 +27,11 @@ constructor(props){
     count : 0,
     Users:[],
     Followers:[],
-    bgColorAll:"white",
+    Following:[],
+    bgColorAll:"blue",
     bgColorFollowers:"white",
     bgColorFollowing:"white",
-    colorAll:"black",
+    colorAll:"white",
     colorFollowers:"black",
     colorFollowing:"black",
 
@@ -40,10 +41,12 @@ constructor(props){
 
 componentDidMount(){
   this._loadPeopleInfo();
+  //this._loadFollowingInfo();
+  //this.currentUser();
 }
 
 private _loadPeopleInfo():void{
-  debugger;
+  //debugger;
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
@@ -123,7 +126,7 @@ private _loadFollowersInfo(){
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
-debugger;
+//debugger;
   this.props.spHttpClient
     .get(`${this.props.webUrl}/_api/social.following/my/followers?selectproperties='Name,EmailAddress,ImageUri'&sortlist='Name:ascending'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500`, SPHttpClient.configurations.v1, {
       headers: headers
@@ -190,25 +193,23 @@ debugger;
 }
 
 
-private _loadFollowingInfo(){
-
+private currentUserEmailId:string;
+private _loadFollowingInfo()  {
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
 debugger;
 
+  var logName = this.props.webUrl + "/_api/web/currentUser?$select=Email"; 
 //var lognm = LOGINNAME.replace('i:0#.f', 'i:0%23.f');
   this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/social.following/my/followers?selectproperties='Name,EmailAddress,ImageUri'&sortlist='Name:ascending'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500`, SPHttpClient.configurations.v1, {
+    .get(`${this.props.webUrl}/_api/web/currentUser?$select=Email`, SPHttpClient.configurations.v1, {
       headers: headers
     })
     .then((res: SPHttpClientResponse): Promise<IFollowerResults> => {
-      //console.log("res value = " + res.json());
-      // alert("res.Json() of UserList = " + res.json());
       return res.json();
     })
     .then((res: any): void => {
-      alert("response = " + res);
       if (res.error) {
       //   // There was an error loading information about people.
       //   // Notify the user that loading data is finished and return the
@@ -216,54 +217,86 @@ debugger;
          this.setState({
       //    // loading: false,
            errorMessage: res.error.message,
-            },()=>alert("Error occured in UserList = " + this.state.errorMessage));
+            });
         return;
       }
+        this.currentUserEmailId = res.Email;
+        //console.log("mail = " + this.currentUserEmailId);
+////////////////////////////////////////////////////////////////////////////////
 
-      // let people = res.Followers.element[0].d;
-
-      let people: IFollowers[] = res.value.map(r => {
-        return {         
-          name:r.Name,
-          email:r.EmailAddress,
-          // photoUrl:r.ImageUri,
-          photoUrl:`${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.EmailAddress}`,
-          // name: this._getValueFromSearchResult2('Name', r.Name),
-          // email: this._getValueFromSearchResult2('EmailAddress', r),
-          //  photoUrl: `${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + this._getValueFromSearchResult2('ImageUri', r)}`,    
-        };
+        const headers: HeadersInit = new Headers();
+        // suppress metadata to minimize the amount of data loaded from SharePoint
+        headers.append("accept", "application/json;odata.metadata=none");
+      //debugger;
+      
+       // var logName = this.props.webUrl + "/_api/web/currentUser?$select=Email"; 
+      //var lognm = LOGINNAME.replace('i:0#.f', 'i:0%23.f');
+        this.props.spHttpClient
+          .get(`${this.props.webUrl}/_api/sp.userprofiles.peoplemanager/getpeoplefollowedby(accountName=@v)?@v='i:0%23.f|membership|${this.currentUserEmailId}'`, SPHttpClient.configurations.v1, {
+            headers: headers
+          })
+          .then((result: SPHttpClientResponse): Promise<IFollowerResults> => {
+            //console.log("res value = " + res.json());
+            // alert("res.Json() of UserList = " + res.json());
+            return result.json();
+          })
+          .then((result: any): void => {
+            //alert("response = " + res);
+            if (result.error) {
+            //   // There was an error loading information about people.
+            //   // Notify the user that loading data is finished and return the
+            //   // error message that occurred
+               this.setState({
+            //    // loading: false,
+                 errorMessage: res.error.message,
+                  });
+              return;
+            }
+              //let Mail = res.Email;
+            // let people = res.Followers.element[0].d;
+      
+            let people: IFollowers[] = result.value.map(r => {
+              return {         
+                name:r.DisplayName,
+                email:r.Email,
+                // photoUrl:r.ImageUri,
+                photoUrl:`${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.Email}`,
+                // name: this._getValueFromSearchResult2('Name', r.Name),
+                // email: this._getValueFromSearchResult2('EmailAddress', r),
+                //  photoUrl: `${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + this._getValueFromSearchResult2('ImageUri', r)}`,    
+              };
+            });
+        // debugger;
+        if(people.length>0){
+          //alert("I have arrived to people.length = " + people.length);
+        this.setState({
+          Following : people,
+        })
+        }
+        else if(people.length === null){
+          alert("I have arrived to ERONOUS people.length = " + people.length);
+      
+        }
+      }, (error: any): void => {
+        // An error has occurred while loading the data. Notify the user
+        // that loading data is finished and return the error message.
+        this.setState({
+          //loading: false,
+          errorMessage: error
+        });
+      })
+      .catch((error: any): void => {
+        // An exception has occurred while loading the data. Notify the user
+        // that loading data is finished and return the exception.
+        this.setState({
+          //loading: false,
+          errorMessage: error
+        });
       });
-  // debugger;
-  if(people.length>0){
-    alert("I have arrived to people.length = " + people.length);
-  this.setState({
-    Followers : people,
-  },()=>alert("Users = " + this.state.Users))
-  }
-  else if(people.length === null){
-    alert("I have arrived to ERONOUS people.length = " + people.length);
 
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    //loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    //loading: false,
-    errorMessage: error
-  });
-});
-
+      ///////////////////////////////////////////////////////////////
+})   
 }
-
-
 
  /**
    * Retrieves the value of the particular managed property for the current search result.
@@ -332,6 +365,7 @@ followingUserClick = () =>{
     colorFollowers:"black",
     colorFollowing:"white",
   })
+  this._loadFollowingInfo();
 }
 
 UserSearchClick = () =>{
@@ -342,21 +376,26 @@ UserSearchClick = () =>{
 
 
   public render(): React.ReactElement<IUserListProps> {
-    const {Users} = this.state
+    const {Users} = this.state;
     return (
       <div className={ styles.userList }>
         {/* <div className={ styles.container }> */}
           <div className={styles.SetDisplay}>
-           
-              <div>              
+              <div>                             
+            {/* {alert("this.props.isFollowerDisplay = " + this.props.isFollowerDisplay)} */}
                 <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} onClick={this.allUserClick}>All</DefaultButton>             
               </div>
+          
+          { this.props.isFollowerDisplay &&  
               <div>              
                 <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} onClick={this.followersUserClick}>Followers</DefaultButton>              
               </div>
+          } 
+          {  this.props.isFollowingDisplay && 
               <div>              
                 <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} onClick={this.followingUserClick}>Following</DefaultButton>              
               </div>
+          }
               {/* <div>
                 <DefaultButton onClick={this.UserSearchClick}>User Search</DefaultButton>
               </div> */}
@@ -367,10 +406,10 @@ UserSearchClick = () =>{
               (this.state.count === 0 ? <AllUser/> : (this.state.count === 1 ? <AllUser/> : <FollowerUser/>))
             } */}
               {  
-               (this.state.count === 1 ? <ListView people={this.state.Users}/> : 
-                (this.state.count === 2) ? <FollowerUser people={this.state.Followers}/> : <ListView people={this.state.Users}/>  )
+               ((this.state.count === 1) ? <ListView people={this.state.Users}/> : 
+                (this.state.count === 2 && this.props.isFollowerDisplay) ? <FollowerUser people={this.state.Followers}/> : (this.state.count === 3 && this.props.isFollowingDisplay) ? <FollowerUser people={this.state.Following}/> : <ListView people={this.state.Users}/>  )
               }
-                      {/* <FollowerUser people={this.state.Followers}/> */}
+
           </div>
         {/* </div> */}
       </div>
