@@ -7,6 +7,7 @@ import {
   IPropertyPaneDropdownProps,
   PropertyPaneDropdown,
   PropertyPaneCheckbox,
+  PropertyPaneToggle,
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
@@ -109,6 +110,12 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
               }),
               PropertyPaneCheckbox("WorkAnniversary",{
                 text: "Display  Work Anniversary",
+              }),
+              PropertyPaneToggle("isFollowerDisplay",{
+                label: "Display Followers",
+              }),
+              PropertyPaneToggle("isFollowingDisplay",{
+                label: "Display Following",
               }),
               ]
             }

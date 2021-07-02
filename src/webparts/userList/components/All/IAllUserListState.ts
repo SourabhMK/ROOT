@@ -5,6 +5,7 @@ import {IUserAll} from "./IUserAll";
 export interface IALLUserListState {
     Users : IUserAll[],
     Followers : IFollowers[],
+    Following : IFollowers[],
     count:number,
     bgColorAll:string,
     bgColorFollowers:string,
