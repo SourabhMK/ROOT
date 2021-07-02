@@ -21,7 +21,12 @@
     "description": { "default": "Shows people in your organization" },
     "officeFabricIconFontName": "People",
     "properties": {
-     
+      "description": "UserList",
+      "isNameSearchDisplay" : "true",
+      "isTitleSearchDisplay" : "false",
+      "isDeaprtmentSearchDisplay" : "false",
+      "isSkillSearchDisplay" : "false",
+      "isAskMeAboutSearchDisplay" : "false"
     }
   }]
 }

@@ -7,12 +7,27 @@ import {
 import {
   IPropertyPaneConfiguration
 } from "@microsoft/sp-property-pane";
+import {
+  PropertyPaneTextField,
+  PropertyPaneCheckbox,
+  PropertyPaneLabel,
+  PropertyPaneLink,
+  PropertyPaneSlider,
+  PropertyPaneToggle,
+  PropertyPaneDropdown
+} from '@microsoft/sp-property-pane';
 
 import * as strings from 'PeopleDirectoryWebPartStrings';
 import { PeopleDirectory, IPeopleDirectoryProps } from './components/PeopleDirectory/';
 
 export interface IPeopleDirectoryWebPartProps {
   title: string;
+  description: string;  
+      isNameSearchDisplay : boolean;
+      isTitleSearchDisplay : boolean;
+      isDeaprtmentSearchDisplay : boolean;
+      isSkillSearchDisplay : boolean;
+      isAskMeAboutSearchDisplay : boolean;
 }
 
 export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopleDirectoryWebPartProps> {
@@ -29,7 +44,13 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
           // after updating the web part title in the component
           // persist it in web part properties
           this.properties.title = newTitle;
-        }
+        },
+        description: this.properties.description,  
+      isNameSearchDisplay : this.properties.isNameSearchDisplay,
+      isTitleSearchDisplay : this.properties.isTitleSearchDisplay,
+      isDeaprtmentSearchDisplay : this.properties.isDeaprtmentSearchDisplay,
+      isSkillSearchDisplay : this.properties.isNameSearchDisplay,
+      isAskMeAboutSearchDisplay : this.properties.isAskMeAboutSearchDisplay,
       }
     );
       
@@ -45,7 +66,10 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
-      pages: []
+      pages: [
+
+        
+      ]
     };
   }
 }
