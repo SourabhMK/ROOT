@@ -229,7 +229,14 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           displayMode={this.props.displayMode}
           title={this.props.title}
           updateProperty={this.props.onTitleUpdate} />
-        <Filter description=""/>
+        <Filter 
+        description={this.props.description} 
+        isNameSearchDisplay={this.props.isNameSearchDisplay}
+        isTitleSearchDisplay={this.props.isTitleSearchDisplay}
+        isDeaprtmentSearchDisplay={this.props.isDeaprtmentSearchDisplay}
+        isSkillSearchDisplay={this.props.isNameSearchDisplay}
+        isAskMeAboutSearchDisplay={this.props.isAskMeAboutSearchDisplay}
+        />
         <IndexNavigation
           selectedIndex={selectedIndex}
           searchQuery={searchQuery}
