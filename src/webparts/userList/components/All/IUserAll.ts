@@ -6,8 +6,8 @@ export interface IUserAll {
     mobile: string;
     email: string;
     photoUrl: string;
-    function: string;
+   // function: string;
     department: string;
-    skills: string;
-    projects: string;
+    // skills: string;
+    // projects: string;
   }
