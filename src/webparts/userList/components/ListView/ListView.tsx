@@ -6,6 +6,7 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IALLUserListState } from './IAllUserListState';
 import {IUserResults, ICell} from './IUserResults';
 import {IUserAll} from './IUserAll';
+import {IUserListProps} from '../IUserListProps'
 
 import {
   Persona,
@@ -31,7 +32,21 @@ constructor(props){
             // const toggleClassName: string = this.state.toggleClass ? `ms-Icon--ChromeClose ${styles.isClose}` : "ms-Icon--ContactInfo";
             return (
               <div className={styles.persona_card}>
-                <Persona primaryText={p.name} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                { (this.props.listSelect === 0 && this.props.contactSelect &&
+                <Persona primaryText={p.name} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />) || (this.props.listSelect === 0 &&
+                  <Persona primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />)
+                }
+
+                { this.props.listSelect === 1 &&
+                <Persona primaryText={`${p.lastName } ${p.firstName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                }
+
+                { this.props.listSelect === 2 &&
+                <Persona primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                }
+                
+
+                
               </div>
             );
             })

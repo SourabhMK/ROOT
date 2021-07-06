@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './UserList.module.scss';
 import { IUserListProps } from './IUserListProps';
 import { escape } from '@microsoft/sp-lodash-subset';
-import AllUser from './All/AllUser';
+// import AllUser from './All/AllUser';
 import FollowerUser from './Followers/FollowerUser';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import {IUserResults, ICell} from './All/IUserResults';
@@ -82,13 +82,13 @@ let people: IUserAll[] = res.d.results.map(r => {
   return {
 
     name:r.Name,
-    firstName:r.firstName,
-    lastName:r.lastName,
+    firstName:r.FirstName,
+    lastName:r.LastName,
     phone:r.WorkPhone,
     mobile:r.MobilePhone,
     email:r.WorkEMail,
     photoUrl: `${webUrlUser}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.WorkEMail}`,
-    department: r.department,
+    department: r.Department,
 
   };
 });
@@ -403,8 +403,8 @@ UserSearchClick = () =>{
               (this.state.count === 0 ? <AllUser/> : (this.state.count === 1 ? <AllUser/> : <FollowerUser/>))
             } */}
               {  
-               ((this.state.count === 1) ? <ListView people={this.state.Users}/> : 
-                (this.state.count === 2 && this.props.isFollowerDisplay) ? <FollowerUser people={this.state.Followers}/> : (this.state.count === 3 && this.props.isFollowingDisplay) ? <FollowerUser people={this.state.Following}/> : <ListView people={this.state.Users}/>  )
+               ((this.state.count === 1) ? <ListView people={this.state.Users} listSelect={this.props.nameFormatIndex} contactSelect={this.props.isContactNumberDisplay}/> : 
+                (this.state.count === 2 && this.props.isFollowerDisplay) ? <FollowerUser people={this.state.Followers}/> : (this.state.count === 3 && this.props.isFollowingDisplay) ? <FollowerUser people={this.state.Following}/> : <ListView people={this.state.Users} listSelect={this.props.nameFormatIndex} contactSelect={this.props.isContactNumberDisplay}/>  )
               }
 
           </div>
