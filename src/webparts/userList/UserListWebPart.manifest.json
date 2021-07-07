@@ -21,7 +21,7 @@
     "description": { "default": "UserList description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "UserList",
+      "description": "User List",
       "title": "User List",
       "nameFormatIndex": "0",
       "isContactNumberDisplay":"false",

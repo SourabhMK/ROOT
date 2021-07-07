@@ -78,38 +78,24 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 }),
-                PropertyPaneDropdown
-                ('ListName',{ label:"Select your list",options:[
+                PropertyPaneDropdown('nameFormatIndex',{ label:"Select your list type",options:[
                   {
-                    key: "-Select your list-",
-                    text:"-Select your list-",
-                  },
-                  {
-                    key:"US",
+                    key:0,
                     text:"First-Name then Last-Name",
                   },
                   {
-                    key:"UK",
+                    key:1,
                     text:"Last-Name then First-Name",
                   },
                   {
-                    key:"OTH",
+                    key:2,
                     text:"Only First-Name",
                   },
                 ],
-                selectedKey :"-Select your list-" 
+                selectedKey :0 
               }),
-              PropertyPaneCheckbox("ContactNumber",{
-                text: "Display Contact Number",
-              }),
-              PropertyPaneCheckbox("DateOfJoining",{
-                text: "Display Date of joining",
-              }),
-              PropertyPaneCheckbox("BirthDay",{
-                text: "Display Birth Day",
-              }),
-              PropertyPaneCheckbox("WorkAnniversary",{
-                text: "Display  Work Anniversary",
+              PropertyPaneToggle("isContactNumberDisplay",{
+                label: "Display Contact Number",
               }),
               PropertyPaneToggle("isFollowerDisplay",{
                 label: "Display Followers",
@@ -117,6 +103,15 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
               PropertyPaneToggle("isFollowingDisplay",{
                 label: "Display Following",
               }),
+              // PropertyPaneToggle("isDateOfBirthDisplay",{
+              //   label: "Display Date of Birth",
+              // }),
+              // PropertyPaneToggle("isDateOfJoiningDisplay",{
+              //   label: "Display Date of Joining",
+              // }),
+              // PropertyPaneToggle("isWorkAnniversaryDisplay",{
+              //   label: "Display Work Anniversary",
+              // }),
               ]
             }
           ]

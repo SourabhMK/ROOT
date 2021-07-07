@@ -8,5 +8,7 @@ export interface IListViewProps {
    * Array of people matching the selected tab or the current search query
    */
   people: IUserAll[];
+  listSelect: number;
+  contactSelect: boolean;
 
 }
