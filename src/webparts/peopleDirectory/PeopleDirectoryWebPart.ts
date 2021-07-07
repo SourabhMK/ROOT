@@ -49,7 +49,7 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
       isNameSearchDisplay : this.properties.isNameSearchDisplay,
       isTitleSearchDisplay : this.properties.isTitleSearchDisplay,
       isDeaprtmentSearchDisplay : this.properties.isDeaprtmentSearchDisplay,
-      isSkillSearchDisplay : this.properties.isNameSearchDisplay,
+      isSkillSearchDisplay : this.properties.isSkillSearchDisplay,
       isAskMeAboutSearchDisplay : this.properties.isAskMeAboutSearchDisplay,
       }
     );
@@ -67,8 +67,58 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
+        {
+          header: {
+            description: strings.PropertyPaneDescription
+          },
+          groups: [
+            {
+              groupName: strings.BasicGroupName,
+              groupFields: [
+                PropertyPaneTextField('description', {
+                  label: strings.DescriptionFieldLabel
+                }),
+                PropertyPaneDropdown
+                ('SearchTextfield',{ label:"Select your Search Textfield",options:[
+                  {
+                    key: "-Select your Search Textfield-",
+                    text:"-Select your Search Textfield-",
+                  },
+                  {
+                    key:"FirstNameSearch",
+                    text:"Using First Name",
+                  },
+                  {
+                    key:"LastNameSearch",
+                    text:"Using Last Name",
+                  },
+                  {
+                    key:"BothFirstLastNameSearch",
+                    text:"Using Both First and Last Name",
+                  },                  
+                ],
+                selectedKey :"-Select your Search Textfield-" 
+              }),                          
+              PropertyPaneToggle("isNameSearchDisplay",{
+                label: "Display Name Search Textfield",
+              }),
+              PropertyPaneToggle("isTitleSearchDisplay",{
+                label: "Display Title Search Textfield",
+              }),
+              PropertyPaneToggle("isDepartmentSearchDisplay",{
+                label: "Display Department Search Textfield",
+              }),
+              PropertyPaneToggle("isSkillSearchDisplay",{
+                label: "Display Skill Search Textfield",
+              }),
+              PropertyPaneToggle("isAskMeAboutSearchDisplay",{
+                label: "Display AskMeAbout Search Textfield",
+              }),                          
+             ]
+            }
+          ]
+        }
 
-        
       ]
     };
   }

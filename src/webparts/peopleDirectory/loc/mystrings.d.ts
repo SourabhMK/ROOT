@@ -9,6 +9,10 @@ declare interface IPeopleDirectoryWebPartStrings {
   CopyEmailLabel: string;
   CopyPhoneLabel: string;
   CopyMobileLabel: string;
+  //Property Pane element define
+  PropertyPaneDescription: string;
+  BasicGroupName: string;
+  DescriptionFieldLabel: string;
 }
 
 declare module 'PeopleDirectoryWebPartStrings' {

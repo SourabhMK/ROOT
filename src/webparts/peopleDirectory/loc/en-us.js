@@ -9,6 +9,10 @@ define([], function() {
     "ProjectsLabel": "Projects",
     "CopyEmailLabel": "Copy email to clipboard",
     "CopyPhoneLabel": "Copy phone to clipboard",
-    "CopyMobileLabel": "Copy mobile to clipboard"
+    "CopyMobileLabel": "Copy mobile to clipboard",
+    //Property Pane element define
+    "PropertyPaneDescription": "Description",
+    "BasicGroupName": "Group Name",
+    "DescriptionFieldLabel": "Description Field"
   }
 });

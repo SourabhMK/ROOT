@@ -234,7 +234,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
         isNameSearchDisplay={this.props.isNameSearchDisplay}
         isTitleSearchDisplay={this.props.isTitleSearchDisplay}
         isDeaprtmentSearchDisplay={this.props.isDeaprtmentSearchDisplay}
-        isSkillSearchDisplay={this.props.isNameSearchDisplay}
+        isSkillSearchDisplay={this.props.isSkillSearchDisplay}
         isAskMeAboutSearchDisplay={this.props.isAskMeAboutSearchDisplay}
         />
         <IndexNavigation

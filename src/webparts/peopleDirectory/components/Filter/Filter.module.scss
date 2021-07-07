@@ -2,9 +2,10 @@
 
 .filter {
   .container {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    padding: 10px;
   }
 
   .row {
@@ -23,8 +24,11 @@
   }
 
   .title {
-    @include ms-font-xl;
-    @include ms-fontColor-white;
+    //@include ms-font-xl;
+    @include ms-font-l;
+    @include ms-fontColor-black;
+    //text-decoration: underline;
+    border-bottom: 1px solid gray;
   }
 
   .subTitle {

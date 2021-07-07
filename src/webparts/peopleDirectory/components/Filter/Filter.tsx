@@ -19,11 +19,11 @@ import {
   PropertyPaneDropdown
 } from '@microsoft/sp-property-pane';
 
-const stackTokens = { childrenGap: 50 };
+const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
 const columnProps: Partial<IStackProps> = {
-  tokens: { childrenGap: 15 },
-  styles: { root: { width: 150 } },
+  tokens: { childrenGap: 10 },
+  styles: { root: { width: 125, textAlign: "Center"  } },
 };
 
 //Dropdown options
@@ -59,61 +59,69 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
       return (
         <div className={ styles.filter }>
           <div className={ styles.container }>
-            <h2>People Search </h2>
+            {/* <h2>People Search </h2> */}
             {/* <div className={ styles.row }>
               <div className={ styles.column }> */}
-              {/* <div className={ styles.SetDisplay}></div> */}
                <span className={ styles.title }> People Search </span>
 
                <div className="ms-Grid" >
-               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-u-sm2">
-                <Stack horizontal tokens={stackTokens} styles={stackStyles}>
+               <div className="ms-Grid-row"  >
+                { this.props.isNameSearchDisplay && 
+                  <div className="ms-Grid-col ms-u-sm2">
+                  <Stack horizontal tokens={stackTokens} styles={stackStyles}>
                   <Stack {...columnProps}>
                     <TextField label="Name" />                
                   </Stack>
-                </Stack>
+                  </Stack>
+                  </div>
+                }
+                { this.props.isTitleSearchDisplay &&
+                <div className="ms-Grid-col ms-u-sm2" >
+                  <Stack horizontal tokens={stackTokens} styles={stackStyles}>
+                    <Stack {...columnProps}>
+                      <TextField label="Title" />                
+                    </Stack>
+                  </Stack>
                 </div>
-              {/* <div className="ms-Grid-col ms-sm3 "> */}
-              <div className="ms-Grid-col ms-u-sm2">
-              <Stack horizontal tokens={stackTokens} styles={stackStyles}>
-                  <Stack {...columnProps}>
-                    <TextField label="Title" />                
+                }                
+                {/* { this.props.isDeaprtmentSearchDisplay && */}
+                <div className="ms-Grid-col ms-u-sm2">
+                  <Stack horizontal tokens={stackTokens} styles={stackStyles}>
+                    <Stack {...columnProps}>
+                      <TextField label="Department" />                
+                    </Stack>
                   </Stack>
-                </Stack>
-              </div>
-              <div className="ms-Grid-col ms-u-sm2">
-              <Stack horizontal tokens={stackTokens} styles={stackStyles}>
-                  <Stack {...columnProps}>
-                    <TextField label="Department" />                
+                </div>
+                {/* }  */}
+                { this.props.isSkillSearchDisplay &&
+                <div className="ms-Grid-col ms-u-sm2">
+                <Stack tokens={stackTokens}>
+                      <Dropdown
+                        placeholder="Select an option"
+                        label="Skill"
+                        options={options}
+                        //styles={dropdownStyles}
+                        styles={{ dropdown: { width: 125 } }}
+                      />
                   </Stack>
-                </Stack>
-              </div>
-              <div className="ms-Grid-col ms-u-sm2">
-              <Stack tokens={stackTokens}>
-                    <Dropdown
-                      placeholder="Select an option"
-                      label="Skill"
-                      options={options}
-                      //styles={dropdownStyles}
-                      styles={{ dropdown: { width: 130 } }}
-                    />
-                </Stack>
-               </div>
-               <div className="ms-Grid-col ms-u-sm2">
-                   <Stack tokens={stackTokens}>             
-                    <Dropdown
-                      placeholder="Select an option"
-                      label="Ask Me About"
-                      options={optionsAskMeAbout}
-                      //styles={dropdownStyles}
-                      styles={{ dropdown: { width: 130 } }}
-                    />
-                     </Stack>
-               </div>
-               <div className="ms-Grid-col ms-u-sm2">
+                </div>
+                }
+                { this.props.isAskMeAboutSearchDisplay &&
+                <div className="ms-Grid-col ms-u-sm2">
+                    <Stack tokens={stackTokens}>             
+                      <Dropdown
+                        placeholder="Select an option"
+                        label="Ask Me About"
+                        options={optionsAskMeAbout}
+                        //styles={dropdownStyles}
+                        styles={{ dropdown: { width: 125 } }}
+                      />
+                    </Stack>
+                </div>
+                }
+               <div className="ms-Grid-col ms-u-sm2">             
                   {/* <PrimaryButton text="Search"  /> */}
-                  <DefaultButton  onClick={_alertClicked} className={styles.button}> Search </DefaultButton>
+                  <DefaultButton  onClick={_alertClicked} className={styles.button}> Search </DefaultButton>                 
               </div>
             </div>
           </div>      
