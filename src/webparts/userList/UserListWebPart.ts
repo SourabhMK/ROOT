@@ -79,10 +79,6 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
                   label: strings.DescriptionFieldLabel
                 }),
                 PropertyPaneDropdown('nameFormatIndex',{ label:"Select your list type",options:[
-                  // {
-                  //   key: "-Select your list-",
-                  //   text:"-Select your list-",
-                  // },
                   {
                     key:0,
                     text:"First-Name then Last-Name",
@@ -107,15 +103,15 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
               PropertyPaneToggle("isFollowingDisplay",{
                 label: "Display Following",
               }),
-              PropertyPaneToggle("isDateOfBirthDisplay",{
-                label: "Display Date of Birth",
-              }),
-              PropertyPaneToggle("isDateOfJoiningDisplay",{
-                label: "Display Date of Joining",
-              }),
-              PropertyPaneToggle("isWorkAnniversaryDisplay",{
-                label: "Display Work Anniversary",
-              }),
+              // PropertyPaneToggle("isDateOfBirthDisplay",{
+              //   label: "Display Date of Birth",
+              // }),
+              // PropertyPaneToggle("isDateOfJoiningDisplay",{
+              //   label: "Display Date of Joining",
+              // }),
+              // PropertyPaneToggle("isWorkAnniversaryDisplay",{
+              //   label: "Display Work Anniversary",
+              // }),
               ]
             }
           ]
