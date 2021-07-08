@@ -35,7 +35,7 @@ export interface IPeopleDirectoryProps {
   description: string;  
       isNameSearchDisplay : boolean;
       isTitleSearchDisplay : boolean;
-      isDeaprtmentSearchDisplay : boolean;
+      isDepartmentSearchDisplay : boolean;
       isSkillSearchDisplay : boolean;
       isAskMeAboutSearchDisplay : boolean;
 }

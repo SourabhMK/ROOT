@@ -54,7 +54,7 @@ const optionsAskMeAbout : IDropdownOption[] = [
 //Primary Button
 //const stackTokens: IStackTokens = { childrenGap: 40 };
 
-export default class PeopleSearch extends React.Component<IFilterProps, {}> {
+export default class Filter extends React.Component<IFilterProps, {}> {
     public render(): React.ReactElement<IFilterProps> {
       return (
         <div className={ styles.filter }>
@@ -70,7 +70,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
                   <div className="ms-Grid-col ms-u-sm2">
                   <Stack horizontal tokens={stackTokens} styles={stackStyles}>
                   <Stack {...columnProps}>
-                    <TextField label="Name" />                
+                    <TextField label="Name" id="filterName"/>                
                   </Stack>
                   </Stack>
                   </div>
@@ -84,7 +84,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
                   </Stack>
                 </div>
                 }                
-                {/* { this.props.isDeaprtmentSearchDisplay && */}
+                 { this.props.isDepartmentSearchDisplay && 
                 <div className="ms-Grid-col ms-u-sm2">
                   <Stack horizontal tokens={stackTokens} styles={stackStyles}>
                     <Stack {...columnProps}>
@@ -92,7 +92,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
                     </Stack>
                   </Stack>
                 </div>
-                {/* }  */}
+                 }  
                 { this.props.isSkillSearchDisplay &&
                 <div className="ms-Grid-col ms-u-sm2">
                 <Stack tokens={stackTokens}>
@@ -121,7 +121,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
                 }
                <div className="ms-Grid-col ms-u-sm2">             
                   {/* <PrimaryButton text="Search"  /> */}
-                  <DefaultButton  onClick={_alertClicked} className={styles.button}> Search </DefaultButton>                 
+                  <DefaultButton  onClick={SearchButtonClicked} className={styles.button}> Search </DefaultButton>                 
               </div>
             </div>
           </div>      
@@ -134,6 +134,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
     }
   }
 
-  function _alertClicked(): void {
+  function SearchButtonClicked(): void {
     alert('Search Button Clicked');
+
   }

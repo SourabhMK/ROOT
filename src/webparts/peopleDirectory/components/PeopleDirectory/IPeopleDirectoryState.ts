@@ -26,4 +26,6 @@ export interface IPeopleDirectoryState {
      * search query. Empty array if no matching people found.
      */
     people: IPerson[];
+
+    showNavigation: boolean;
 }

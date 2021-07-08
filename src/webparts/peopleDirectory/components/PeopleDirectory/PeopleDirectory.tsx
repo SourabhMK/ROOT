@@ -31,7 +31,8 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
       errorMessage: null,
       selectedIndex: 'A',
       searchQuery: '',
-      people: []
+      people: [],
+      showNavigation: false,
     };
   }
 
@@ -163,7 +164,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           this.setState({
             loading: false,
             people: people
-          },()=>alert("people = " + people));
+          });
         }
         else {
           // People collection could be reduced to zero, so no results
@@ -233,10 +234,13 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
         description={this.props.description} 
         isNameSearchDisplay={this.props.isNameSearchDisplay}
         isTitleSearchDisplay={this.props.isTitleSearchDisplay}
-        isDeaprtmentSearchDisplay={this.props.isDeaprtmentSearchDisplay}
+        isDepartmentSearchDisplay={this.props.isDepartmentSearchDisplay}
         isSkillSearchDisplay={this.props.isSkillSearchDisplay}
         isAskMeAboutSearchDisplay={this.props.isAskMeAboutSearchDisplay}
+        //spHttpClient={this.props.spHttpClient}
+        //webUrl={this.props.webUrl}
         />
+        {/* { this.state.showNavigation && */}
         <IndexNavigation
           selectedIndex={selectedIndex}
           searchQuery={searchQuery}
@@ -244,6 +248,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           onSearch={this._handleSearch}
           onSearchClear={this._handleSearchClear}
           locale={this.props.locale} />
+        {/* } */}
         {loading &&
           // if the component is loading its data, show the spinner
           <Spinner size={SpinnerSize.large} label={strings.LoadingSpinnerLabel} />
@@ -252,10 +257,11 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           !errorMessage &&
           // if the component is not loading data anymore and no errors have occurred
           // render the list of retrieved people
+           //this.state.showNavigation &&
           <PeopleList
             selectedIndex={selectedIndex}
             hasSearchQuery={searchQuery !== ''}
-            people={people} />
+            people={people} />          
         }
       </div>
     );
