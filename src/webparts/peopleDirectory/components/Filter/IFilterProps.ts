@@ -5,7 +5,8 @@ export interface IFilterProps {
       isDepartmentSearchDisplay : boolean;
       isSkillSearchDisplay : boolean;
       isAskMeAboutSearchDisplay : boolean;
-
+      // filterAttributes: IFilterState;
+      performSearch(para:IFilterState): void;
       /**
    * Absolute URL of the current site
    */
@@ -15,4 +16,12 @@ export interface IFilterProps {
    * people.
    */
  // spHttpClient: SPHttpClient;
+}
+
+export interface IFilterState {
+  name:string;
+  title:string;
+  department:string;
+  skill:string;
+  askMeAbout:string;
 }

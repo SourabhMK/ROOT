@@ -28,4 +28,8 @@ export interface IPeopleDirectoryState {
     people: IPerson[];
 
     showNavigation: boolean;
+
+    filterName:string;
+    filterTitle:string;
+    filterDepartment:string;
 }
