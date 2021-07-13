@@ -24,7 +24,7 @@
       "description": "UserList",
       "isNameSearchDisplay" : "true",
       "isTitleSearchDisplay" : "false",
-      "isDeaprtmentSearchDisplay" : "false",
+      "isDepartmentSearchDisplay" : "false",
       "isSkillSearchDisplay" : "false",
       "isAskMeAboutSearchDisplay" : "false"
     }

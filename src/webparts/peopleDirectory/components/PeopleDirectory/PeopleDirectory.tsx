@@ -21,6 +21,7 @@ import { IndexNavigation } from '../IndexNavigation';
 import { PeopleList } from '../PeopleList';
 import * as strings from 'PeopleDirectoryWebPartStrings';
 import Filter from '../Filter/Filter';
+import { IFilterState } from '../Filter/IFilterProps';
 
 export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeopleDirectoryState> {
   constructor(props: IPeopleDirectoryProps) {
@@ -31,7 +32,11 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
       errorMessage: null,
       selectedIndex: 'A',
       searchQuery: '',
-      people: []
+      people: [],
+      showNavigation: false,
+      filterName:'',
+      filterDepartment:'',
+      filterTitle:''
     };
   }
 
@@ -96,8 +101,8 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
     // if no search query has been specified, retrieve people whose last name begins with the
     // specified letter. if a search query has been specified, escape any ' (single quotes)
     // by replacing them with two '' (single quotes). Without this, the search query would fail
-    const query: string = searchQuery === null ? `LastName:${index}*` : searchQuery.replace(/'/g, `''`);
-
+    const query: string = searchQuery === null ? `FirstName:${index}*` : searchQuery.replace(/'/g, `''`);
+    console.log("query: " + query);
     // retrieve information about people using SharePoint People Search
     // sort results ascending by the last name
     this.props.spHttpClient
@@ -212,6 +217,26 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
     this._loadPeopleInfo(this.state.selectedIndex, null);
   }
 
+  private performFilterSearch = (para:IFilterState) => {
+    console.log("Name :" + para.name + ", Title :" + para.title + ", Department :" + para.department + ", skill :" + para.skill);
+    this.setState({
+      filterName: para.name,
+      filterDepartment: para.department,
+      filterTitle:para.title
+    });
+    let query = "";
+    if(para.name != null && para.name != "") {
+      query += 'FirstName:' + para.name + '*; ';
+    }
+    if (para.title != null && para.title != "") {
+      query += 'Title:' +para.title + '*; ';
+    }
+    if (para.skill != null && para.skill != "") {
+      query += 'Skills:' +para.skill + '*; ';
+    }
+    this._handleSearch(query);
+  }
+
   public render(): React.ReactElement<IPeopleDirectoryProps> {
     const { loading, errorMessage, selectedIndex, searchQuery, people } = this.state;
 
@@ -233,10 +258,12 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
         description={this.props.description} 
         isNameSearchDisplay={this.props.isNameSearchDisplay}
         isTitleSearchDisplay={this.props.isTitleSearchDisplay}
-        isDeaprtmentSearchDisplay={this.props.isDeaprtmentSearchDisplay}
+        isDepartmentSearchDisplay={this.props.isDepartmentSearchDisplay}
         isSkillSearchDisplay={this.props.isSkillSearchDisplay}
         isAskMeAboutSearchDisplay={this.props.isAskMeAboutSearchDisplay}
+        performSearch={this.performFilterSearch}
         />
+        {/* { this.state.showNavigation && */}
         <IndexNavigation
           selectedIndex={selectedIndex}
           searchQuery={searchQuery}
@@ -244,6 +271,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           onSearch={this._handleSearch}
           onSearchClear={this._handleSearchClear}
           locale={this.props.locale} />
+        {/* } */}
         {loading &&
           // if the component is loading its data, show the spinner
           <Spinner size={SpinnerSize.large} label={strings.LoadingSpinnerLabel} />
@@ -252,6 +280,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           !errorMessage &&
           // if the component is not loading data anymore and no errors have occurred
           // render the list of retrieved people
+           //this.state.showNavigation &&
           <PeopleList
             selectedIndex={selectedIndex}
             hasSearchQuery={searchQuery !== ''}

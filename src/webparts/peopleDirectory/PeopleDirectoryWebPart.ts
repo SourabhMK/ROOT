@@ -25,7 +25,7 @@ export interface IPeopleDirectoryWebPartProps {
   description: string;  
       isNameSearchDisplay : boolean;
       isTitleSearchDisplay : boolean;
-      isDeaprtmentSearchDisplay : boolean;
+      isDepartmentSearchDisplay : boolean;
       isSkillSearchDisplay : boolean;
       isAskMeAboutSearchDisplay : boolean;
 }
@@ -48,9 +48,10 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
         description: this.properties.description,  
       isNameSearchDisplay : this.properties.isNameSearchDisplay,
       isTitleSearchDisplay : this.properties.isTitleSearchDisplay,
-      isDeaprtmentSearchDisplay : this.properties.isDeaprtmentSearchDisplay,
+      isDepartmentSearchDisplay : this.properties.isDepartmentSearchDisplay,
       isSkillSearchDisplay : this.properties.isSkillSearchDisplay,
       isAskMeAboutSearchDisplay : this.properties.isAskMeAboutSearchDisplay,
+      
       }
     );
       
