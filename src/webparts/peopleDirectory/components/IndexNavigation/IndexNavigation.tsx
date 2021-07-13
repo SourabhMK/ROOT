@@ -21,12 +21,13 @@ export class IndexNavigation extends React.Component<IIndexNavigationProps, {}> 
 
   public render(): React.ReactElement<IIndexNavigationProps> {
     // build the list of alphabet letters A..Z
-    const az = Array.apply(null, { length: 26 }).map((x: string, i: number): string => { return String.fromCharCode(65 + i); });
+    const az = Array.apply(null, { length: 26 }).map((x: string, i: number): string => { return String.fromCharCode(65 + i);});
     if (this.props.locale === "sv-SE") {
       az.push('Å', 'Ä', 'Ö');
     }
     // for each letter, create a PivotItem component
-    const indexes: JSX.Element[] = az.map(index => <PivotItem linkText={index} itemKey={index} key={index} />);
+    const indexes: JSX.Element[] = az.map(index => 
+       <PivotItem linkText={index} itemKey={index} key={index} />);
     // as the last tab in the navigation, add the Search option
     indexes.push(<PivotItem linkText={strings.SearchButtonText} itemKey='Search'>
       <Search
@@ -35,10 +36,13 @@ export class IndexNavigation extends React.Component<IIndexNavigationProps, {}> 
         onClear={this.props.onSearchClear} />
     </PivotItem>);
 
+
     return (
       <div className={styles.indexNavigation}>
         <Pivot onLinkClick={this._handleIndexSelect} selectedKey={this.props.selectedIndex}>
-          {indexes}
+          {
+           indexes
+          }
         </Pivot>
       </div>
     );

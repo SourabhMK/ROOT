@@ -163,7 +163,7 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
           this.setState({
             loading: false,
             people: people
-          },()=>alert("people = " + people));
+          });
         }
         else {
           // People collection could be reduced to zero, so no results

@@ -23,7 +23,7 @@
     "properties": {
       "description": "User List",
       "title": "User List",
-      "nameFormatIndex": "0",
+      "nameFormatIndex": 0,
       "isContactNumberDisplay":"false",
       "isDateOfBirthDisplay":"false",
       "isDateOfJoiningDisplay":"false",

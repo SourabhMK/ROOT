@@ -13,6 +13,12 @@ import ListView from './ListView/ListView';
 import {IFollowers} from '../components/Followers/IFollowers';
 import {IFoll, IFollowerResults} from '../components/Followers/IFollowerResults';
 import {PeopleDirectory} from '../../peopleDirectory/components/PeopleDirectory/PeopleDirectory';
+import * as strings from 'UserListWebPartStrings';
+
+import {
+  Spinner,
+  SpinnerSize
+} from 'office-ui-fabric-react/lib/Spinner';
 
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { ColorPickerGridCell } from '@fluentui/react';
@@ -35,7 +41,7 @@ constructor(props){
     colorAll:"white",
     colorFollowers:"black",
     colorFollowing:"black",
-
+    loading:false,
     errorMessage:null,
   }
 }
@@ -48,6 +54,10 @@ componentDidMount(){
 
 private _loadPeopleInfo():void{
   debugger;
+  this.setState({
+    loading:true,
+    errorMessage:null,
+  })
   const webUrlUser = 'https://champion1.sharepoint.com';
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -69,13 +79,12 @@ private _loadPeopleInfo():void{
       //   // Notify the user that loading data is finished and return the
       //   // error message that occurred
          this.setState({
-      //    // loading: false,
+           loading: false,
            errorMessage: res.error.message,
-            },()=>alert("Error occured in UserList = " + this.state.errorMessage));
+            });
         return;
       }
     
-      // alert("res PrimaryQueryResult value = " + res.PrimaryQueryResult.RelevantResults.Table.Rows.length);
       
 // convert the SharePoint People Search results to an array of people
 let people: IUserAll[] = res.d.results.map(r => {
@@ -96,6 +105,7 @@ let people: IUserAll[] = res.d.results.map(r => {
   if(people.length>0){
     // alert("I have arrived to people.length = " + people.length);
   this.setState({
+    loading:false,
     Users : people,
   })
   }
@@ -103,7 +113,7 @@ let people: IUserAll[] = res.d.results.map(r => {
   // An error has occurred while loading the data. Notify the user
   // that loading data is finished and return the error message.
   this.setState({
-    //loading: false,
+    loading: false,
     errorMessage: error
   });
 })
@@ -111,7 +121,7 @@ let people: IUserAll[] = res.d.results.map(r => {
   // An exception has occurred while loading the data. Notify the user
   // that loading data is finished and return the exception.
   this.setState({
-    //loading: false,
+    loading: false,
     errorMessage: error
   });
 }); 
@@ -119,6 +129,11 @@ let people: IUserAll[] = res.d.results.map(r => {
 
 
 private _loadFollowersInfo(){
+
+  this.setState({
+    loading:true,
+    errorMessage:null,
+  })
 
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -140,9 +155,9 @@ private _loadFollowersInfo(){
       //   // Notify the user that loading data is finished and return the
       //   // error message that occurred
          this.setState({
-      //    // loading: false,
+           loading: false,
            errorMessage: res.error.message,
-            },()=>alert("Error occured in UserList = " + this.state.errorMessage));
+            });
         return;
       }
 
@@ -163,18 +178,16 @@ private _loadFollowersInfo(){
   if(people.length>0){
     //alert("I have arrived to people.length = " + people.length);
   this.setState({
+    loading:false,
     Followers : people,
   })
   }
-  else if(people.length === null){
-    alert("I have arrived to ERONOUS people.length = " + people.length);
-
-  }
+  
 }, (error: any): void => {
   // An error has occurred while loading the data. Notify the user
   // that loading data is finished and return the error message.
   this.setState({
-    //loading: false,
+    loading: false,
     errorMessage: error
   });
 })
@@ -182,7 +195,7 @@ private _loadFollowersInfo(){
   // An exception has occurred while loading the data. Notify the user
   // that loading data is finished and return the exception.
   this.setState({
-    //loading: false,
+    loading: false,
     errorMessage: error
   });
 });
@@ -192,6 +205,12 @@ private _loadFollowersInfo(){
 
 private currentUserEmailId:string;
 private _loadFollowingInfo()  {
+
+  this.setState({
+    loading:true,
+    errorMessage:null,
+  })
+
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
@@ -212,7 +231,7 @@ debugger;
       //   // Notify the user that loading data is finished and return the
       //   // error message that occurred
          this.setState({
-      //    // loading: false,
+           loading: false,
            errorMessage: res.error.message,
             });
         return;
@@ -244,7 +263,7 @@ debugger;
             //   // Notify the user that loading data is finished and return the
             //   // error message that occurred
                this.setState({
-            //    // loading: false,
+                 loading: false,
                  errorMessage: res.error.message,
                   });
               return;
@@ -256,7 +275,6 @@ debugger;
               return {         
                 name:r.DisplayName,
                 email:r.Email,
-                // photoUrl:r.ImageUri,
                 photoUrl:`${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.Email}`,
                 // name: this._getValueFromSearchResult2('Name', r.Name),
                 // email: this._getValueFromSearchResult2('EmailAddress', r),
@@ -265,8 +283,8 @@ debugger;
             });
         // debugger;
         if(people.length>0){
-          //alert("I have arrived to people.length = " + people.length);
         this.setState({
+          loading:false,
           Following : people,
         })
         }
@@ -278,7 +296,7 @@ debugger;
         // An error has occurred while loading the data. Notify the user
         // that loading data is finished and return the error message.
         this.setState({
-          //loading: false,
+          loading: false,
           errorMessage: error
         });
       })
@@ -376,39 +394,32 @@ UserSearchClick = () =>{
     const {Users} = this.state;
     return (
       <div className={ styles.userList }>
-        {/* <div className={ styles.container }> */}
-          <div className={styles.SetDisplay}>
-              <div>                             
-            {/* {alert("this.props.isFollowerDisplay = " + this.props.isFollowerDisplay)} */}
-                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} onClick={this.allUserClick}>All</DefaultButton>             
-              </div>
+        <div className={styles.SetDisplay}>
+          <div>                                                  
+                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} onClick={this.allUserClick}>All</DefaultButton>   
+          </div>
           
           { this.props.isFollowerDisplay &&  
               <div>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} onClick={this.followersUserClick}>Followers</DefaultButton>              
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} onClick={this.followersUserClick}>Followers</DefaultButton>             
               </div>
           } 
           {  this.props.isFollowingDisplay && 
               <div>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} onClick={this.followingUserClick}>Following</DefaultButton>              
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} onClick={this.followingUserClick}>Following</DefaultButton>  
               </div>
           }
-              {/* <div>
-                <DefaultButton onClick={this.UserSearchClick}>User Search</DefaultButton>
-              </div> */}
-              {/* <div><h1 style={{ color: "black" }}>{this.state.count}</h1></div> */}
-          </div>
-          <div>
-            {/* {
-              (this.state.count === 0 ? <AllUser/> : (this.state.count === 1 ? <AllUser/> : <FollowerUser/>))
-            } */}
+        </div>
+      <div>
+          {
+            this.state.loading &&
+            <Spinner size={SpinnerSize.large} label={strings.LoadingSpinnerLabel}/>
+          }
+      </div>
               {  
                ((this.state.count === 1) ? <ListView people={this.state.Users} listSelect={this.props.nameFormatIndex} contactSelect={this.props.isContactNumberDisplay}/> : 
                 (this.state.count === 2 && this.props.isFollowerDisplay) ? <FollowerUser people={this.state.Followers}/> : (this.state.count === 3 && this.props.isFollowingDisplay) ? <FollowerUser people={this.state.Following}/> : <ListView people={this.state.Users} listSelect={this.props.nameFormatIndex} contactSelect={this.props.isContactNumberDisplay}/>  )
               }
-
-          </div>
-        {/* </div> */}
       </div>
     );
   }

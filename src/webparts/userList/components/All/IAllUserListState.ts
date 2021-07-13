@@ -13,7 +13,7 @@ export interface IALLUserListState {
     colorAll:string,
     colorFollowers:string,
     colorFollowing:string,
-
+    loading:boolean,
     /**
      * Contains the error message that occurred while loading the data.
      * If no error message occurred, null.

@@ -58,7 +58,7 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
     public render(): React.ReactElement<IFilterProps> {
       return (
         <div className={ styles.filter }>
-          <div className={ styles.container }>
+          {/* <div className={ styles.container }> */}
             {/* <h2>People Search </h2> */}
             {/* <div className={ styles.row }>
               <div className={ styles.column }> */}
@@ -120,11 +120,11 @@ export default class PeopleSearch extends React.Component<IFilterProps, {}> {
                 </div>
                 }
                <div className="ms-Grid-col ms-u-sm2">             
-                  {/* <PrimaryButton text="Search"  /> */}
-                  <DefaultButton  onClick={_alertClicked} className={styles.button}> Search </DefaultButton>                 
+                  <DefaultButton style={{top:"29px"}} onClick={_alertClicked} className={styles.button}> Search </DefaultButton> 
+                                
               </div>
             </div>
-          </div>      
+          {/* </div>       */}
                 
               {/* </div>
             </div> */}

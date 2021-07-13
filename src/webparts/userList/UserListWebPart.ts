@@ -34,7 +34,9 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
       UserList,
       {
        //description: this.properties.description,
-        webUrl: this.context.pageContext.web.absoluteUrl,
+        // webUrl: this.context.pageContext.web.absoluteUrl,
+           webUrl: this.context.pageContext.web.absoluteUrl,
+
         spHttpClient: this.context.spHttpClient,
         title: this.properties.title,
         description:this.properties.description,
@@ -92,7 +94,7 @@ export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebP
                     text:"Only First-Name",
                   },
                 ],
-                selectedKey :0 
+                selectedKey :0
               }),
               PropertyPaneToggle("isContactNumberDisplay",{
                 label: "Display Contact Number",
