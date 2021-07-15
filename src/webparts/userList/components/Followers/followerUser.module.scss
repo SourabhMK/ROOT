@@ -1,6 +1,6 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.listView {
+.followerUser {
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -66,7 +66,6 @@
 .persona_card{
   align-items: center;
   border: 1px solid "[theme:neutralLight, default: #eaeaea]";
-  //border-color: sandybrown;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;

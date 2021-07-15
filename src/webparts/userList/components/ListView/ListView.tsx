@@ -43,10 +43,7 @@ constructor(props){
 
                 { this.props.listSelect === 2 &&
                 <Persona primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
-                }
-                
-
-                
+                }                
               </div>
             );
             })

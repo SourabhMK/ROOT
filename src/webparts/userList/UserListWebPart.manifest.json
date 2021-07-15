@@ -19,7 +19,7 @@
     "group": { "default": "Other" },
     "title": { "default": "UserList" },
     "description": { "default": "UserList description" },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "FabricUserFolder",
     "properties": {
       "description": "User List",
       "title": "User List",

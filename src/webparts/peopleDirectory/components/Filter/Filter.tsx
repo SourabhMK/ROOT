@@ -141,7 +141,6 @@ export default class Filter extends React.Component<IFilterProps, IFilterState> 
                 }
 
                <div className="ms-Grid-col ms-u-sm2">
-                  {/* <PrimaryButton text="Search"  /> */}
                   <DefaultButton style={{top:"29px"}}  onClick={PerformSearchClick} className={styles.button}> Search </DefaultButton>
               </div>
             </div>
