@@ -33,7 +33,7 @@
 
   .SetDisplay{
     display: flex;
-    margin-bottom: 5px;
+    //margin-bottom: 5px;
   }
 
   .title {
@@ -56,7 +56,55 @@
   //   cursor: pointer;
   // }
 
- 
+ //////////////////////////////////////////////////////////
+
+ .buttonStyleLeft{
+   
+  // border-top-left-radius:6px;
+  // border-bottom-left-radius:6px;
+  font-size: 18px;
+  padding: 18px 18px;
+  box-shadow: none;
+  color: #fff;
+  width: 100%;
+  box-shadow: none;
+  //border: 2px solid rgb(221, 221, 221);
+  box-sizing: border-box;
+  //background-color: #00d47c !important;
+  border-bottom: 0;
+ }
+
+ .buttonStyleRight{
+   
+  // border-top-right-radius:6px;
+  // border-bottom-right-radius:6px;
+  font-size: 18px;
+  padding: 18px 18px;
+  box-shadow: none;
+  color: #fff;
+  width: 100%;
+  box-shadow: none;
+  //border: 2px solid rgb(221, 221, 221);
+  box-sizing: border-box;
+  //background-color: #00d47c !important;
+  border-bottom: 0;
+ }
+
+ .buttonStyleMiddle{
+  font-size: 18px;
+  padding: 18px 18px;
+  box-shadow: none;
+  color: #fff;
+  width: 100%;
+  box-shadow: none;
+  //border: 2px solid rgb(221, 221, 221);
+  box-sizing: border-box;
+  //background-color: #00d47c !important;
+  border-bottom: 0;
+ }
+
+
+ //////////////////////////////////////////////////////////
 
   .RedButton{
     Background-color:lightcoral;

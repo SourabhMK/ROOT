@@ -35,7 +35,7 @@ constructor(props){
     Users:[],
     Followers:[],
     Following:[],
-    bgColorAll:"blue",
+    bgColorAll:"#0078D4",
     bgColorFollowers:"white",
     bgColorFollowing:"white",
     colorAll:"white",
@@ -64,8 +64,7 @@ private _loadPeopleInfo():void{
   headers.append("accept", "application/json;odata.metadata=none");
 
   this.props.spHttpClient
-    .get(`https://champion1.sharepoint.com/_vti_bin/ListData.svc/UserInformationList?$filter=ContentType eq 'Person' and Title ne null and WorkEMail ne null &$orderby=Name asc
-    &sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500`, SPHttpClient.configurations.v1, {
+    .get(`${this.props.webUrl}/_api/search/query?querytext='*'&amp;refinementfilters=FirstName ne 'null' &selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,WorkPhone,MobilePhone,JobTitle,Department,Skills,PastProjects'&sortlist='LastName:ascending'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500`, SPHttpClient.configurations.v1, {
       headers: headers
     })
     .then((res: SPHttpClientResponse): Promise<IUserAllResults> => {
@@ -73,7 +72,7 @@ private _loadPeopleInfo():void{
       // alert("res.Json() of UserList = " + res.json());
       return res.json();
     })
-    .then((res: any): void => {
+    .then((res: IUserAllResults): void => {
       if (res.error) {
       //   // There was an error loading information about people.
       //   // Notify the user that loading data is finished and return the
@@ -84,20 +83,38 @@ private _loadPeopleInfo():void{
             });
         return;
       }
+      if (res.PrimaryQueryResult.RelevantResults.TotalRows == 0) {
+        // No results were found. Notify the user that loading data is finished
+        this.setState({
+          loading: false
+        });
+        return;
+      }
     
       
 // convert the SharePoint People Search results to an array of people
-let people: IUserAll[] = res.d.results.map(r => {
+let people: IUserAll[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {
   return {
 
-    name:r.Name,
-    firstName:r.FirstName,
-    lastName:r.LastName,
-    phone:r.WorkPhone,
-    mobile:r.MobilePhone,
-    email:r.WorkEMail,
-    photoUrl: `${webUrlUser}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.WorkEMail}`,
-    department: r.Department,
+    // name:r.Name,
+    // firstName:r.FirstName,
+    // lastName:r.LastName,
+    // phone:r.WorkPhone,
+    // mobile:r.MobilePhone,
+    // email:r.WorkEMail,
+    // photoUrl: `${webUrlUser}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + r.WorkEMail}`,
+    // department: r.Department,
+    name: this._getValueFromSearchResult('PreferredName', r.Cells),
+    firstName: this._getValueFromSearchResult('FirstName', r.Cells),
+    lastName: this._getValueFromSearchResult('LastName', r.Cells),
+    phone: this._getValueFromSearchResult('WorkPhone', r.Cells),
+    mobile: this._getValueFromSearchResult('MobilePhone', r.Cells),
+    email: this._getValueFromSearchResult('WorkEmail', r.Cells),
+    photoUrl: `${this.props.webUrl}${"/_layouts/15/userphoto.aspx?size=M&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,
+    function: this._getValueFromSearchResult('JobTitle', r.Cells),
+    department: this._getValueFromSearchResult('Department', r.Cells),
+    skills: this._getValueFromSearchResult('Skills', r.Cells),
+    projects: this._getValueFromSearchResult('PastProjects', r.Cells)
 
   };
 });
@@ -346,7 +363,7 @@ debugger;
  allUserClick = () =>{
   this.setState({
     count: 1,
-    bgColorAll:"blue",
+    bgColorAll:"#0078D4",
     bgColorFollowers:"white",
     bgColorFollowing:"white",
     colorAll:"white",
@@ -361,7 +378,7 @@ followersUserClick = () =>{
   this.setState({
     count: 2,
     bgColorAll:"white",
-    bgColorFollowers:"blue",
+    bgColorFollowers:"#0078D4",
     bgColorFollowing:"white",
     colorAll:"black",
     colorFollowers:"white",
@@ -375,7 +392,7 @@ followingUserClick = () =>{
     count: 3,
     bgColorAll:"white",
     bgColorFollowers:"white",
-    bgColorFollowing:"blue",
+    bgColorFollowing:"#0078D4",
     colorAll:"black",
     colorFollowers:"black",
     colorFollowing:"white",
@@ -395,18 +412,18 @@ UserSearchClick = () =>{
     return (
       <div className={ styles.userList }>
         <div className={styles.SetDisplay}>
-          <div>                                                  
-                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} onClick={this.allUserClick}>All</DefaultButton>   
+          <div style={{width:'120px'}}>                                                  
+                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} className={styles.buttonStyleLeft} onClick={this.allUserClick}>All</DefaultButton>   
           </div>
           
           { this.props.isFollowerDisplay &&  
-              <div>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} onClick={this.followersUserClick}>Followers</DefaultButton>             
+              <div style={{width:'120px'}}>              
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} className={styles.buttonStyleMiddle} onClick={this.followersUserClick}>Followers</DefaultButton>             
               </div>
           } 
           {  this.props.isFollowingDisplay && 
-              <div>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} onClick={this.followingUserClick}>Following</DefaultButton>  
+              <div style={{width:'120px'}}>              
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} className={styles.buttonStyleRight} onClick={this.followingUserClick}>Following</DefaultButton>  
               </div>
           }
         </div>

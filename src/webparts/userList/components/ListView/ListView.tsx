@@ -33,16 +33,26 @@ constructor(props){
             return (
               <div className={styles.persona_card}>
                 { (this.props.listSelect === 0 && this.props.contactSelect &&
-                <Persona primaryText={p.name} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />) || (this.props.listSelect === 0 &&
-                  <Persona primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />)
+                <Persona styles={{
+                  primaryText: 
+                    {color:"orange", fontSize:"18px"
+                
+                 }}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />) || (this.props.listSelect === 0 &&
+                  <Persona styles={{
+                    primaryText: 
+                      {color:"orange", fontSize:"18px"}}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />)
                 }
 
                 { this.props.listSelect === 1 &&
-                <Persona primaryText={`${p.lastName } ${p.firstName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                <Persona styles={{
+                  primaryText: 
+                    {color:"orange", fontSize:"18px"}}} primaryText={`${p.lastName } ${p.firstName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 }
 
                 { this.props.listSelect === 2 &&
-                <Persona primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                <Persona styles={{
+                  primaryText: 
+                    {color:"orange", fontSize:"18px"}}} primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 }                
               </div>
             );

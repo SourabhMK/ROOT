@@ -39,7 +39,7 @@ export class IndexNavigation extends React.Component<IIndexNavigationProps, {}> 
 
     return (
       <div className={styles.indexNavigation}>
-        <Pivot onLinkClick={this._handleIndexSelect} selectedKey={this.props.selectedIndex}>
+        <Pivot className={styles['link-202']} onLinkClick={this._handleIndexSelect} selectedKey={this.props.selectedIndex}>
           {
            indexes
           }

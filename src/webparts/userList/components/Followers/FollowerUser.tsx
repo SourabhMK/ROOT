@@ -18,7 +18,9 @@ export default class FollowerUser extends React.Component<IFollowerUserListProps
             // const toggleClassName: string = this.state.toggleClass ? `ms-Icon--ChromeClose ${styles.isClose}` : "ms-Icon--ContactInfo";
             return (
               <div className={styles.persona_card}>
-                <Persona primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                <Persona styles={{
+                  primaryText: 
+                    {color:"orange", fontSize:"18px"}}} primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
               </div>
             );
             })

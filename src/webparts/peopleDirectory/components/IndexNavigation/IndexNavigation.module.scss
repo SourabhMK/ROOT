@@ -1,6 +1,7 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
 .indexNavigation {
+    
     margin-bottom: 1em;
     ul{
         white-space: normal !important;
@@ -8,4 +9,8 @@
             font-weight: 600;
         }
     }
+    .link-202{
+        margin-right: 4px !important;
+    }
 }
+

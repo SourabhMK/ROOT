@@ -1,6 +1,7 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
 .listView {
+  border: 1px solid #ddd;
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -21,6 +22,7 @@
     @include ms-xlPush2;
     @include ms-lgPush1;
   }
+
 
   .trail{
     display: flex;
@@ -65,8 +67,9 @@
 
 .persona_card{
   align-items: center;
-  border: 1px solid "[theme:neutralLight, default: #eaeaea]";
+  //border: 1px solid "[theme:neutralLight, default: #eaeaea]";
   //border-color: sandybrown;
+  border-bottom: 1px solid #ddd;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
@@ -88,8 +91,22 @@
       cursor: pointer;
       font-size: 1.4rem;
     }
+
+    
   }
-} 
+
+}
+
+.persona_card:last-child {
+  border-bottom: none;
+}
+
+  // $primaryText:{
+  //     color: #398080 !important;
+  //   }
+  .ms-Persona-primaryText{
+    color:red;
+    }
 
 //////////////////////////////////////////
   .button {
