@@ -114,7 +114,9 @@ let people: IUserAll[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r
     function: this._getValueFromSearchResult('JobTitle', r.Cells),
     department: this._getValueFromSearchResult('Department', r.Cells),
     skills: this._getValueFromSearchResult('Skills', r.Cells),
-    projects: this._getValueFromSearchResult('PastProjects', r.Cells)
+    projects: this._getValueFromSearchResult('PastProjects', r.Cells),
+    JobTitle: this._getValueFromSearchResult('JobTitle', r.Cells),
+    
 
   };
 });

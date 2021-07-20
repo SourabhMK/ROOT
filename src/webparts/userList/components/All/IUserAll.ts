@@ -24,5 +24,6 @@ export interface IUserAll{
   department: string;
   skills: string;
   projects: string;
+  JobTitle:string;
 }
 

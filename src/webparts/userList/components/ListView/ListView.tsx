@@ -29,6 +29,8 @@ constructor(props){
       <div className={ styles.listView }>
         {this.props.people.map((p,i) => {
             const phone: string = p.phone && p.mobile ? `${p.phone}/${p.mobile}`: p.phone ? p.phone: p.mobile;
+            const jobTitle: string = p.JobTitle ? `${p.JobTitle}` :
+            ` `; 
             // const toggleClassName: string = this.state.toggleClass ? `ms-Icon--ChromeClose ${styles.isClose}` : "ms-Icon--ContactInfo";
             return (
               <div className={styles.persona_card}>
