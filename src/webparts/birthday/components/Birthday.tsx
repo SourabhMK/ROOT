@@ -49,7 +49,7 @@ export default class Birthday extends React.Component<IBirthdayProps, {}> {
     });    
   }   */  
 
-   /* public render(): React.ReactElement<IBirthdayProps> { 
+    public render(): React.ReactElement<IBirthdayProps> { 
 
     return(
       <div className={styles.birthday} >
@@ -58,7 +58,8 @@ export default class Birthday extends React.Component<IBirthdayProps, {}> {
         </div>
         
       </div>
-    ) */
+    ) 
+    }
     
     /* return (    
    

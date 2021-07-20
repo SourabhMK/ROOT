@@ -20,7 +20,10 @@ export default class FollowerUser extends React.Component<IFollowerUserListProps
               <div className={styles.persona_card}>
                 <Persona styles={{
                   primaryText: 
-                    {color:"orange", fontSize:"18px"}}} primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                    {color:"#548dbc", fontSize:"18px",fontWeight:"600"},
+                  secondaryText:
+                  {color:"#808080", fontSize:"15px",fontWeight:"500"}  
+                    }} primaryText={p.name} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
               </div>
             );
             })

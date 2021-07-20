@@ -37,24 +37,31 @@ constructor(props){
                 { (this.props.listSelect === 0 && this.props.contactSelect &&
                 <Persona styles={{
                   primaryText: 
-                    {color:"orange", fontSize:"18px"
-                
-                 }}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />) || (this.props.listSelect === 0 &&
+                    {color:"#548dbc", fontSize:"18px",fontWeight:"600"   
+                 },
+                 secondaryText:
+                 {color:"#808080", fontSize:"15px",fontWeight:"500"}}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />) || (this.props.listSelect === 0 &&
                   <Persona styles={{
                     primaryText: 
-                      {color:"orange", fontSize:"18px"}}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />)
+                      {color:"#548dbc", fontSize:"18px",fontWeight:"600"},
+                      secondaryText:
+                      {color:"#808080", fontSize:"15px",fontWeight:"500"}}} primaryText={`${p.firstName } ${p.lastName}`} secondaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />)
                 }
 
                 { this.props.listSelect === 1 &&
                 <Persona styles={{
                   primaryText: 
-                    {color:"orange", fontSize:"18px"}}} primaryText={`${p.lastName } ${p.firstName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                    {color:"#548dbc", fontSize:"18px",fontWeight:"600"},
+                    secondaryText:
+                    {color:"#808080", fontSize:"15px",fontWeight:"500"}}} primaryText={`${p.lastName } ${p.firstName}`} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 }
 
                 { this.props.listSelect === 2 &&
                 <Persona styles={{
                   primaryText: 
-                    {color:"orange", fontSize:"18px"}}} primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                    {color:"#548dbc", fontSize:"18px",fontWeight:"600"},
+                    secondaryText:
+                    {color:"#808080", fontSize:"15px",fontWeight:"500"}}} primaryText={p.firstName} secondaryText={p.email} tertiaryText={phone} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 }                
               </div>
             );

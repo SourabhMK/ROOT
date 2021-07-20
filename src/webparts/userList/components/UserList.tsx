@@ -35,7 +35,7 @@ constructor(props){
     Users:[],
     Followers:[],
     Following:[],
-    bgColorAll:"#0078D4",
+    bgColorAll:"#ef8700",
     bgColorFollowers:"white",
     bgColorFollowing:"white",
     colorAll:"white",
@@ -365,7 +365,7 @@ debugger;
  allUserClick = () =>{
   this.setState({
     count: 1,
-    bgColorAll:"#0078D4",
+    bgColorAll:"#ef8700",
     bgColorFollowers:"white",
     bgColorFollowing:"white",
     colorAll:"white",
@@ -380,7 +380,7 @@ followersUserClick = () =>{
   this.setState({
     count: 2,
     bgColorAll:"white",
-    bgColorFollowers:"#0078D4",
+    bgColorFollowers:"#ef8700",
     bgColorFollowing:"white",
     colorAll:"black",
     colorFollowers:"white",
@@ -394,7 +394,7 @@ followingUserClick = () =>{
     count: 3,
     bgColorAll:"white",
     bgColorFollowers:"white",
-    bgColorFollowing:"#0078D4",
+    bgColorFollowing:"#ef8700",
     colorAll:"black",
     colorFollowers:"black",
     colorFollowing:"white",
@@ -415,17 +415,17 @@ UserSearchClick = () =>{
       <div className={ styles.userList }>
         <div className={styles.SetDisplay}>
           <div style={{width:'120px'}}>                                                  
-                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll}} className={styles.buttonStyleLeft} onClick={this.allUserClick}>All</DefaultButton>   
+                <DefaultButton style={{backgroundColor:this.state.bgColorAll, color:this.state.colorAll,border:'1px solid #ddd'}} className={styles.buttonStyleLeft} onClick={this.allUserClick}>All</DefaultButton>   
           </div>
           
           { this.props.isFollowerDisplay &&  
               <div style={{width:'120px'}}>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers}} className={styles.buttonStyleMiddle} onClick={this.followersUserClick}>Followers</DefaultButton>             
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowers, color:this.state.colorFollowers,border:'1px solid #ddd'}} className={styles.buttonStyleMiddle} onClick={this.followersUserClick}>Followers</DefaultButton>             
               </div>
           } 
           {  this.props.isFollowingDisplay && 
-              <div style={{width:'120px'}}>              
-                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing}} className={styles.buttonStyleRight} onClick={this.followingUserClick}>Following</DefaultButton>  
+              <div style={{width:'117px'}}>              
+                <DefaultButton style={{backgroundColor:this.state.bgColorFollowing, color:this.state.colorFollowing,border:'1px solid #ddd'}} className={styles.buttonStyleRight} onClick={this.followingUserClick}>Following</DefaultButton>  
               </div>
           }
         </div>

@@ -60,25 +60,26 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       } 
     );
    
-    this.domElement.innerHTML = `
-      <div class="${ styles.birthday }">
-        <div class="${ styles.container }">          
-          <div class="${ styles.description }">                        
-          <h1><i class="ms-Icon ms-Icon--Cake" aria-hidden="true">&nbsp;&nbsp;</i>Birthday/Anniversary</h1>
-          </div> 
-          <div class="${ styles.SetDisplay }">                                                             
-            <div><PrimaryButton onClick=${this._alertClicked}><h3>Birthday</h3></PrimaryButton></div>   
+    // this.domElement.innerHTML = `
+    //   <div class="${ styles.birthday }">
+    //     <div class="${ styles.container }">          
+    //       <div class="${ styles.description }">                        
+    //       <h1><i class="ms-Icon ms-Icon--Cake" aria-hidden="true">&nbsp;&nbsp;</i>Birthday/Anniversary</h1>
+    //       </div> 
+    //       <div class="${ styles.SetDisplay }">                                                             
+    //         <div><PrimaryButton onClick=${this._alertClicked}><h3>Birthday</h3></PrimaryButton></div>   
                                                       
-            <div><PrimaryButton onClick=${this._alertClicked}><h3>Anniversary</h3></PrimaryButton></div>              
-      </div>        
+    //         <div><PrimaryButton onClick=${this._alertClicked}><h3>Anniversary</h3></PrimaryButton></div>              
+    //   </div>        
                
-          <br></br>
+    //       <br></br>
 
-          <div id="spListContainer" />
-        </div>
-      </div>`;
+    //       <div id="spListContainer" />
+    //     </div>
+    //   </div>`;
+    ReactDom.render(element, this.domElement);
 
-      this._renderListAsync();
+     // this._renderListAsync();
 
   }
 

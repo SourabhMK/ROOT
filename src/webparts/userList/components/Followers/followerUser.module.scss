@@ -2,6 +2,7 @@
 
 .followerUser {
   border: 1px solid #ddd;
+  box-shadow: 0px 1px 3px #939393;
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -67,7 +68,7 @@
 .persona_card{
   align-items: center;
   //border: 1px solid "[theme:neutralLight, default: #eaeaea]";
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid rgb(239, 163, 0);
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
