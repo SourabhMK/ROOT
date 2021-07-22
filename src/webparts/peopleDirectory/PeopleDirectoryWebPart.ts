@@ -82,23 +82,23 @@ export default class PeopleDirectoryWebPart extends BaseClientSideWebPart<IPeopl
                 PropertyPaneDropdown
                 ('SearchTextfield',{ label:"Select your Search Textfield",options:[
                   {
-                    key: "-Select your Search Textfield-",
+                    key: "0",
                     text:"-Select your Search Textfield-",
                   },
                   {
-                    key:"FirstNameSearch",
+                    key:"1",
                     text:"Using First Name",
                   },
                   {
-                    key:"LastNameSearch",
+                    key:"2",
                     text:"Using Last Name",
                   },
                   {
-                    key:"BothFirstLastNameSearch",
+                    key:"3",
                     text:"Using Both First and Last Name",
                   },                  
                 ],
-                selectedKey :"-Select your Search Textfield-" 
+                selectedKey :"0" 
               }),                          
               PropertyPaneToggle("isNameSearchDisplay",{
                 label: "Display Name Search Textfield",

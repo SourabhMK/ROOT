@@ -250,10 +250,10 @@ export class PeopleDirectory extends React.Component<IPeopleDirectoryProps, IPeo
             messageBarType={MessageBarType.error}
             isMultiline={false}>{strings.ErrorLabel}: {errorMessage}</MessageBar>
         }
-        <WebPartTitle
+        {/* <WebPartTitle
           displayMode={this.props.displayMode}
           title={this.props.title}
-          updateProperty={this.props.onTitleUpdate} />
+          updateProperty={this.props.onTitleUpdate} /> */}
         <Filter 
         description={this.props.description} 
         isNameSearchDisplay={this.props.isNameSearchDisplay}
