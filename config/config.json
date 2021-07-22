@@ -17,12 +17,30 @@
           "manifest": "./src/webparts/peopleDirectory/PeopleDirectoryWebPart.manifest.json"
         }
       ]
+    },
+    "birthday-test-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/birthdayTest/BirthdayTestWebPart.js",
+          "manifest": "./src/webparts/birthdayTest/BirthdayTestWebPart.manifest.json"
+        }
+      ]
+    },
+    "birthday-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/birthday/BirthdayWebPart.js",
+          "manifest": "./src/webparts/birthday/BirthdayWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "UserListWebPartStrings": "lib/webparts/userList/loc/{locale}.js",
     "PeopleDirectoryWebPartStrings": "lib/webparts/peopleDirectory/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "BirthdayTestWebPartStrings": "lib/webparts/birthdayTest/loc/{locale}.js",
+    "BirthdayWebPartStrings": "lib/webparts/birthday/loc/{locale}.js"
   }
 }

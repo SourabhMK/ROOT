@@ -9,11 +9,10 @@
 
   .row {
     @include ms-Grid-row;
-    @include ms-fontColor-black;
-   // background-color: $ms-color-white;
+    @include ms-fontColor-white;
+    //background-color: $ms-color-themeDark;
     padding: 20px;
   }
-
 
   .column {
     @include ms-Grid-col;
@@ -21,11 +20,6 @@
     @include ms-xl8;
     @include ms-xlPush2;
     @include ms-lgPush1;
-  }
-
-  .SetDisplay{
-    display: flex;
-    margin-bottom: 5px;
   }
 
   .title {
@@ -39,10 +33,8 @@
   }
 
   .description {
-    @include ms-Grid-row;
+    @include ms-font-l;
     @include ms-fontColor-white;
-    background-color: $ms-color-themeDark;
-    padding: 20px;
   }
 
   .button {
