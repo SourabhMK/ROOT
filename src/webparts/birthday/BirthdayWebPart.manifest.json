@@ -19,10 +19,11 @@
     "group": { "default": "Other" },
     "title": { "default": "Birthday" },
     "description": { "default": "Birthday description" },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "BirthdayCake",
     "properties": {
       "description": "Birthday",
-      "dropdown": ""
+      "dropdown": "",
+      "SiteCollection":""
     }
   }]
 }
