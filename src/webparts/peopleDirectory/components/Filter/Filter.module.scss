@@ -1,5 +1,9 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
+.e_a_8474018e {
+  padding: 10px 0!important;
+}
+
 .filter {
   .container {
     max-width: 1500px;
@@ -55,7 +59,8 @@
 
     // Primary Button
     min-width: 80px;
-    background-color: $ms-color-themePrimary;
+    //background-color: $ms-color-themePrimary;
+    background-color: orangered;
     border-color: $ms-color-themePrimary;
     color: $ms-color-white;
 
