@@ -24,22 +24,16 @@ export interface IBirthdayWebPartProps {
   siteurl: string;
   spHttpClient: SPHttpClient;
   dropdown: string; 
+  simpleText: string;
+  imageUrl: string;
   SiteCollection: string;
-}
-
-export interface ISPLists {
-  value: ISPList[];
-}
-
- export interface ISPList {
-  Title: string;
-  EmailId: string;
-  BirthDate : Date;
+  StartDate: string;
+  EndDate: string;
 }
 
 export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebPartProps> {
 
-  private sitecollectionsDropDown: PropertyPaneDropdown;  
+  //private sitecollectionsDropDown: PropertyPaneDropdown;  
   
   public render(): void {
     const element: React.ReactElement<IBirthdayProps> = React.createElement(
@@ -49,54 +43,24 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         siteurl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
         dropdown: this.properties.dropdown,
+        simpleText: this.properties.simpleText,
+        imageUrl: this.properties.imageUrl,
         SiteCollection: this.properties.SiteCollection        
       } 
     );
+    ReactDom.render(element, this.domElement);
+  }
 
-      ReactDom.render(element, this.domElement); 
-      //this._renderListAsync();
+  private onDropdownChange(propertyPath: string, newValue: any): void {  
+    const oldValue: any = get(this.properties, propertyPath);  
+    // store new value in web part properties  
+    update(this.properties, propertyPath, (): any => { return newValue; });  
+    // refresh web part 
+    this.context.propertyPane.refresh(); 
+    this.render();     
+  }
 
-  }  
-
-  /* debugger;
-  private _getListData(): Promise<ISPLists> {
-    debugger;   
-    return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/getbytitle('EmployeeMaster')/items`, SPHttpClient.configurations.v1)
-      .then((response: SPHttpClientResponse) => {
-        return response.json();
-      });       
-  } */
-
-  /*private _renderList(items: ISPList[]): void {
-     let html: string = '';    
-    let teststr: string = this.context.pageContext.web.absoluteUrl.substring(0,this.context.pageContext.web.absoluteUrl.search("/sites"));
-    items.forEach((item: ISPList) => {  
-      let bdate: Date = item.BirthDate;    
-      html += `      
-        <div className={styles.row}>${item.Title}</div>  
-        <div className={styles.row}><a href="">${item.EmailId}</a></div>
-        <div className={styles.row}>Birth Date - <a href="">${bdate}</a></div>
-            
-        <div className={styles.row}>User Photo: <img src = "${teststr}/_layouts/15/userphoto.aspx?size=S&username=${item.EmailId}"></div>
-        <br></br>`;        
-    });    
-  
-    const listContainer: Element = this.domElement.querySelector('#spListContainer');
-    listContainer.innerHTML = html; 
-  }*/
-
-  /* private _renderListAsync(): void {   
-    if (Environment.type == EnvironmentType.SharePoint ||
-             Environment.type == EnvironmentType.ClassicSharePoint) 
-    {
-      this._getListData()
-        .then((response) => {
-          this._renderList(response.value);
-        });
-    }
-  } */
-
-  /* private loadOptions(): Promise<IDropdownOption[]> {
+  private loadOptions(): Promise<IDropdownOption[]> {
     return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
       setTimeout(() => {
         resolve([{
@@ -110,21 +74,19 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
           {
             key: 'External',
             text: 'External list from SharePoint'
+          },
+          {
+            key: 'API',
+            text: 'APIs OR Webservice'
           }
         ]);
       }, 2000);
-    });
+    });   
   }
 
-  private onDropdownChange(propertyPath: string, newValue: any): void {  
-    const oldValue: any = get(this.properties, propertyPath);  
-    // store new value in web part properties  
-    update(this.properties, propertyPath, (): any => { return newValue; });  
-    // refresh web part  
-    this.render();  
-  }
+  
 
-  private loadItems(): Promise<IDropdownOption[]> {
+  /*private loadItems(): Promise<IDropdownOption[]> {
     if (!this.properties.dropdown) {
       // resolve to empty options since no list has been selected
       //return Promise.resolve();
@@ -199,7 +161,25 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
-    
+    let textControl: any = [];  
+    let imageSourceControl: any = [];  
+      
+    if (this.properties.dropdown === "Internal") {  
+      textControl = PropertyPaneTextField('simpleText', {  
+        label: "Text",  
+        placeholder: "Enter Text"  
+      });  
+    }  
+    else if (this.properties.dropdown === "External")
+    {  
+      imageSourceControl = PropertyPaneTextField('imageUrl', {  
+        label: "Image URL",  
+        placeholder: "Enter Image URL"  
+      });  
+    }  
+
+   
+
     /* this.sitecollectionsDropDown = new PropertyPaneDropdown('SiteCollection', {
       label: strings.SiteCollectionFieldLabel,
       loadOptions: this.loadItems.bind(this),
@@ -209,7 +189,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       disabled: !this.properties.dropdown
     }); */
 
-    return {
+    return {      
       pages: [
         {
           header: {
@@ -218,23 +198,22 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
           groups: [
             {
               groupName: "",
-              groupFields: [
-                /* PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                }), */                
-                /* new PropertyPaneDropdown('dropdown', {
+              groupFields: [                               
+                new PropertyPaneDropdown('dropdown', {
                   label: 'Select the source from where data to be fetched for users.',
                   loadOptions: this.loadOptions.bind(this),
                   onPropertyChange: this.onDropdownChange.bind(this),
-                  selectedKey: this.properties.dropdown
+                  selectedKey: this.properties.dropdown,
                 }),
-                this.sitecollectionsDropDown */
+                
+                textControl,
+                imageSourceControl
               ]
             }
           ]
         }
       ]
-    };
+    };    
   }
 }
 

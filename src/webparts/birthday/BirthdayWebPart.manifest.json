@@ -23,6 +23,8 @@
     "properties": {
       "description": "Birthday",
       "dropdown": "",
+      "simpleText": "",
+      "imageUrl": "",
       "SiteCollection":""
     }
   }]

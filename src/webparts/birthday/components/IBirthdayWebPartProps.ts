@@ -1,4 +1,6 @@
 export interface IBirthdayWebPartProps {
     dropdown: string;
-    SiteCollection: string;
+    simpleText: string;
+    imageUrl: string;
+    SiteCollection: string;    
   }

@@ -1,8 +1,10 @@
 
 import {IBirthday} from "./IBirthday";
+import {IAnniversary} from "./IAnniversary"
 
 export interface IBirthdayState {
-    Users : IBirthday[],    
+    BUsers : IBirthday[], 
+    AUsers : IAnniversary[],
     count:number,
     bgColorBirthday:string,
     bgColorAnniversary:string,
@@ -16,5 +18,7 @@ export interface IBirthdayState {
      * If no error message occurred, null.
      */
      errorMessage: string;
+     StartDate: string;
+     EndDate: string;
 
 }

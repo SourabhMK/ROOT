@@ -6,5 +6,7 @@ export interface IBirthdayProps {
   siteurl: string;
   spHttpClient: SPHttpClient;
   dropdown: string;
+  simpleText: string;
+  imageUrl: string;
   SiteCollection: string;
 }
