@@ -5,8 +5,18 @@
     "id": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
-    "isDomainIsolated": false,
+    "isDomainIsolated": true,
     "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [  
+      {  
+        "resource": "Microsoft Graph",  
+        "scope": "User.ReadBasic.All"  
+      },  
+      {  
+        "resource": "Microsoft Graph",  
+        "scope": "Mail.Send"  
+      }  
+    ],  
     "developer": {
       "name": "",
       "websiteUrl": "",
@@ -17,6 +27,6 @@
   },
   "paths": {
     "zippedPackage": "solution/root.sppkg"
-  }
+  } 
   
 }

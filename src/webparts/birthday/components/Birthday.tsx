@@ -36,7 +36,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     }
   }
 
-  componentDidMount(){
+  componentDidMount(){    
     //alert(this.props.dropdown);   
     this.LoadBirthdayDetails();    
   }
@@ -66,7 +66,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     this.setState({
        StartDate: startDate,
        EndDate: endDate,
-     }, () => alert("Inside set state Start Date: " + this.state.StartDate + ", End Date: " + this.state.EndDate))
+     })
    
   }
 
@@ -83,7 +83,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage:null,       
       }) 
 
-      alert("Load birthday details." + this.state.StartDate + " " +this.state.EndDate);
+      //alert("Load birthday details." + this.state.StartDate + " " +this.state.EndDate);
       const headers: HeadersInit = new Headers();
       // suppress metadata to minimize the amount of data loaded from SharePoint
       headers.append("accept", "application/json;odata.metadata=none");
@@ -253,11 +253,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage: error
       });
     });
-  }
-
-  /* private sendEmail() {
-    alert('Sent Email.');
-  } */
+  } 
 
   public render(): React.ReactElement<IBirthdayProps> { 
 
@@ -276,8 +272,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           </div>
           <div className = { styles.row}>This Month</div>
           {  
-            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} msGraphClientFactory /> : 
-            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers}/> :  <BirthdayUser people={this.state.BUsers} msGraphClientFactory/> )
+            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} /> : 
+            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers}/> :  <BirthdayUser people={this.state.BUsers} /> )
           }           
                       
         </div>        

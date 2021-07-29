@@ -21,8 +21,8 @@
     "description": { "default": "Birthday description" },
     "officeFabricIconFontName": "BirthdayCake",
     "properties": {
-      "description": "Birthday",
-      "dropdown": "",
+      "description": "Birthday/ Anniversary",
+      "dropdown": "Azure",
       "simpleText": "",
       "imageUrl": "",
       "SiteCollection":""

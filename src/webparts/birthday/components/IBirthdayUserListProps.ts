@@ -1,8 +1,7 @@
 import { IBirthday } from "./IBirthday";
 
 export interface IBirthdayUserListProps {
-    people: IBirthday[];
-    msGraphClientFactory : any;
+    people: IBirthday[];    
 }
 
 export interface IBirthdayUserListState {
