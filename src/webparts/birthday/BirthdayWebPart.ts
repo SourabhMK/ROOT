@@ -79,7 +79,8 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
             key: 'API',
             text: 'APIs OR Webservice'
           }
-        ]);
+        ]
+        );
       }, 2000);
     });   
   }

@@ -4,6 +4,8 @@ import { IBirthdayUserListProps, IBirthdayUserListState } from './IBirthdayUserL
 import { escape } from '@microsoft/sp-lodash-subset';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
+import { MSGraphClient } from '@microsoft/sp-http';
+import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 
 initializeIcons();
 
@@ -25,11 +27,14 @@ initializeIcons();
         <div>
         {this.props.people.map((p, i) => {
             return(                
-                <div className = {styles.row}>                      
-                  <div className = {styles.column}>{p.firstName}</div> 
-                  <div className = {styles.column}>{p.email} <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true" onClick={() => this.sendEmail(p.email)}></i></div>
+                <div className = {styles.row}> 
+                
                   <div className = {styles.column}><img src = {p.photoUrl} /></div>
-                  <div className = {styles.column}>{p.birthdate}</div>                    
+                  
+                  <div className = {styles.column}>{p.firstName}</div>
+                  <div className = {styles.column}>{p.birthdate}</div>
+                  <div className = {styles.column}>{p.email} <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true" onClick={() => this.sendEmail(p.email)}></i></div>                  
+                                      
                 </div>
             );                                                      
           })}
@@ -40,7 +45,7 @@ initializeIcons();
   private sendEmail(ToEmailId: string) {
     alert('Sent Email.' + ToEmailId);
 
-   /*  if (ToEmailId) 
+     if (ToEmailId) 
     {
       //Create Body for Email  
       let emailPostBody: any = {  
@@ -56,12 +61,12 @@ initializeIcons();
                 "address": ToEmailId 
               }  
             }  
-          ],  
+          ],
         }  
       };
-
+      
       //Send Email uisng MS Graph
-      this.props.msGraphClientFactory  
+      this.context.msGraphClientFactory  
       .getClient()  
       .then((client: MSGraphClient): void => {  
         client  
@@ -76,11 +81,12 @@ initializeIcons();
              //Set Success Message Bar after Sending Email  
             else {  
               this.setState({  
-                statusMessage: { isShowMessage: true, message: "Email Sent using MS Graph", messageType: 4 }  
+                statusMessage: { isShowMessage: true, message: "Email Sent successfully.", messageType: 4 }  
               });  
             }  
           });  
         });  
-      } */
-    }  
+      }  
+    
+  }   
 }
