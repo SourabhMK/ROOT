@@ -4,30 +4,56 @@
       <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
     </ContentTypes> -->
     <Fields>
-      <Field ID="{193a4224-664f-4288-965e-a644d6c65998}"
-            Name="SPFxAmount"
-            DisplayName="Amount"
-            Type="Currency"
-            Decimals="2"
-            Min="0"
-            Required="FALSE"
-            Group="SPFx Columns" />
-
-    <Field ID="{089b5794-b497-4242-a204-226ad4420b84}"
-            Name="SPFxCostCenter"
-            DisplayName="Cost Center"
-            Type="Choice"
-            Required="FALSE"
-            Group="SPFx Columns">
-        <CHOICES>
-        <CHOICE>Administration</CHOICE>
-        <CHOICE>Information</CHOICE>
-        <CHOICE>Facilities</CHOICE>
-        <CHOICE>Operations</CHOICE>
-        <CHOICE>Sales</CHOICE>
-        <CHOICE>Marketing</CHOICE>
-        </CHOICES>
-    </Field>
+      <Field
+                Type="User"
+                DisplayName="Manager"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleOnly"
+                UserSelectionScope="0"
+                ID="{68b3ec21-ace9-419c-979d-dbf9e8a39c90}"
+                SourceID="{cf419c7b-4e8e-45e6-bd48-96382c601a81}"
+                StaticName="Manager"
+                Name="Manager"
+                ColName="int3"
+                RowOrdinal="0"
+            />
+            <Field
+                Type="User"
+                DisplayName="Dispatcher Group"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleAndGroups"
+                UserSelectionScope="0"
+                ID="{df52cc30-70e0-4d66-8eed-405762b8660a}"
+                SourceID="{cf419c7b-4e8e-45e6-bd48-96382c601a81}"
+                StaticName="GroupName"
+                Name="GroupName"
+                ColName="int1"
+                RowOrdinal="0"
+                Group=""
+            />
+            <Field
+                Type="User"
+                DisplayName="Department Group"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleAndGroups"
+                UserSelectionScope="0"
+                ID="{5aece817-8c95-4f64-abb8-fee155872aed}"
+                SourceID="{cf419c7b-4e8e-45e6-bd48-96382c601a81}"
+                StaticName="DepartmentGroup"
+                Name="DepartmentGroup"
+                ColName="int2"
+                RowOrdinal="0"
+                Group=""
+            />
     </Fields>
     <Views>
       <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
@@ -37,8 +63,9 @@
         <Toolbar Type="Standard" />
         <ViewFields>
           <FieldRef Name="LinkTitle"></FieldRef>
-          <FieldRef Name="SPFxAmount"></FieldRef>
-          <FieldRef Name="SPFxCostCenter"></FieldRef>
+          <FieldRef Name="Manager"></FieldRef>
+          <FieldRef Name="GroupName"></FieldRef>
+          <FieldRef Name="DepartmentGroup"></FieldRef>
         </ViewFields>
         <Query>
           <OrderBy>
