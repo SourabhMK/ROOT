@@ -6,7 +6,23 @@
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
-    "skipFeatureDeployment": true,
+    "skipFeatureDeployment": false,
+    "features": [{
+      "title": "root-client-side-solution",
+      "description": "root-client-side-solution",
+      "id": "8dd9844b-864f-40c2-9f18-5285417189aa",     
+      "version": "1.0.0.0",
+      "assets": {
+        "elementManifests": [
+          "elements.xml"
+        ],
+        "elementFiles":[
+          "schema.xml",
+          "departmentSchema.xml"
+        ]
+        
+      }
+    }],
     "developer": {
       "name": "",
       "websiteUrl": "",

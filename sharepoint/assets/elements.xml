@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+
+    <!-- <Field ID="{193a4224-664f-4288-965e-a644d6c65998}"
+            Name="SPFxAmount"
+            DisplayName="Amount"
+            Type="Currency"
+            Decimals="2"
+            Min="0"
+            Required="FALSE"
+            Group="SPFx Columns" />
+
+    <Field ID="{089b5794-b497-4242-a204-226ad4420b84}"
+            Name="SPFxCostCenter"
+            DisplayName="Cost Center"
+            Type="Choice"
+            Required="FALSE"
+            Group="SPFx Columns">
+        <CHOICES>
+        <CHOICE>Administration</CHOICE>
+        <CHOICE>Information</CHOICE>
+        <CHOICE>Facilities</CHOICE>
+        <CHOICE>Operations</CHOICE>
+        <CHOICE>Sales</CHOICE>
+        <CHOICE>Marketing</CHOICE>
+        </CHOICES>
+    </Field> -->
+
+    <!-- <ContentType ID="0x010042D0C1C200A14B6887742B6344675C8B"
+            Name="Cost Center"
+            Group="SPFx Content Types"
+            Description="Sample content types from web part solution">
+        <FieldRefs>
+            <FieldRef ID="{193a4224-664f-4288-965e-a644d6c65998}" />
+            <FieldRef ID="{089b5794-b497-4242-a204-226ad4420b84}" />
+        </FieldRefs>
+    </ContentType> -->
+
+    <ListInstance
+            CustomSchema="schema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="SPFx List"
+            Description="SPFx List"
+            TemplateType="100"
+            Url="Lists/SPFxList">
+    </ListInstance>
+      <ListInstance
+            CustomSchema="departmentSchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="Department"
+            Description="Display Department"
+            TemplateType="100"
+            Url="Lists/Department">
+    </ListInstance>
+
+</Elements>
