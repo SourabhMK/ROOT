@@ -20,12 +20,18 @@
     "@microsoft/sp-office-ui-fabric-core": "1.12.1",
     "@microsoft/sp-property-pane": "1.12.1",
     "@microsoft/sp-webpart-base": "1.12.1",
+    "@pnp/common": "^2.7.0",
+    "@pnp/logging": "^2.7.0",
+    "@pnp/odata": "^2.7.0",
+    "@pnp/polyfill-ie11": "^2.0.2",
+    "@pnp/sp": "^2.7.0",
     "@pnp/spfx-controls-react": "^3.2.0",
     "cross-env": "^7.0.3",
     "office-ui-fabric-react": "7.156.0",
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "sp-pnp-js": "^3.0.10"
+    "react-elastic-carousel": "^0.11.5",
+    "styled-components": "^5.3.0"
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.1.0",
@@ -38,6 +44,7 @@
     "@types/react-dom": "16.9.8",
     "@types/webpack-env": "1.13.1",
     "ajv": "~5.2.2",
-    "gulp": "~4.0.2"
+    "gulp": "~4.0.2",
+    "webpack-env": "^0.8.0"
   }
 }

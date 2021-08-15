@@ -1,9 +1,7 @@
 import * as React from 'react';
-import styles from './Birthday.module.scss';
+import styles from '../Birthday.module.scss';
 import { IAnniversaryUserListProps, IAnniversaryUserListState } from './IAnniversaryUserListProps';
 import { escape } from '@microsoft/sp-lodash-subset';
-//import { initializeIcons } from "@fluentui/font-icons-mdl2";
-//import { Icon } from '@fluentui/react/lib/Icon';
 import { Callout, DirectionalHint } from 'office-ui-fabric-react/lib/Callout';
 import { SendAnniversaryEmailCallout } from './SendAnniversaryEmailCallout';
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
@@ -11,9 +9,12 @@ import {
   Persona,
   PersonaSize
 } from 'office-ui-fabric-react/lib/Persona';
+import { initializeIcons } from "@fluentui/font-icons-mdl2";
+import { Icon } from '@fluentui/react/lib/Icon';
 
-//initializeIcons();
+initializeIcons();
 
+const MyMailIcon = () => <Icon iconName="Mail" />;
 
 export default class AnniversaryUser extends React.Component<IAnniversaryUserListProps, IAnniversaryUserListState> {
 
@@ -40,15 +41,26 @@ export default class AnniversaryUser extends React.Component<IAnniversaryUserLis
       {this.props.people &&
       <div>
       {this.props.people.map((p, i) => {
+
+        let finalhiredate;
+        if(p.hiredate === "")
+        {
+          finalhiredate = p.hiredate;
+        }
+        else
+        {
+          let hiredate = new Date(p.hiredate);
+          finalhiredate = new Intl.DateTimeFormat('en-US', {day: '2-digit',month: 'long'}).format(hiredate); 
+        } 
           return(                
               <div className = {styles.persona_card}> 
-                <Persona primaryText={p.name} secondaryText={p.hiredate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                <Persona primaryText={p.name} secondaryText={finalhiredate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 
                 {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
                   <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>
                 </div> */}
                 <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
-                  <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true"></i>
+                  <MyMailIcon />
                 </div> 
                 
                 { this.state.showCallOut && this.state.calloutElement === i && (
@@ -63,7 +75,7 @@ export default class AnniversaryUser extends React.Component<IAnniversaryUserLis
                   directionalHint={DirectionalHint.rightCenter}
                   doNotLayer={false}
                 >
-                  <SendAnniversaryEmailCallout person={this.state.person} siteurl="" spHttpClient = {this.props.spHttpClient} ></SendAnniversaryEmailCallout>
+                  <SendAnniversaryEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} ></SendAnniversaryEmailCallout>
                 </Callout>
                 )}                 
                                     

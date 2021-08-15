@@ -1,0 +1,112 @@
+<List xmlns:ows="Microsoft SharePoint" Title="EmailSender" EnableContentTypes="FALSE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/EmailSender" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>    
+    <Fields>
+        <Field ID="{5d8d2028-3993-45c4-aff3-d648a56b1c56}"
+            Type="Text" 
+            DisplayName="EmailSubject" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="EmailSubject" 
+            Name="EmailSubject" 
+            ColName="nvarchar3" 
+            RowOrdinal="0" />
+
+         <Field ID="{a581d179-aaa2-4757-b1d3-82b508149bce}"
+            Type="Note" 
+            DisplayName="EmailBody" 
+            Required="FALSE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            NumLines="3" 
+            RichText="TRUE" 
+            RichTextMode="FullHtml" 
+            IsolateStyles="TRUE" 
+            Sortable="FALSE"  
+            StaticName="EmailBody" 
+            Name="EmailBody" 
+            ColName="ntext2" 
+            RowOrdinal="0" />
+
+        <Field ID="{0dce30e1-4e54-47d8-b856-40f5941413de}"
+            Type="Text" 
+            DisplayName="EmailTo" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="EmailTo"
+            Name="EmailTo" 
+            ColName="nvarchar4" 
+            RowOrdinal="0" />
+
+        <Field ID="{8dd6cf88-e1a0-498c-a7ae-7c68f7473be3}"
+            Type="Text" 
+            DisplayName="EmailCCTo" 
+            Required="FALSE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="EmailCCTo" 
+            Name="EmailCCTo" 
+            ColName="nvarchar9" 
+            RowOrdinal="0" />
+
+        <Field ID="{887a9d64-e42b-4988-847b-815205ef4991}"
+            Type="Text" 
+            DisplayName="EmailFrom" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="EmailFrom" 
+            Name="EmailFrom" 
+            ColName="nvarchar9" 
+            RowOrdinal="0" />
+
+        <Field ID="{770ab16b-8ffc-4f8c-be43-1e25174a396d}"
+            Name="ActivityEmail"
+            DisplayName="ActivityEmail"
+            Type="URL"
+            StaticName="ActivityEmail"
+            ColName="nvarchar5" 
+            RowOrdinal="0" 
+            ColName2="nvarchar6" 
+            RowOrdinal2="0" 
+            ShowInDisplayForm="TRUE" 
+            ShowInEditForm="TRUE" 
+            ShowInNewForm="TRUE"            
+            Required="FALSE" />
+
+    </Fields>
+
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="EmailSubject"></FieldRef>
+          <FieldRef Name="EmailBody"></FieldRef>
+          <FieldRef Name="EmailTo"></FieldRef>
+          <FieldRef Name="EmailCCTo"></FieldRef>
+          <FieldRef Name="ActivityEmail"></FieldRef>
+
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

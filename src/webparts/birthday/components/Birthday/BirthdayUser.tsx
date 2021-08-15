@@ -1,9 +1,9 @@
 import * as React from 'react';
-import styles from './Birthday.module.scss';
+import styles from '../Birthday.module.scss';
 import { IBirthdayUserListProps, IBirthdayUserListState } from './IBirthdayUserListProps';
 import { escape, fromPairs } from '@microsoft/sp-lodash-subset';
-//import { initializeIcons } from "@fluentui/font-icons-mdl2";
-//import { Icon } from '@fluentui/react/lib/Icon';
+import { initializeIcons } from "@fluentui/font-icons-mdl2";
+import { Icon } from '@fluentui/react/lib/Icon';
 import { MSGraphClient } from '@microsoft/sp-http';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 //import useMsGraphProvider, { IMSGraphInterface } from './msGraphProvider';
@@ -15,8 +15,10 @@ import {
   PersonaSize
 } from 'office-ui-fabric-react/lib/Persona';
 
+initializeIcons();
+const MyMailIcon = () => <Icon iconName="Mail" />;
+const MyGiftIcon = () => <Icon iconName="GiftBox" />;
 
-//initializeIcons();
 //debugger;
   export default class BirthdayUser extends React.Component<IBirthdayUserListProps, IBirthdayUserListState> {
 
@@ -54,19 +56,21 @@ import {
             {
               let birthdate = new Date(p.birthdate);
               finalbirthdate = new Intl.DateTimeFormat('en-US', {day: '2-digit',month: 'long'}).format(birthdate); 
-            }            
+            }   
             
-            return(             
+            return(  
+              
                 <div className = {styles.persona_card}> 
-                  <Persona primaryText={p.name} secondaryText={finalbirthdate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                  <Persona primaryText={`${p.name}`} secondaryText={finalbirthdate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                   
                   {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
                     <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>
                   </div> */}
                   <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
-                    <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true"></i>
+                    {/* <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true"></i> */}
+                    <MyMailIcon />
                   </div> 
-                  
+                                    
                   { this.state.showCallOut && this.state.calloutElement === i && (
                   <Callout
                     className={this.state.showCallOut ? styles.calloutShow: styles.callout}
@@ -79,7 +83,7 @@ import {
                     directionalHint={DirectionalHint.rightCenter}
                     doNotLayer={false}
                   >
-                    <SendEmailCallout person={this.state.person} siteurl="" spHttpClient = {this.props.spHttpClient} ></SendEmailCallout>
+                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} ></SendEmailCallout>
                   </Callout>
                   )}                 
                                       

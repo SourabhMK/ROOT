@@ -1,13 +1,13 @@
-import { IAnniversary } from "./IAnniversary";
+import { IAnniversary } from "../../../../Models/IAnniversary";
 import { SPHttpClient } from "@microsoft/sp-http";
 
 export interface IAnniversaryUserListProps {
-    people: IAnniversary[],
+    people: IAnniversary[];
     spHttpClient: SPHttpClient;
+    siteurl: string;
 }
 
 export interface IAnniversaryUserListState {
-    //statusMessage:IMessage;
     showCallOut: boolean;
     calloutElement: number;
     person: IAnniversary;

@@ -1,13 +1,13 @@
-import { IBirthday } from "./IBirthday";
+import { IBirthday } from "../../../../Models/IBirthday";
 import { SPHttpClient } from "@microsoft/sp-http";
 
 export interface IBirthdayUserListProps {
     people: IBirthday[]; 
-    spHttpClient: SPHttpClient;   
+    spHttpClient: SPHttpClient; 
+    siteurl: string;  
 }
 
 export interface IBirthdayUserListState {
-    //statusMessage:IMessage;
     showCallOut: boolean;
     calloutElement: number;
     person: IBirthday;
