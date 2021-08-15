@@ -256,11 +256,25 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           };
         });
     
-        if(people.length>0){          
-          people = this.SortAnniversary(people);
+        if(people.length>0){            
+          let currentMonth = new Date().getMonth() + 1;
+          let hmonth, hday, hireDate;
+          let currentMonthPeople: IAnniversary[] = [];
+          for(let i=0; i<people.length;++i)
+          {    
+            hday = new Date(people[i].hiredate).getDate();       
+            hmonth = new Date(people[i].hiredate).getMonth() + 1;
+            if(hmonth == currentMonth)
+            {
+              hireDate = hmonth < 10 ? hday < 10 ? '2000-0' + hmonth + '-0' + hday : '2000-0' + hmonth + '-' + hday : hday < 10 ? '2000-' + hmonth + '-0' + hday : '2000' + hmonth + '-' + hday;
+              people[i].hiredate = hireDate;               
+              currentMonthPeople.push(people[i]);
+            }            
+          }         
+          currentMonthPeople = this.SortAnniversary(currentMonthPeople);
           this.setState({
             loading:false,
-            AUsers : people,
+            AUsers : currentMonthPeople,
           })
         }
       }, (error: any): void => {
