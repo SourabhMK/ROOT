@@ -1,0 +1,82 @@
+<List Title="EmployeeRequest" Direction="none" Url="Lists/EmployeeRequest" BaseType="0" Type="100" MultipleDataList="FALSE" BrowserFileHandling="permissive" FolderCreation="FALSE" Catalog="FALSE" IpLabelId="" SendToLocation="|" ImageUrl="/_layouts/15/images/itgen.png?rev=44" xmlns:ows="Microsoft SharePoint" xmlns:spctf="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>
+    <!-- <ContentTypes>
+      <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
+    </ContentTypes> -->
+    <Fields>
+        	<Field Type="Note" DisplayName="Description" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" NumLines="6" RichText="FALSE" Sortable="FALSE" ID="{e9a3b2ce-ff67-40b5-81d1-7ebbd9c733dd}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Description" Name="Description" ColName="ntext2" RowOrdinal="0" />
+			<Field Type="Text" DisplayName="Category" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" MaxLength="255" ID="{f6b62366-8ce7-4275-a644-9531557878d1}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Category" Name="Category" ColName="nvarchar3" RowOrdinal="0" />
+			<Field Type="Text" DisplayName="Department" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" MaxLength="255" ID="{6a6f1918-717c-41a2-bed4-8201e902a4dc}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Department" Name="Department" ColName="nvarchar4" RowOrdinal="0" />
+			<Field Type="Text" DisplayName="Dispatcher Group" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" MaxLength="255" ID="{6881fa07-813a-4b63-ba37-0d0684b8992b}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="AssignedTo" Name="AssignedTo" ColName="nvarchar5" RowOrdinal="0" />
+			<Field Type="User" DisplayName="Assigned To" List="UserInfo" Required="FALSE" EnforceUniqueValues="FALSE" ShowField="ImnName" UserSelectionMode="PeopleOnly" UserSelectionScope="0" ID="{ea0f4eaf-6332-4ae8-bd3e-c662c199b6e4}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="ReAssignTo" Name="ReAssignTo" ColName="int1" RowOrdinal="0" Group="" />
+			<Field Type="Text" DisplayName="Status" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" MaxLength="255" ID="{9babf631-ccc3-43eb-9528-362adb1be099}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Status" Name="Status" ColName="nvarchar6" RowOrdinal="0" />
+			<Field Type="Note" DisplayName="Comment" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" NumLines="6" RichText="FALSE" Sortable="FALSE" ID="{e256b2e9-2939-4e74-8fe1-22f7e3ea70c6}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Comment" Name="Comment" ColName="ntext3" RowOrdinal="0" />
+			<Field Type="User" DisplayName="DepartmentManager" List="UserInfo" Required="FALSE" EnforceUniqueValues="FALSE" ShowField="ImnName" UserSelectionMode="PeopleOnly" UserSelectionScope="0" ID="{5668fd22-8bd4-48bb-a5cb-49a8d2137672}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="DepartmentManager" Name="DepartmentManager" ColName="int2" RowOrdinal="0" />
+			<Field Type="Number" DisplayName="ArchivedTimeSpan" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" ID="{9b4771dd-8ed1-4099-9eab-aaa994776222}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="ArchivedTimeSpan" Name="ArchivedTimeSpan" ColName="float1" RowOrdinal="0" />
+			<Field ID="{07e67a99-1a78-4b60-a124-323be52736fd}" ColName="tp_Author" RowOrdinal="0" ReadOnly="TRUE" Type="User" List="UserInfo" Name="Author" DisplayName="Raised By" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Author" FromBaseType="TRUE" Required="FALSE" ShowField="ImnName" />
+			<Field Type="Calculated" DisplayName="ArchiveDate" EnforceUniqueValues="FALSE" Indexed="FALSE" Format="DateTime" LCID="1033" ResultType="DateTime" ReadOnly="TRUE" ID="{5227ed10-9160-4365-9722-6ede6d59c84d}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="ArchiveDate" Name="ArchiveDate" ColName="sql_variant1" RowOrdinal="0" Required="FALSE">
+				<Formula>=Created+ArchivedTimeSpan</Formula>
+				<FieldRefs>
+					<FieldRef Name="ArchivedTimeSpan" />
+					<FieldRef Name="Created" />
+				</FieldRefs>
+			</Field>
+			<Field Type="Calculated" DisplayName="Dispatch Group" EnforceUniqueValues="FALSE" Indexed="FALSE" Format="DateOnly" LCID="1033" ResultType="Text" ReadOnly="TRUE" ID="{b972dc27-6ebf-4425-8ac2-607588524537}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Dispatch_x0020_Group" Name="Dispatch_x0020_Group" ColName="sql_variant2" RowOrdinal="0" CustomFormatter="" Required="FALSE">
+				<Formula>=IF(Status="Pending",AssignedTo,"")</Formula>
+				<FieldRefs>
+					<FieldRef Name="AssignedTo" />
+					<FieldRef Name="Status" />
+				</FieldRefs>
+			</Field>
+            <Field ID="{317b90fd-1637-4055-8530-1e10b5df304a}" ColName="tp_ID" RowOrdinal="0" ReadOnly="TRUE" Type="Counter" Name="ID" PrimaryKey="TRUE" DisplayName="ID" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="ID" FromBaseType="TRUE" />
+			<Field Type="Lookup" DisplayName="Predecessor" Required="FALSE" EnforceUniqueValues="FALSE" List="Lists/EmployeeRequest" ShowField="Title" UnlimitedLengthInDocumentLibrary="FALSE" RelationshipDeleteBehavior="None" ID="{bdec1ba0-b872-485b-a454-2cfcc2699611}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="Predecessor" Name="Predecessor" ColName="int3" RowOrdinal="0" />
+			<Field Type="Number" DisplayName="OnOffBoardTask" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" ID="{84841b32-397d-4335-9892-cd59c2d14be8}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="OnOffBoardTask" Name="OnOffBoardTask" ColName="float2" RowOrdinal="0" />
+            <Field ID="{c51fb01f-87c1-4edc-bb17-d726f37479c4}" ColName="tp_HasAttachment" RowOrdinal="0" Type="Attachments" Name="Attachments" DisplayName="Attachments" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Attachments" FromBaseType="TRUE" />
+			<Field Type="Calculated" DisplayName="MyTest" EnforceUniqueValues="FALSE" Indexed="FALSE" Format="DateOnly" LCID="1033" ResultType="Text" ReadOnly="TRUE" ID="{49966e93-9845-48c2-9cf3-a8bbddcbce19}" SourceID="{$ListId:Lists/EmployeeRequest;}" StaticName="MyTest" Name="MyTest" ColName="sql_variant3" RowOrdinal="0">
+				<Formula>=IF(Status="Pending","Yes","No")</Formula>
+				<FieldRefs>
+					<FieldRef Name="Status" />
+				</FieldRefs>
+			</Field>
+    </Fields>
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="Description" />
+		  <FieldRef Name="Category" />
+		  <FieldRef Name="Department" />
+		  <FieldRef Name="AssignedTo" />
+		  <FieldRef Name="ReAssignTo" />
+	      <FieldRef Name="Status" />
+		  <FieldRef Name="Comment" />
+		  <FieldRef Name="DepartmentManager" />
+		  <FieldRef Name="ArchivedTimeSpan" />
+		  <FieldRef Name="ArchiveDate" />
+		  <FieldRef Name="Author" />
+		  <FieldRef Name="Created" />
+		  <FieldRef Name="Dispatch_x0020_Group" />
+		  <FieldRef Name="ID" />
+		  <FieldRef Name="Predecessor" />
+		  <FieldRef Name="OnOffBoardTask" />
+		  <FieldRef Name="Attachments" />
+		  <FieldRef Name="MyTest" />
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

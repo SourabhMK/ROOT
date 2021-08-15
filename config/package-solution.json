@@ -18,7 +18,10 @@
         ],
         "elementFiles":[
           "schema.xml",
-          "departmentSchema.xml"
+          "departmentSchema.xml",
+          "departmentalCategorySchema.xml",
+          "IssueArchiveSettingsSchema.xml",
+          "employeeRequestSchema.xml"
         ]
         
       }

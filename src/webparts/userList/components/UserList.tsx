@@ -157,7 +157,7 @@ private _loadFollowersInfo(){
   const headers: HeadersInit = new Headers();
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
-//debugger;
+debugger;
   this.props.spHttpClient
     .get(`${this.props.webUrl}/_api/social.following/my/followers?selectproperties='Name,EmailAddress,ImageUri'&sortlist='Name:ascending'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500`, SPHttpClient.configurations.v1, {
       headers: headers

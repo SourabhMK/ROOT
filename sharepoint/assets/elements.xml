@@ -52,5 +52,29 @@
             TemplateType="100"
             Url="Lists/Department">
     </ListInstance>
+    <ListInstance
+            CustomSchema="departmentalCategorySchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="Departmental_Category"
+            Description="Display Department"
+            TemplateType="100"
+            Url="Lists/Departmental_Category">
+    </ListInstance>
+    <ListInstance
+            CustomSchema="IssueArchiveSettingsSchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="IssueArchiveSettings"
+            Description="Display IssueArchiveSettings"
+            TemplateType="100"
+            Url="Lists/IssueArchiveSettings">
+    </ListInstance>
+    <ListInstance
+            CustomSchema="employeeRequestSchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="EmployeeRequest"
+            Description="Display EmployeeRequest"
+            TemplateType="100"
+            Url="Lists/EmployeeRequest">
+    </ListInstance>
 
 </Elements>

@@ -1,33 +1,10 @@
-<List xmlns:ows="Microsoft SharePoint" Title="Basic List" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Basic List" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+<List xmlns:ows="Microsoft SharePoint" Title="Departmental_Category" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Departmental_Category" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
   <MetaData>
     <!-- <ContentTypes>
       <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
     </ContentTypes> -->
-    <Fields>
-      <Field ID="{af077472-d352-4c42-bb3e-c377a5dbfef7}"
-            Name="SPFxAmount"
-            DisplayName="Amount"
-            Type="Currency"
-            Decimals="2"
-            Min="0"
-            Required="FALSE"
-            Group="SPFx Columns" />
-
-    <Field ID="{581e2e9f-c85b-4ad9-8af5-82d56799c1bf}"
-            Name="SPFxCostCenter"
-            DisplayName="Cost Center"
-            Type="Choice"
-            Required="FALSE"
-            Group="SPFx Columns">
-        <CHOICES>
-        <CHOICE>Administration</CHOICE>
-        <CHOICE>Information</CHOICE>
-        <CHOICE>Facilities</CHOICE>
-        <CHOICE>Operations</CHOICE>
-        <CHOICE>Sales</CHOICE>
-        <CHOICE>Marketing</CHOICE>
-        </CHOICES>
-    </Field>
+    <Fields>  
+      <Field Type="Lookup" DisplayName="Department" Required="FALSE" EnforceUniqueValues="FALSE" List="Lists/Department" ShowField="Title" UnlimitedLengthInDocumentLibrary="FALSE" RelationshipDeleteBehavior="None" ID="{89d8b2f6-d914-4910-83f8-7468089e69b4}" SourceID="{$ListId:Lists/Department_Category;}" StaticName="Department" Name="Department" ColName="int1" RowOrdinal="0" />
     </Fields>
     <Views>
       <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
@@ -37,8 +14,7 @@
         <Toolbar Type="Standard" />
         <ViewFields>
           <FieldRef Name="LinkTitle"></FieldRef>
-          <FieldRef Name="SPFxAmount"></FieldRef>
-          <FieldRef Name="SPFxCostCenter"></FieldRef>
+          <FieldRef Name="Department"></FieldRef>
         </ViewFields>
         <Query>
           <OrderBy>
@@ -54,3 +30,16 @@
     </Forms>
   </MetaData>
 </List>
+
+
+
+
+
+
+
+
+
+
+
+
+

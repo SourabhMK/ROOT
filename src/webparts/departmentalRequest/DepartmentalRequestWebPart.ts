@@ -9,8 +9,8 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'DepartmentalRequestWebPartStrings';
-import DepartmentalRequest from './components/DepartmentalRequest';
-import { IDepartmentalRequestProps } from './components/IDepartmentalRequestProps';
+import DepartmentalRequest from './components/DepartmentalRequest/DepartmentalRequest';
+import { IDepartmentalRequestProps } from './components/DepartmentalRequest/IDepartmentalRequestProps';
 
 export interface IDepartmentalRequestWebPartProps {
   description: string;
@@ -24,7 +24,11 @@ export default class DepartmentalRequestWebPart extends BaseClientSideWebPart<ID
       DepartmentalRequest,
       {
         description: this.properties.description,
+        webUrl: this.context.pageContext.web.absoluteUrl,
+        spHttpClient: this.context.spHttpClient,
         groupType:this.properties.groupType,
+        loggedInUserName:this.context.pageContext.user.displayName,
+        loggedInUserEmail:this.context.pageContext.user.email,
       }
     );
 
