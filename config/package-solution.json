@@ -14,14 +14,14 @@
       "version": "1.0.0.0",
       "assets": {
         "elementManifests": [
-          "elements.xml"
+          "DepartmentalRequest/elements.xml"
         ],
         "elementFiles":[
-          "schema.xml",
-          "departmentSchema.xml",
-          "departmentalCategorySchema.xml",
-          "IssueArchiveSettingsSchema.xml",
-          "employeeRequestSchema.xml"
+          "DepartmentalRequest/schema.xml",
+          "DepartmentalRequest/departmentSchema.xml",
+          "DepartmentalRequest/departmentalCategorySchema.xml",
+          "DepartmentalRequest/IssueArchiveSettingsSchema.xml",
+          "DepartmentalRequest/employeeRequestSchema.xml"
         ]
         
       }
