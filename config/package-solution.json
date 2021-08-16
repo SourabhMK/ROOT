@@ -14,11 +14,18 @@
       "version": "1.0.0.0",
       "assets": {
         "elementManifests": [
+          "DepartmentalRequest/elements.xml",
           "Birthday/elements.xml"
         ],
         "elementFiles":[
+          "DepartmentalRequest/schema.xml",
+          "DepartmentalRequest/departmentSchema.xml",
+          "DepartmentalRequest/departmentalCategorySchema.xml",
+          "DepartmentalRequest/IssueArchiveSettingsSchema.xml",
+          "DepartmentalRequest/employeeRequestSchema.xml",
           "Birthday/BirthdayAnniversaryImages.xml",
           "Birthday/EmailSenderschema.xml"
+
         ]
       }
     }],
