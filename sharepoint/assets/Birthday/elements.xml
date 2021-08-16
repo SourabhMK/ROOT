@@ -10,8 +10,7 @@
         Url="Lists/EmailSender">
     </ListInstance>
 
-    <ListInstance
-        CustomSchema="BirthdayAnniversaryImages.xml" 
+    <ListInstance       
         FeatureId="00bfea71-52d4-45b3-b544-b1c71b620109" 
         Title="BirthdayAnniversaryImages" 
         Description="Birthday and Anniversary Images list"       

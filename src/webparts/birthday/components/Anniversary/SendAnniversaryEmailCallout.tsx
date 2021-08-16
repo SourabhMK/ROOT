@@ -16,7 +16,8 @@ import { TextField } from '@fluentui/react/lib/TextField';
 interface ISendAnniversaryEmailCalloutState {    
   selectedImage: string;
   message: string;
-  images: string[];  
+  images: string[];
+  errorMessage: string;  
 } 
 
 let Images: string[] = [];
@@ -27,7 +28,8 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     this.state = {
       selectedImage: "",
       message: "",
-      images: []
+      images: [],
+      errorMessage: ""
     };
     this.getAnniversaryDetails();      
   } 
@@ -59,13 +61,15 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
   handleClick = async(image) => {
 
     await this.setState({
-      selectedImage:""
+      selectedImage:image,
+      errorMessage: ""
     })
   }
   
   handleChange = async(Anniversarymessage :string) => {
     await this.setState({
-      message: Anniversarymessage
+      message: Anniversarymessage,
+      errorMessage: ""
     })   
   }
 
@@ -89,9 +93,10 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
                 isRTL={false}
                 focusOnSelect={true}>
                   {this.state.images.map((img, index) => {
-                    return <img src={`${this.props.siteurl}/BirthdayPictureLibrary/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? 'selected':''} height="100px" width="100%" margin-top="15px"/>
+                    return <img src={`${this.props.siteurl}/BirthdayPictureLibrary/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
                   })}                                                
             </Carousel>
+            <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
           </div>
         </div>
         
@@ -112,23 +117,49 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
 
   SaveDataClicked = async(message, image) =>
   {
-    const assets = sp.web.lists.ensureSiteAssetsLibrary();
-    alert("site asset library: " + assets);
-
-    const fileItem = (await assets).rootFolder.files.add(image, true);
-
-    const img = {
-      "serverUrl": "https://champion1.sharepoint.com",
-      "serverRelativeUrl":(await fileItem).data.ServerRelativeUrl
-    };
-    
-    await sp.web.lists.getByTitle("EmailSender").items.add({
-      Title: "Anniversary Message",
+    if(message == "" || message == null)
+    {
+      this.setState({
+        errorMessage: "Please Add message"
+      })
+      this.render();
+    }
+    else if(image == "" || image == null)
+    {
+      this.setState({
+        errorMessage: "Please select image"
+      })
+      this.render();
+    }
+    else
+    {
+      const requestlistItem: string = JSON.stringify({
+      Title: "Work Anniversary Message",
       EmailSubject: "Happy Work Anniversary",
       EmailBody: message,
-      EmailTo:this.props.person.email,
-      ActivityEmail: JSON.stringify(img)
-    });
+      EmailTo: this.props.person.email,
+      ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayPictureLibrary/" + image}   
+      });
+
+      console.log(requestlistItem);
+      this.props.spHttpClient.post(`${this.props.siteurl}/_api/web/lists/getbytitle('SendEmailList')/items`, SPHttpClient.configurations.v1,  
+      {  
+        headers: {  
+        'Accept': 'application/json;odata=nometadata',  
+        'Content-type': 'application/json;odata=nometadata',  
+        'odata-version': ''  
+        },  
+        body: requestlistItem  
+      }) 
+      .then((response: SPHttpClientResponse): Promise<void> => {  
+          return response.json();  
+      })  
+      .then((item: any): void => {  
+          console.log('Item has been created.');
+      }, (error: any): void => {  
+          console.log('Error while creating the item: ' + error);
+      });   
+    }
   }
   
 }

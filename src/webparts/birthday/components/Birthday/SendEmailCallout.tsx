@@ -118,6 +118,8 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
   
   SaveDataClicked = async(message: string, image: string) =>
   { 
+    //let userEmail = this.context.pageContext.userEmail;
+    //console.log('userEmail: '+ userEmail);
     if(message == "" || message == null)
     {
       this.setState({
