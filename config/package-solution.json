@@ -7,22 +7,25 @@
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
     "skipFeatureDeployment": false,
-    "features": [{
-      "title": "root-client-side-solution",
-      "description": "root-client-side-solution",
-      "id": "86a8f167-6a32-4191-9e32-3b9ffeff4f36",     
-      "version": "1.0.0.0",
-      "assets": {
-        "elementManifests": [
-          "elements.xml"
-        ],
-        "elementFiles":[
-          "schema.xml",
-          "departmentSchema.xml"
-        ]
-        
+    "features": [
+      {
+        "title": "root-client-side-solution",
+        "description": "root-client-side-solution",
+        "id": "86a8f167-6a32-4191-9e32-3b9ffeff4f36",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "RoomReservation/RoomReservationElements.xml"
+          ],
+          "elementFiles": [
+            "schema.xml",
+            "departmentSchema.xml",
+            "RoomReservation/RoomReservationSchema.xml"
+          ]
+        }
       }
-    }],
+    ],
     "developer": {
       "name": "",
       "websiteUrl": "",
@@ -33,6 +36,5 @@
   },
   "paths": {
     "zippedPackage": "solution/root.sppkg"
-  } 
-  
+  }
 }
