@@ -1,6 +1,6 @@
 
-import {IBirthday} from "./IBirthday";
-import {IAnniversary} from "./IAnniversary"
+import {IBirthday} from "../../../Models/IBirthday";
+import {IAnniversary} from "../../../Models/IAnniversary"
 
 export interface IBirthdayState {
     BUsers : IBirthday[], 

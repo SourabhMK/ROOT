@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">  
+
+    <ListInstance
+        CustomSchema="EmailSenderschema.xml"
+        FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+        Title="EmailSender"
+        Description="Email sending list"
+        TemplateType="100"
+        Url="Lists/EmailSender">
+    </ListInstance>
+
+    <ListInstance 
+        FeatureId="00bfea71-52d4-45b3-b544-b1c71b620109" 
+        Title="BirthdayPictureLibrary"        
+        TemplateType="109"
+        Url="BirthdayPictureLibrary"  >
+=======
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
 
     <!-- <Field ID="{193a4224-664f-4288-965e-a644d6c65998}"
@@ -75,6 +93,7 @@
             Description="Display EmployeeRequest"
             TemplateType="100"
             Url="Lists/EmployeeRequest">
+>>>>>>> 6e6eb6de3217d970aa728c418c4666294897c5fd
     </ListInstance>
 
 </Elements>

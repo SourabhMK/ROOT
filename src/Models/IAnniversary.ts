@@ -4,6 +4,5 @@ export interface IAnniversary{
     lastName: string;   
     email: string;
     photoUrl: string;
-    //birthdate: any;
     hiredate: any;    
   }

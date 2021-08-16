@@ -4,19 +4,19 @@ import { IBirthdayProps } from './IBirthdayProps';
 import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
-import { IBaseButtonState } from 'office-ui-fabric-react/lib/Button';
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
+import { IBirthday} from '../../../Models/IBirthday';
+import { IAnniversary } from '../../../Models/IAnniversary';
+import { IBirthdayState } from './IBirthdayState';
+import { IBirthdayResults, ICell } from '../../../Models/IBirthdayResults';
+import BirthdayUser from './Birthday/BirthdayUser';
+import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
-import { IBirthday} from './IBirthday';
-import { IAnniversary } from './IAnniversary';
-import { IBirthdayState } from './IBirthdayState';
-import { IBirthdayResults, ICell } from './IBirthdayResults';
-import BirthdayUser from './BirthdayUser';
-import AnniversaryUser  from './AnniversaryUser';
 
 initializeIcons();
-
+const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
+debugger;
 export default class Birthday extends React.Component<IBirthdayProps, IBirthdayState> {  
 
   constructor(props){
@@ -25,7 +25,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       BUsers:[],    
       AUsers:[],
       count : 0,    
-      bgColorBirthday:"#005a9e",
+      bgColorBirthday:"rgb(239, 135, 0)",
       bgColorAnniversary: "white",   
       colorBirthday:"white",
       colorAnniversary:"black",    
@@ -36,8 +36,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     }
   }
 
-  componentDidMount(){    
-    //alert(this.props.dropdown);   
+  componentDidMount(){     
     this.LoadBirthdayDetails();    
   }
 
@@ -59,9 +58,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     {
       startDate  = "2000-" + month + "-01";
       endDate  = "2000-" + month + "-" + days;
-    }
-
-    //alert("Start Date: " + startDate + ", End Date: " + endDate);
+    }  
 
     this.setState({
        StartDate: startDate,
@@ -83,7 +80,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage:null,       
       }) 
 
-      //alert("Load birthday details." + this.state.StartDate + " " +this.state.EndDate);
       const headers: HeadersInit = new Headers();
       // suppress metadata to minimize the amount of data loaded from SharePoint
       headers.append("accept", "application/json;odata.metadata=none");
@@ -123,12 +119,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             lastName: this._getValueFromSearchResult('LastName', r.Cells),     
             email: this._getValueFromSearchResult('WorkEmail', r.Cells),
             photoUrl: `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,
-            birthdate:  this._getValueFromSearchResult('RefinableDate00', r.Cells),
-           // hiredate: this._getValueFromSearchResult('RefinableDate01', r.Cells)
+            birthdate:  this._getValueFromSearchResult('RefinableDate00', r.Cells)
           };
       });
       
-        if(people.length>0){      
+        if(people.length>0){
+          people = this.SortBirthday(people);      
           this.setState({
             loading:false,
             BUsers : people,
@@ -150,12 +146,42 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage: error
       });
     });
-  }  
+  }
+  
+  private SortBirthday(BirthUsers: IBirthday[])
+  {
+    return BirthUsers.sort((a, b) => {
+      if(a.birthdate > b.birthdate)
+      {
+        return 1;
+      }
+      if(a.birthdate < b.birthdate)
+      {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
+  private SortAnniversary(AnniUsers: IAnniversary[])
+  {
+    return AnniUsers.sort((a, b) => {
+      if(a.hiredate > b.hiredate)
+      {
+        return 1;
+      }
+      if(a.hiredate < b.hiredate)
+      {
+        return -1;
+      }
+      return 0;
+    });
+  }
    
   BirthdayClicked = () =>{
     this.setState({
       count: 1,
-      bgColorBirthday:"#005a9e",
+      bgColorBirthday:"rgb(239, 135, 0)",
       bgColorAnniversary:"white",
       colorBirthday:"white",
       colorAnniversary:"black",    
@@ -167,7 +193,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     this.setState({
       count: 2,
       bgColorBirthday:"white",
-      bgColorAnniversary:"#005a9e",
+      bgColorAnniversary:"rgb(239, 135, 0)",
       colorBirthday:"black",
       colorAnniversary:"white",    
     })
@@ -184,7 +210,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   }   
 
   LoadAnniversaryDetails = async () => {
-    //alert('Anniversary tab Clicked');
     await this.CountStartAndEndDates();
     this.setState({
       loading:true,
@@ -196,7 +221,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     headers.append("accept", "application/json;odata.metadata=none");
   
       this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,RefinableDate01'&refinementfilters='RefinableDate01:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,RefinableDate01'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((res: SPHttpClientResponse): Promise<IBirthdayResults> => {          
@@ -231,10 +256,25 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           };
         });
     
-        if(people.length>0){      
+        if(people.length>0){            
+          let currentMonth = new Date().getMonth() + 1;
+          let hmonth, hday, hireDate;
+          let currentMonthPeople: IAnniversary[] = [];
+          for(let i=0; i<people.length;++i)
+          {    
+            hday = new Date(people[i].hiredate).getDate();       
+            hmonth = new Date(people[i].hiredate).getMonth() + 1;
+            if(hmonth == currentMonth)
+            {
+              hireDate = hmonth < 10 ? hday < 10 ? '2000-0' + hmonth + '-0' + hday : '2000-0' + hmonth + '-' + hday : hday < 10 ? '2000-' + hmonth + '-0' + hday : '2000' + hmonth + '-' + hday;
+              people[i].hiredate = hireDate;               
+              currentMonthPeople.push(people[i]);
+            }            
+          }         
+          currentMonthPeople = this.SortAnniversary(currentMonthPeople);
           this.setState({
             loading:false,
-            AUsers : people,
+            AUsers : currentMonthPeople,
           })
         }
       }, (error: any): void => {
@@ -255,25 +295,23 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     });
   } 
 
-  public render(): React.ReactElement<IBirthdayProps> { 
-
-    //let imageBack : string = require('.../../../');   
+  public render(): React.ReactElement<IBirthdayProps> {    
     return(
       <div className={styles.birthday} >
         <div className={ styles.container }>
-          <div className={styles.description }>                        
-            <h1><i className ="ms-Icon ms-Icon--BirthdayCake" aria-hidden="true"></i>Birthday/Anniversary</h1>
-          </div>
+          <div className={styles.description}>                        
+            <h1 style={{margin:'0'}}><MyBirthdayIcon/>Birthday/Anniversary</h1>
+          </div>          
           <br></br>
           <div className={styles.SetDisplay}>                                                             
-            <div><DefaultButton style={{backgroundColor:this.state.bgColorBirthday, color:this.state.colorBirthday,border:'1px solid #ddd'}} onClick={this.BirthdayClicked}><h2>Birthday</h2></DefaultButton></div>   
+            <div><DefaultButton className={styles.birthTabBtn} style={{backgroundColor:this.state.bgColorBirthday, color:this.state.colorBirthday}} onClick={this.BirthdayClicked}><h3>Birthday</h3></DefaultButton></div>   
                                                       
-            <div><DefaultButton style={{backgroundColor:this.state.bgColorAnniversary, color:this.state.colorAnniversary,border:'1px solid #ddd'}} onClick={this.AnniversaryClicked}><h2>Anniversary</h2></DefaultButton></div>              
+            <div><DefaultButton className={styles.birthTabBtn} style={{backgroundColor:this.state.bgColorAnniversary, color:this.state.colorAnniversary}} onClick={this.AnniversaryClicked}><h3>Anniversary</h3></DefaultButton></div>              
           </div>
-          <div className = { styles.row}>This Month</div>
+          {/* <div className = { styles.persona_card}>This Month</div> */}
           {  
-            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} /> : 
-            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers}/> :  <BirthdayUser people={this.state.BUsers} /> )
+            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl}/> : 
+            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} /> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl}/> )
           }           
                       
         </div>        

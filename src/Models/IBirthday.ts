@@ -4,6 +4,5 @@ export interface IBirthday{
     lastName: string;   
     email: string;
     photoUrl: string;
-    birthdate: any;
-    //hiredate: any;    
+    birthdate: any; 
   }
