@@ -12,7 +12,8 @@ import AssetReservation from './components/AssetReservation';
 import { IAssetReservationProps } from './components/IAssetReservationProps';
 
 export interface IAssetReservationWebPartProps {
-  description: string;
+  description: string,
+  context:any,
 }
 
 export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
@@ -21,7 +22,8 @@ export default class AssetReservationWebPart extends BaseClientSideWebPart<IAsse
     const element: React.ReactElement<IAssetReservationProps> = React.createElement(
       AssetReservation,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        context:this.properties.context
       }
     );
 

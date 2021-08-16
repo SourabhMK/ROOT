@@ -1,7 +1,7 @@
 <List xmlns:ows="Microsoft SharePoint" Title="BirthdayAnniversaryImages" EnableContentTypes="FALSE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="BirthdayAnniversaryImages" BaseType="1" xmlns="http://schemas.microsoft.com/sharepoint/">
  <MetaData>   
    <Fields>
-    <Field ID="{0c731a12-e883-47ec-92c5-f63807d22cd6}"
+    <Field ID="{9b85ba31-9cd7-482c-b512-5725b480e7c3}"
           Name="Category"
           DisplayName="Category"
           Type="Choice"
