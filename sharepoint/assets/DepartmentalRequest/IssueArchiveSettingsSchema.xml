@@ -1,0 +1,32 @@
+<List Title="IssueArchiveSettings" Direction="none" Url="Lists/IssueArchiveSettings" BaseType="0" Type="100" MultipleDataList="FALSE" BrowserFileHandling="permissive" FolderCreation="FALSE" Catalog="FALSE" IpLabelId="" SendToLocation="|" ImageUrl="/_layouts/15/images/itgen.png?rev=44" xmlns:ows="Microsoft SharePoint" xmlns:spctf="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms" xmlns="http://schemas.microsoft.com/sharepoint/">
+<MetaData>
+    <!-- <ContentTypes>
+      <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
+    </ContentTypes> -->
+    <Fields>
+        <Field Type="Number" DisplayName="Number Of Days" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" ID="{0b1d6f59-57ba-423f-a056-44ce4526e1a9}" SourceID="{$ListId:Lists/IssueArchiveSettings;}" StaticName="NumberOfDays" Name="NumberOfDays" ColName="float1" RowOrdinal="0" Percentage="FALSE" />
+    </Fields>
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="NumberOfDays"/>
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

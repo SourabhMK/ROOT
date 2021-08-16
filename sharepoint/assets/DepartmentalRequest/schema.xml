@@ -4,7 +4,7 @@
       <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
     </ContentTypes> -->
     <Fields>
-      <Field ID="{ed92a037-14e9-403a-876c-5cc7cd312834}"
+      <Field ID="{af077472-d352-4c42-bb3e-c377a5dbfef7}"
             Name="SPFxAmount"
             DisplayName="Amount"
             Type="Currency"
@@ -13,7 +13,7 @@
             Required="FALSE"
             Group="SPFx Columns" />
 
-    <Field ID="{a81a592c-9362-471b-b2fe-da30874a56b9}"
+    <Field ID="{581e2e9f-c85b-4ad9-8af5-82d56799c1bf}"
             Name="SPFxCostCenter"
             DisplayName="Cost Center"
             Type="Choice"

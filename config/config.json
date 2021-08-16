@@ -17,7 +17,7 @@
           "manifest": "./src/webparts/peopleDirectory/PeopleDirectoryWebPart.manifest.json"
         }
       ]
-    },
+    },    
     "birthday-web-part": {
       "components": [
         {

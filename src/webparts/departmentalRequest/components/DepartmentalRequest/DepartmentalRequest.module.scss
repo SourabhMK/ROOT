@@ -44,6 +44,22 @@
     //margin-bottom: 5px;
   }
 
+  .dropdownStyle{
+    font-size: large;
+    color: red;
+  }
+
+ 
+
+  .block {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px black solid;
+    text-align: center;
+    color:white;
+    background-color: gray;
+  }
+
   .button {
     // Our button
     text-decoration: none;
@@ -76,6 +92,10 @@
       margin: 0 4px;
       vertical-align: top;
       display: inline-block;
+      color: white;
     }
   }
+}
+.raisebtn .ms-Button-textContainer{
+  text-align: center!important;
 }
