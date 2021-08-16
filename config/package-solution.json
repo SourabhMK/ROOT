@@ -3,7 +3,7 @@
   "solution": {
     "name": "root-client-side-solution",
     "id": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
-    "version": "2.0.0.1",
+    "version": "1.0.0.3",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
     "skipFeatureDeployment": false,
@@ -14,18 +14,16 @@
       "version": "1.0.0.0",
       "assets": {
         "elementManifests": [
-          "DepartmentalRequest/elements.xml",
-          "Birthday/elements.xml"
+          "DepartmentalRequestElements.xml",
+          "BirthdayElements.xml"
         ],
         "elementFiles":[
-          "DepartmentalRequest/schema.xml",
-          "DepartmentalRequest/departmentSchema.xml",
-          "DepartmentalRequest/departmentalCategorySchema.xml",
-          "DepartmentalRequest/IssueArchiveSettingsSchema.xml",
-          "DepartmentalRequest/employeeRequestSchema.xml",
-          "Birthday/BirthdayAnniversaryImages.xml",
-          "Birthday/EmailSenderschema.xml"
-
+          "schema.xml",
+          "departmentSchema.xml",
+          "departmentalCategorySchema.xml",
+          "IssueArchiveSettingsSchema.xml",
+          "employeeRequestSchema.xml",
+          "EmailSenderschema.xml"
         ]
       }
     }],
@@ -40,6 +38,5 @@
   },
   "paths": {
     "zippedPackage": "solution/root.sppkg"
-  } 
-  
+  }
 }

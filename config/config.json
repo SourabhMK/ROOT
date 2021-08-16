@@ -25,13 +25,31 @@
           "manifest": "./src/webparts/birthday/BirthdayWebPart.manifest.json"
         }
       ]
+    },
+    "departmental-request-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/departmentalRequest/DepartmentalRequestWebPart.js",
+          "manifest": "./src/webparts/departmentalRequest/DepartmentalRequestWebPart.manifest.json"
+        }
+      ]
+    },
+    "asset-reservation-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/assetReservation/AssetReservationWebPart.js",
+          "manifest": "./src/webparts/assetReservation/AssetReservationWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "UserListWebPartStrings": "lib/webparts/userList/loc/{locale}.js",
     "PeopleDirectoryWebPartStrings": "lib/webparts/peopleDirectory/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",   
-    "BirthdayWebPartStrings": "lib/webparts/birthday/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "BirthdayWebPartStrings": "lib/webparts/birthday/loc/{locale}.js",
+    "DepartmentalRequestWebPartStrings": "lib/webparts/departmentalRequest/loc/{locale}.js",
+    "AssetReservationWebPartStrings": "lib/webparts/assetReservation/loc/{locale}.js"
   }
 }

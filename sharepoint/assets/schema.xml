@@ -1,10 +1,33 @@
-<List Title="IssueArchiveSettings" Direction="none" Url="Lists/IssueArchiveSettings" BaseType="0" Type="100" MultipleDataList="FALSE" BrowserFileHandling="permissive" FolderCreation="FALSE" Catalog="FALSE" IpLabelId="" SendToLocation="|" ImageUrl="/_layouts/15/images/itgen.png?rev=44" xmlns:ows="Microsoft SharePoint" xmlns:spctf="http://schemas.microsoft.com/sharepoint/v3/contenttype/forms" xmlns="http://schemas.microsoft.com/sharepoint/">
-<MetaData>
+<List xmlns:ows="Microsoft SharePoint" Title="Basic List" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Basic List" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>
     <!-- <ContentTypes>
       <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
     </ContentTypes> -->
     <Fields>
-        <Field Type="Number" DisplayName="Number Of Days" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" ID="{0b1d6f59-57ba-423f-a056-44ce4526e1a9}" SourceID="{$ListId:Lists/IssueArchiveSettings;}" StaticName="NumberOfDays" Name="NumberOfDays" ColName="float1" RowOrdinal="0" Percentage="FALSE" />
+      <Field ID="{522c1e28-0af7-4f47-bce4-2de6433862d5}"
+            Name="SPFxAmount"
+            DisplayName="Amount"
+            Type="Currency"
+            Decimals="2"
+            Min="0"
+            Required="FALSE"
+            Group="SPFx Columns" />
+
+    <Field ID="{7279fe6a-db43-439a-aa06-a728542c4139}"
+            Name="SPFxCostCenter"
+            DisplayName="Cost Center"
+            Type="Choice"
+            Required="FALSE"
+            Group="SPFx Columns">
+        <CHOICES>
+        <CHOICE>Administration</CHOICE>
+        <CHOICE>Information</CHOICE>
+        <CHOICE>Facilities</CHOICE>
+        <CHOICE>Operations</CHOICE>
+        <CHOICE>Sales</CHOICE>
+        <CHOICE>Marketing</CHOICE>
+        </CHOICES>
+    </Field>
     </Fields>
     <Views>
       <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
@@ -14,7 +37,8 @@
         <Toolbar Type="Standard" />
         <ViewFields>
           <FieldRef Name="LinkTitle"></FieldRef>
-          <FieldRef Name="NumberOfDays"/>
+          <FieldRef Name="SPFxAmount"></FieldRef>
+          <FieldRef Name="SPFxCostCenter"></FieldRef>
         </ViewFields>
         <Query>
           <OrderBy>

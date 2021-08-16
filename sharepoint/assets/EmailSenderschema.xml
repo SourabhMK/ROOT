@@ -1,7 +1,7 @@
 <List xmlns:ows="Microsoft SharePoint" Title="EmailSender" EnableContentTypes="FALSE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/EmailSender" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
   <MetaData>    
     <Fields>
-        <Field ID="{5d8d2028-3993-45c4-aff3-d648a56b1c56}"
+        <Field ID="{38703d01-f047-4312-8dd7-8215b7f64748}"
             Type="Text" 
             DisplayName="EmailSubject" 
             Required="TRUE" 
@@ -13,7 +13,7 @@
             ColName="nvarchar3" 
             RowOrdinal="0" />
 
-         <Field ID="{a581d179-aaa2-4757-b1d3-82b508149bce}"
+         <Field ID="{52991d6d-ab82-4a0d-a92f-1186e28f8461}"
             Type="Note" 
             DisplayName="EmailBody" 
             Required="FALSE" 
@@ -29,7 +29,7 @@
             ColName="ntext2" 
             RowOrdinal="0" />
 
-        <Field ID="{0dce30e1-4e54-47d8-b856-40f5941413de}"
+        <Field ID="{730da155-bb5f-4a17-aab6-3fa2abadbdc2}"
             Type="Text" 
             DisplayName="EmailTo" 
             Required="TRUE" 
@@ -41,7 +41,7 @@
             ColName="nvarchar4" 
             RowOrdinal="0" />
 
-        <Field ID="{8dd6cf88-e1a0-498c-a7ae-7c68f7473be3}"
+        <Field ID="{f3310bb2-7499-4097-8975-dacda5507105}"
             Type="Text" 
             DisplayName="EmailCCTo" 
             Required="FALSE" 
@@ -53,7 +53,7 @@
             ColName="nvarchar9" 
             RowOrdinal="0" />
 
-        <Field ID="{887a9d64-e42b-4988-847b-815205ef4991}"
+        <Field ID="{5c0d9b38-8594-436a-9632-c5c21a643027}"
             Type="Text" 
             DisplayName="EmailFrom" 
             Required="TRUE" 
@@ -65,7 +65,7 @@
             ColName="nvarchar9" 
             RowOrdinal="0" />
 
-        <Field ID="{770ab16b-8ffc-4f8c-be43-1e25174a396d}"
+        <Field ID="{86ea6297-008f-4677-9471-b0cee72b4e63}"
             Name="ActivityEmail"
             DisplayName="ActivityEmail"
             Type="URL"
