@@ -18,7 +18,8 @@ import { initializeIcons } from '@fluentui/font-icons-mdl2';
 initializeIcons();
 import { Icon } from '@fluentui/react/lib/Icon';
 import pnp from 'sp-pnp-js';
-import {IMyIssueList} from '../MyRequestedIssues/IMyRequestedIssuesProps'
+import {IMyIssueList} from '../MyRequestedIssues/IMyRequestedIssuesProps';
+import MyRequestedIssues from '../MyRequestedIssues/MyRequestedIssues';
 
 
 import {
@@ -30,7 +31,7 @@ import {
   PropertyPaneToggle,
   PropertyPaneDropdown
 } from '@microsoft/sp-property-pane';
-import DepartmentSelect from '../MyRequestedIssues/MyRequestedIssues';
+//import DepartmentSelect from '../MyRequestedIssues/MyRequestedIssues';
 import DispatcherView from '../DispatcherView/DispatcherView';
 import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
 
@@ -63,6 +64,8 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       dataFilledCheck:0,
       myIssueUnlock:0,
       nextCount:0,
+      initialRaisedCount:0,
+      totalRaisedIssuesCount:0,
       bgColorRaiseRequest:"#ef8700",
       bgColorFollowers:"white",
       bgColorFollowing:"white",
@@ -74,7 +77,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       selectedDept:"",
       selectedDeptCategory:"",
       requestDescription:"",
-      raisedIssuesCount:0,
       dispatcherViewUnlock:0,
     }
     this.handleChange = this.handleChange.bind(this);
@@ -86,19 +88,24 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
     this.loadDepartmentOptions();
     this.GetIssueArchiveSettings();
     loggedInUserEmail = this.props.loggedInUserEmail;
-    this. getUserId (loggedInUserEmail);
+    this.myIssue();
+    this.initialRaisedIssuesCount();
+    //this. getUserId (loggedInUserEmail);
     
   }
+  
+  initialRaisedIssuesCount(){
+    this.setState({
+      totalRaisedIssuesCount:this.state.initialRaisedCount
+    })
+  }
 
-  public getUserId(loggedInUserEmail: string): Promise<number> {
-    return pnp.sp.site.rootWeb.ensureUser(loggedInUserEmail).then(result => {
-      loggedInUserId = result.data.Id
-      this.myIssue();
-      return result.data.Id;
-    });
-
-    
-    }
+  // public getUserId(loggedInUserEmail: string): Promise<number> {
+  //   return pnp.sp.site.rootWeb.ensureUser(loggedInUserEmail).then(result => {
+  //     loggedInUserId = result.data.Id   
+  //     return result.data.Id;
+  //   });  
+  //   }
 
   handleChange(e:any) {
     console.log("Fruit Selected!!");
@@ -345,6 +352,11 @@ GetIssueArchiveSettings():void{
 }
   
  addEmployeeRequest(issueDescription, selectedDept, selectedDeptCategory,departmentFAQ_ArchiveTimeSpan){
+   this.setState({
+    count: 0,
+    totalRaisedIssuesCount:this.state.totalRaisedIssuesCount + 1,
+    initialRaisedCount:0
+   })
    var selectedDeptGroup, selectedDeptManager, selectedDispatcherName;
    var selectedTitle:string = selectedDeptCategory + ' Request';
   var currentUserName = this.props.loggedInUserName;
@@ -398,7 +410,7 @@ GetIssueArchiveSettings():void{
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
   this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${loggedInUserId} &$orderby=ID desc&$top=10`,
+    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc&$top=10`,
     SPHttpClient.configurations.v1, {
       headers: headers
     })
@@ -430,9 +442,11 @@ GetIssueArchiveSettings():void{
          let createdDateFormat = new Date(r.Created).toLocaleDateString();
          myIssueCount= myIssueCount + 1;
          this.setState({
-          raisedIssuesCount: this.state.raisedIssuesCount + 1
+          initialRaisedCount: this.state.initialRaisedCount + 1
          })
          console.log("createdDateFormat= " + createdDateFormat);
+         console.log("initialRaisedCount= " + this.state.initialRaisedCount);
+
         return {
           created:createdDateFormat,
           description:r.Description,
@@ -527,19 +541,25 @@ GetIssueArchiveSettings():void{
           <div className="ms-Grid" dir="ltr">
             <h1>Welcome to Departmental Request Facility!!</h1>
             <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4  ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.myIssueClick} >My Requested Issues = {this.state.raisedIssuesCount} </CompoundButton>
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
+                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
               </div>
-              <div className="ms-Grid-col ms-lg4 ms-sm12 ">
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}}>Assigned Issues</CompoundButton>
               </div>
-              <div className="ms-Grid-col ms-lg4 ms-sm12">
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.dispatcherViewClick}>Dispatcher View</CompoundButton>
               </div>
             </div>
             <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-sm12">
+              <div className="ms-Grid-col ms-lg12 ms-md12 ms-sm12">
               <CompoundButton className="raisebtn" style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.raiseRequestClick}>Raise a Request</CompoundButton>
+              {/* <div>
+                {`loggedInUserId = ${loggedInUserId}`}
+              </div>
+              <div>
+                {`currentUserId = ${this.props.currentUserId}`}
+              </div> */}
               </div>
             </div>
           </div>
@@ -551,10 +571,10 @@ GetIssueArchiveSettings():void{
             <h1>Please select the Department</h1>
             </div>
               <div className="ms-Grid-row" style={{marginBottom:'20px'}}>
-                <div className="ms-Grid-col ms-lg2 ms-sm12" onKeyDown={(e)=>this.onKeyDownPress(e)} tabIndex={40}>
+                <div className="ms-Grid-col ms-lg2 ms-md2 ms-sm2" onKeyDown={(e)=>this.onKeyDownPress(e)} tabIndex={40}>
                   <Icon iconName="ChevronLeft" style={{fontSize:'20px', cursor:'pointer'}} onClick={this.previousClick} ></Icon>
                 </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
+                <div className="ms-Grid-col ms-lg8 ms-md8 ms-sm8">
                   {/* <DefaultButton>Select Department</DefaultButton> */}
                   <Stack tokens={stackTokens}>
                          <Dropdown
@@ -568,7 +588,7 @@ GetIssueArchiveSettings():void{
                          />
                     </Stack>
                 </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-md2 ms-sm2">
                   <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer', float:'right'}} onClick={this.nextClick} onKeyUp={this.nextClick}></Icon>
                 </div>
               </div>
@@ -581,10 +601,10 @@ GetIssueArchiveSettings():void{
             <h1>Please select the Department category</h1>
             </div>
               <div className="ms-Grid-row" style={{marginBottom:'20px'}}>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
                 </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
+                <div className="ms-Grid-col ms-lg8 ms-sm8">
                   {/* <DefaultButton>Select Department</DefaultButton> */}
                   <Stack tokens={stackTokens}>
                      <Dropdown
@@ -598,7 +618,7 @@ GetIssueArchiveSettings():void{
                          />
                      </Stack>
                 </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer', float:'right'}} onClick={this.nextClick}></Icon>
                 </div>
               </div>
@@ -610,10 +630,10 @@ GetIssueArchiveSettings():void{
             <h1>Please type your issue</h1>
             </div>
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
                 </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
+                <div className="ms-Grid-col ms-lg8 ms-sm8">
                 <TextField label="Type your issue" multiline rows={3}
                       //  onChange={e => this.setState({
                       //    requestDescription:e.currentTarget.value
@@ -621,7 +641,7 @@ GetIssueArchiveSettings():void{
                            onChange={(requestDescription)=>this.onChangeRequestDescriptionHandle(requestDescription)}
                         />
                 </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer', float:'right'}} onClick={this.nextClick}></Icon>
                 </div>
               </div>
@@ -633,13 +653,13 @@ GetIssueArchiveSettings():void{
             <h1>Please add file if any</h1>
             </div>
               <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
                 </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
+                <div className="ms-Grid-col ms-lg8 ms-sm8">
                  <input type="file" style={{width:'100%',border:'1px solid #ddd',padding:'10px  10px' }}/>
                 </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
+                <div className="ms-Grid-col ms-lg2 ms-sm2">
                 {/* <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer'}} onClick={this.nextClickWithNotCompulsary}></Icon> */}
                 <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', bottom:'100px',float:'right'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan)}>Submit</DefaultButton>
                 </div>
@@ -663,7 +683,7 @@ GetIssueArchiveSettings():void{
 
           {
             (this.state.myIssueUnlock === 1) &&
-              <DepartmentSelect issueDataList={issueData} groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}/>
+              <MyRequestedIssues issueDataList={issueData} groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/>
           }
           {
             (this.state.dispatcherViewUnlock === 1) &&

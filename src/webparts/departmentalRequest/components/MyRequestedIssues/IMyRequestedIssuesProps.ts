@@ -17,6 +17,7 @@ export interface IMyRequestedIssuesProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
   issueDataList:IMyIssueList[];
+  currentUserId:number;
 
 }
 

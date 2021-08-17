@@ -82,9 +82,7 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
       { key: 'column5', name: 'AssignedTo', fieldName: 'assignedTo', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column6', name: 'Comment', fieldName: 'comment', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'column7', name: 'Status', fieldName: 'status', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column8', name: 'Attachments', fieldName: 'attachments', minWidth: 100, maxWidth: 200, isResizable: true },
-
-      
+      { key: 'column8', name: 'Attachments', fieldName: 'attachments', minWidth: 100, maxWidth: 200, isResizable: true },      
     ];
   }
 
@@ -124,7 +122,7 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
         </div>
       }
       {(this.state.homeButton === 1) &&
-          <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
+          <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
       }
      </div>
     );

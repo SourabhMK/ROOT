@@ -17,4 +17,5 @@ export interface IDepartmentalRequestProps {
 
     loggedInUserName: string;
     loggedInUserEmail: string;
+    currentUserId:number;
 }

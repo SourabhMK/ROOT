@@ -30,7 +30,7 @@ import {
   PropertyPaneToggle,
   PropertyPaneDropdown
 } from '@microsoft/sp-property-pane';
-import DepartmentSelect from '../MyRequestedIssues/MyRequestedIssues';
+import MyRequestedIssues from '../MyRequestedIssues/MyRequestedIssues';
 
 const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
@@ -524,7 +524,7 @@ GetIssueArchiveSettings():void{
   // suppress metadata to minimize the amount of data loaded from SharePoint
   headers.append("accept", "application/json;odata.metadata=none");
   this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${loggedInUserId} &$orderby=ID desc&$top=10`,
+    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc&$top=10`,
     SPHttpClient.configurations.v1, {
       headers: headers
     })
@@ -768,7 +768,7 @@ GetIssueArchiveSettings():void{
           {
             (this.state.myIssueUnlock === 1) &&
             <div>
-              <DepartmentSelect issueDataList={issueData} groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}/> 
+              <MyRequestedIssues issueDataList={issueData} groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/> 
             </div>
 
           }

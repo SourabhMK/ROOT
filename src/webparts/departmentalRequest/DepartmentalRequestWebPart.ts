@@ -29,6 +29,7 @@ export default class DepartmentalRequestWebPart extends BaseClientSideWebPart<ID
         groupType:this.properties.groupType,
         loggedInUserName:this.context.pageContext.user.displayName,
         loggedInUserEmail:this.context.pageContext.user.email,
+        currentUserId:this.context.pageContext.legacyPageContext["userId"],
       }
     );
 
