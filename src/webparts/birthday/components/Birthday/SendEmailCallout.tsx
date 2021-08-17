@@ -46,7 +46,8 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
+        .get(`https://gns11.sharepoint.com/sites/SiriusTeams/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
+        //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -118,7 +119,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
   
   SaveDataClicked = async(message: string, image: string) =>
   { 
-    //let userEmail = this.context.pageContext.userEmail;
+    //let userEmail = this.context.pageContext.user.email;
     //console.log('userEmail: '+ userEmail);
     if(message == "" || message == null)
     {

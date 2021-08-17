@@ -5,4 +5,5 @@ export interface ISendEmailCalloutProps {
   person: IBirthday;  
   siteurl: string;
   spHttpClient: SPHttpClient;
+  //loggedInUserEmail: string;
 }
