@@ -46,7 +46,8 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayPictureLibrary')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
+        .get(`https://gns11.sharepoint.com/sites/SiriusTeams/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
+        //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -99,7 +100,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
                 isRTL={false}
                 focusOnSelect={true}>
                    {this.state.images.map((img, index) => {
-                    return <img src={`${this.props.siteurl}/BirthdayPictureLibrary/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
+                    return <img src={`${this.props.siteurl}/BirthdayAnniversaryImages/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
                   })}     
             </Carousel>
             <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
@@ -118,7 +119,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
   
   SaveDataClicked = async(message: string, image: string) =>
   { 
-    //let userEmail = this.context.pageContext.userEmail;
+    //let userEmail = this.context.pageContext.user.email;
     //console.log('userEmail: '+ userEmail);
     if(message == "" || message == null)
     {
@@ -141,11 +142,11 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
       EmailSubject: "Happy Birthday",
       EmailBody: message,
       EmailTo: this.props.person.email,
-      ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayPictureLibrary/" + image}   
+      ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });
 
       console.log(requestlistItem);
-      this.props.spHttpClient.post(`${this.props.siteurl}/_api/web/lists/getbytitle('SendEmailList')/items`, SPHttpClient.configurations.v1,  
+      this.props.spHttpClient.post(`${this.props.siteurl}/_api/web/lists/getbytitle('EmailSender')/items`, SPHttpClient.configurations.v1,  
       {  
         headers: {  
         'Accept': 'application/json;odata=nometadata',  

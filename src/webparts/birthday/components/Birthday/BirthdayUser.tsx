@@ -83,7 +83,7 @@ const MyGiftIcon = () => <Icon iconName="GiftBox" />;
                     directionalHint={DirectionalHint.rightCenter}
                     doNotLayer={false}
                   >
-                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} ></SendEmailCallout>
+                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient}></SendEmailCallout>
                   </Callout>
                   )}                 
                                       
