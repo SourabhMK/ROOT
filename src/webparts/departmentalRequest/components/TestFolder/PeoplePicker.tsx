@@ -37,6 +37,9 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
             mostRecentlyUsed:[],
             peopleList:[]
         };
+      }
+      
+      componentDidMount(){        
         this.loadDepartmentOptions();
     }
 
@@ -128,8 +131,8 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
        public render(): React.ReactElement<IPeopleProps> {
         return (
         <div>
-            {/* <h1>People picker</h1> */}
-            <PeoplePickerTestExample deptBelongingNames={pickerGroupNames} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
+            <h1>People picker</h1>
+            {/* <PeoplePickerTestExample deptBelongingNames={pickerGroupNames} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} /> */}
         </div>  );
     }
 }

@@ -456,7 +456,8 @@ GetIssueArchiveSettings():void{
           assignedTo:r.AssignedTo,
           comment:r.Comment,
           status:r.Status,
-          attachments:r.Attachments
+          attachments:r.Attachments,
+          test:r.ReAssignTo
         }
       });
       console.log("myIssueCount= " + myIssueCount);

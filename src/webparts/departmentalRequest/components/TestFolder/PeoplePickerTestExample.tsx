@@ -50,21 +50,18 @@ export interface IExampleExtendedPersonaProps {
     busy = 6,
   }  
 
-export var people1:(IPersonaProps)[]=[
-  // {
-  //   text:'Dipal Bhavsar'
-  // },
-  // {
-  //   text:'Vrushali'
-  // }
+// export var people1:(IPersonaProps)[]=[
+//   {
+//     text:'Dipal Bhavsar'
+//   },
+//   {
+//     text:'Vrushali'
+//   }
 
-]
-// test(props);
-
+// ]
 
 
-// people1 = 
-export const people: (IExampleExtendedPersonaProps & { key: string | number })[] = [
+export const people: (IPersonaProps)[] = [
     {
     key: 1,
     imageUrl: ' ',
@@ -73,7 +70,7 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Designer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+     //isValid: true,
     presence: PersonaPresence.online,
   },
   {
@@ -84,7 +81,7 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Designer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+    // isValid: true,
     presence: PersonaPresence.busy,
   },
   {
@@ -95,26 +92,20 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Software Developer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+     //isValid: true,
     presence: PersonaPresence.dnd,
   }
 ];
 
 export var mru:(IPersonaProps)[]=[];
 
-// export interface IPeoplePickerTestExampleState{
-//   peopleList:IPersonaProps[];
-//   mostRecentlyUsed:IPersonaProps[];
-// }
-
 var grpName:string = 'IT Support';
-var pickerGroupNames: IPersonaProps[];
+var pickerGroupNames:(IPersonaProps)[]=[];
 
 
 // export const PeoplePickerTestExample: React.FunctionComponent = (props) => {
-  export default class  PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState > {
- // const [delayResults, setDelayResults] = React.useState(false);
- // const [isPickerDisabled, setIsPickerDisabled] = React.useState(false);
+  export default class PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState> {
+
  
  constructor(props){
    super(props)
@@ -124,17 +115,11 @@ var pickerGroupNames: IPersonaProps[];
     loading:false,
     errorMessage:''
    }
-
-  //  people1 = this.props.deptBelongingNames
-
-  //  this.setMostRecentlyUsed(mru);
-  //  this.setPeopleList(people1);
-  
   }
 
   componentDidMount(){
     this.loadDepartmentOptions();
-    this.testPart();
+      // this.testPart();
   }
 
   private loadDepartmentOptions():void{
@@ -147,8 +132,6 @@ var pickerGroupNames: IPersonaProps[];
         headers: headers
       })
       .then((res: SPHttpClientResponse): Promise<any> => {
-        //console.log("res value = " + res.json());
-        // alert("res.Json() of UserList = " + res.json());
         return res.json();
       })
       .then((res: any): void => {
@@ -175,31 +158,12 @@ var pickerGroupNames: IPersonaProps[];
             text:r.Title,
           }
         })
-      
-        // departmentFAQ_deptList = res.value.map((r,index)=>{
-        //   return {
-        //     deptName:r.Title,
-        //     deptGroup:r.DepartmentGroup.Title,
-        //     deptManager:r.ManagerId,
-        //     dispatcherName:r.GroupName.Title
-        //   };
-        // });
   
-  
-  //  departmentOptions =  res.value.map((r,index) => {
-  //   return {
-  //     key:index,
-  //     text:r.Title,
-  //   };
-  // });
-    // debugger;
     if(pickerGroupNames.length>0){
-      // alert("I have arrived to people.length = " + people.length);
     this.setState({
       loading:false,
-      //Users : people,
-    })
-    
+    })   
+    this.testPart();
     }
   }, (error: any): void => {
     // An error has occurred while loading the data. Notify the user
@@ -219,31 +183,18 @@ var pickerGroupNames: IPersonaProps[];
   });
    }
 
-//  setMostRecentlyUsed(mru:IPersonaProps[]){
-//    return mru;
-//  }
-
-//  setPeopleList(people1:IPersonaProps[]){
-   
-//  }
-
-  //  people1 = props.pickerGroupNames;
-//  testPart();
-//  const [mostRecentlyUsed, setMostRecentlyUsed] = React.useState<IPersonaProps[]>(mru);
-//   const [peopleList, setPeopleList] = React.useState<IPersonaProps[]>(people1);
-
  private testPart():void{
-    people1 = pickerGroupNames;
-     mru = people1.slice(0, 5);
+    // people1 = pickerGroupNames;
+      //  people1 = people1;
+     mru = pickerGroupNames.slice(0, 5);
     
       this.setState({
-        peopleList:people1,
-        mostRecentlyUsed:mru
-      })
+        peopleList:pickerGroupNames,
+        mostRecentlyUsed:mru,
+      },()=>console.log("peopleList= " + this.state.peopleList))
+      console.log("object= " + this.state.mostRecentlyUsed);
   };
-  // const peopleList = people1;
-
-   picker = React.useRef(null);
+//   picker = React.useRef(null);
 
    onFilterChanged = (
     filterText: string,
@@ -273,9 +224,9 @@ var pickerGroupNames: IPersonaProps[];
     // }
   };
 
-  // const returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
-  //   return filterPromise(removeDuplicates(mostRecentlyUsed, currentPersonas));
-  // };
+   returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
+    return this.filterPromise(removeDuplicates(this.state.mostRecentlyUsed, currentPersonas));
+  };
 
    onRemoveSuggestion = (item: IPersonaProps): void => {
     const indexPeopleList: number = this.state.peopleList.indexOf(item);
@@ -310,9 +261,9 @@ var pickerGroupNames: IPersonaProps[];
   //   setDelayResults(!delayResults);
   // };
   public render(): React.ReactElement<IPeopleProps> {
-
   return (
     <div>
+      <h1>People Picker Test Example</h1>
       <NormalPeoplePicker
         // eslint-disable-next-line react/jsx-no-bind
         onResolveSuggestions={this.onFilterChanged}
@@ -332,11 +283,12 @@ var pickerGroupNames: IPersonaProps[];
           onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
           'aria-label': 'People Picker',
         }}
-        componentRef={this.picker}
+        // componentRef={this.picker}
         onInputChange={onInputChange}
         resolveDelay={300}
         // disabled={isPickerDisabled}
       />
+
       {/* <Checkbox
         label="Disable People Picker"
         checked={isPickerDisabled}
