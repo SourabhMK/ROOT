@@ -23,8 +23,8 @@ export interface IUserListWebPartProps {
   isDateOfBirthDisplay:boolean;
   isDateOfJoiningDisplay:boolean;
   isWorkAnniversaryDisplay:boolean;
-  isFollowingDisplay:boolean,
-  isFollowerDisplay:boolean,
+  isFollowingDisplay:boolean;
+  isFollowerDisplay:boolean;
 }
 
 export default class UserListWebPart extends BaseClientSideWebPart<IUserListWebPartProps> {

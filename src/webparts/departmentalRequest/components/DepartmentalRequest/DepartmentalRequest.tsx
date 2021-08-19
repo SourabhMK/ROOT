@@ -20,6 +20,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import pnp from 'sp-pnp-js';
 import {IMyIssueList} from '../MyRequestedIssues/IMyRequestedIssuesProps';
 import MyRequestedIssues from '../MyRequestedIssues/MyRequestedIssues';
+import PeoplePickerTestExample from '../TestFolder/PeoplePickerTestExample'
 
 
 import {
@@ -33,8 +34,8 @@ import {
 } from '@microsoft/sp-property-pane';
 //import DepartmentSelect from '../MyRequestedIssues/MyRequestedIssues';
 import DispatcherView from '../DispatcherView/DispatcherView';
-import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
-
+// import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
+import PeoplePicker from '../TestFolder/PeoplePicker'
 const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
 const columnProps: Partial<IStackProps> = {
@@ -541,13 +542,13 @@ GetIssueArchiveSettings():void{
           <div className="ms-Grid" dir="ltr">
             <h1>Welcome to Departmental Request Facility!!</h1>
             <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
+                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'left'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
               </div>
-              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}}>Assigned Issues</CompoundButton>
               </div>
-              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm4">
+              <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.dispatcherViewClick}>Dispatcher View</CompoundButton>
               </div>
             </div>
@@ -688,7 +689,9 @@ GetIssueArchiveSettings():void{
           {
             (this.state.dispatcherViewUnlock === 1) &&
             // <DispatcherView groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
-            <PeoplePickerTestExample/>
+            // <PeoplePicker currentUserId={this.props.currentUserId} deptBelongingNames={[]} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  />
+            //  <PeoplePickerTestExample />
+            <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
           }
       </div>
     );

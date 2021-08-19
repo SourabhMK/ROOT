@@ -86,18 +86,16 @@ export default class DispatcherView extends React.Component<IDispatcherViewProps
     this.getDepartmentsDetails();
     this.GetIssueArchiveSettings();
     loggedInUserEmail = this.props.loggedInUserEmail;
-    this. getUserId (loggedInUserEmail);
+    // this. getUserId (loggedInUserEmail);
+    this.myIssue();
     
   }
 
   public getUserId(loggedInUserEmail: string): Promise<number> {
     return pnp.sp.site.rootWeb.ensureUser(loggedInUserEmail).then(result => {
       loggedInUserId = result.data.Id
-      this.myIssue();
       return result.data.Id;
-    });
-
-    
+    });  
     }
 
   handleChange(e:any) {
@@ -299,15 +297,20 @@ this.loadAssignedTask(obj);
  }
 
  loadAssignedTask(obj){
-    // var htmlcontent = htmlcontent + "<tr><td id='Author" + obj[0].ID + "' align='left' valign='top'>" + obj[0].Author.Title + "</td>";
-    // htmlcontent = htmlcontent + "<td id='Craeted" + obj[0].ID + "' align='left' valign='top'>" + "</td>";
-    // htmlcontent = htmlcontent + "<td id='Description" + obj[0].ID + "' align='left' valign='top'>" + obj[0].Description + "</td>";
-    // htmlcontent = htmlcontent + "<td id='Category" + obj[0].ID + "' align='left' valign='top'>" + obj[0].Category + "</td>";
-    // htmlcontent = htmlcontent + "<td id='Department" + obj[0].ID + "' align='left' valign='top'>" + obj[0].Department + "</td>";
+  var todaydt = new Date();
+  var day = todaydt.getDate();
+  var month = todaydt.getMonth();
+  var year = todaydt.getFullYear();
 
-     htmlcontent = "<table id='tbl' class='table table-hover'><thead><tr><th align='left' valign='top'>Raised By</th><th align='left' valign='top' style='width: 80px;'>Issue Date</th><th align='left' valign='top'>Description</th><th align='left' valign='top'>Category</th><th align='left' valign='top'>Department</th><th align='left' valign='top'>Comment</th><th align='left' valign='top'>Status</th><th align='left' valign='top'>Assign To</th><th>Attachments</th><th align='left' valign='top'>Action</th></tr><tbody id='myAssignedTask'>";
+  var curDate = new Date(year, month, day);
+  var dtFilter = curDate.setDate(curDate.getDate() - departmentFAQ_ArchiveTimeSpan);
+  //var dtFilter = new Date(curDate);
+  //console.log(dtFilter);
+  var fday = curDate.getDate();
+  var fmonth = curDate.getMonth() + 1;
+  var fyear = curDate.getFullYear();
+  var dateFilter = fyear + "-" + fmonth + "-" + fday + "T00:00:00.000Z";
 
-    var cope:string;
  }
  
    onChangeDeptHandle = async (selectedDept)=> {
@@ -636,7 +639,7 @@ GetIssueArchiveSettings():void{
     return (
       <div className={ styles.dispatcherView }>
         {/* Main page display */}
-        {(this.state.count === 0) && (this.state.myIssueUnlock === 0) &&
+        {/* {(this.state.count === 0) && (this.state.myIssueUnlock === 0) &&
           <div className="ms-Grid" dir="ltr">
             <h1>Welcome to Departmental Request Facility!!</h1>
             <div className="ms-Grid-row">
@@ -656,7 +659,8 @@ GetIssueArchiveSettings():void{
               </div>
             </div>
           </div>
-        }
+        } */}
+        <h1>Dispatcher view</h1>
          {/* Display raise request data filling operation */}
           {(this.state.count === 1) &&
             <div className="ms-Grid" dir="ltr">
