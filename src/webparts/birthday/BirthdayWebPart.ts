@@ -3,7 +3,10 @@ import * as ReactDom from 'react-dom';
 import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField  
+  PropertyPaneButton,
+  PropertyPaneButtonType,
+  PropertyPaneDynamicField,
+  PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 
 import styles from '../birthday/components/Birthday.module.scss';
@@ -18,6 +21,10 @@ import Birthday from './components/Birthday';
 import { IBirthdayProps } from './components/IBirthdayProps';
 
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
+import { setPortalAttribute } from 'office-ui-fabric-react';
+import { sp } from '@pnp/sp';
+import pnp from 'sp-pnp-js';
+import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
 
 export interface IBirthdayWebPartProps {
   description: string;
@@ -29,8 +36,9 @@ export interface IBirthdayWebPartProps {
   SiteCollection: string;
   StartDate: string;
   EndDate: string;
+  filePickerResult: IFilePickerResult;
 }
-
+debugger;
 export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebPartProps> {
 
   //private sitecollectionsDropDown: PropertyPaneDropdown;  
@@ -42,6 +50,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
+        loggedInUserEmail: this.context.pageContext.user.email,
         dropdown: this.properties.dropdown,
         simpleText: this.properties.simpleText,
         imageUrl: this.properties.imageUrl,
@@ -160,26 +169,81 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     return Version.parse('1.0');
   }
 
+  private downloadCsv()
+  {  
+    const link = document.createElement('a');
+    
+    link.href = "https://gns11.sharepoint.com/sites/SiriusTeams/Shared%20Documents/TestingList.csv";
+    link.setAttribute(  
+      'download',
+      `TestingList.csv`,
+    );
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+    // Clean up and remove the link
+    setTimeout(function(){ link.parentNode.removeChild(link); }, 500);    
+  }
+
+  protected onPropertyPaneFieldChanged()
+  {
+    /* const test = this.properties.filePickerResult;
+    console.log(test);
+    const fileResultContent = this.properties.filePickerResult.downloadFileContent();
+    console.log("fileResultContent: " + fileResultContent);
+    const reader = new FileReader();
+    //reader.readAsDataURL(fileResultContent);
+    reader.onload = async () => {
+      
+     }; */
+    //reader.readAsText(files[0]);
+
+  }
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
     let textControl: any = [];  
-    let imageSourceControl: any = [];  
+    let uploadControl: any = []; 
+    let CSVControl: any = []; 
+    let test: any = [];
       
     if (this.properties.dropdown === "Internal") {  
+      CSVControl = PropertyPaneButton('Csv File', {
+        text: "Download csv template",
+        buttonType: PropertyPaneButtonType.Primary,
+        onClick: this.downloadCsv.bind(this)
+      });
+
+      uploadControl = PropertyFieldFilePicker('filePicker', {
+        context: this.context,
+        filePickerResult: this.properties.filePickerResult,
+        onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+        properties: this.properties,
+        onSave: (e: IFilePickerResult) => { this.properties.filePickerResult = e;  },
+        onChanged: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },        
+        accepts:[".csv"],
+        key: "filePickerId",
+        buttonLabel: "Upload Csv file",
+        label: "",
+        hideRecentTab: true,
+        hideStockImages: true,
+        hideOneDriveTab: true,
+        hideSiteFilesTab: true,
+        hideLinkUploadTab: true,        
+        storeLastActiveTab: false
+      });
+
+    }  
+    else if (this.properties.dropdown === "External")
+    {   
       textControl = PropertyPaneTextField('simpleText', {  
         label: "Text",  
         placeholder: "Enter Text"  
-      });  
+      });   
+              
     }  
-    else if (this.properties.dropdown === "External")
-    {  
-      imageSourceControl = PropertyPaneTextField('imageUrl', {  
-        label: "Image URL",  
-        placeholder: "Enter Image URL"  
-      });  
-    }  
-
-   
 
     /* this.sitecollectionsDropDown = new PropertyPaneDropdown('SiteCollection', {
       label: strings.SiteCollectionFieldLabel,
@@ -206,9 +270,9 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
                   onPropertyChange: this.onDropdownChange.bind(this),
                   selectedKey: this.properties.dropdown,
                 }),
-                
-                textControl,
-                imageSourceControl
+                CSVControl,
+                uploadControl,
+                textControl                
               ]
             }
           ]

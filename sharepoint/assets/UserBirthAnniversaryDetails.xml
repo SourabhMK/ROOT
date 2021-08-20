@@ -1,0 +1,132 @@
+<List xmlns:ows="Microsoft SharePoint" Title="UserBirthAnniversaryDetails" EnableContentTypes="FALSE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/UserBirthAnniversaryDetails" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>    
+    <Fields>
+        <Field ID="{58e15479-fdc8-48fd-b548-15df2f8cc931}"
+            Type="Text" 
+            DisplayName="Name" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="Name" 
+            Name="Name" 
+            ColName="nvarchar3" 
+            RowOrdinal="0" />
+
+         <Field ID="{6c514b1d-c641-4a50-8637-c1d7f26c7624}"
+            Type="Text" 
+            DisplayName="FirstName" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255"
+            StaticName="FirstName" 
+            Name="FirstName" 
+            ColName="ntext2" 
+            RowOrdinal="0" />
+
+        <Field ID="{1eecfa22-30ca-4fd1-91db-ee1776f43211}"
+            Type="Text" 
+            DisplayName="LastName" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="LastName"
+            Name="LastName" 
+            ColName="nvarchar4" 
+            RowOrdinal="0" />
+
+        <Field ID="{a7e7e5ae-f9e7-4f54-8f8e-03b2ef987469}"
+            Type="Text" 
+            DisplayName="Email" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="Email" 
+            Name="Email" 
+            ColName="nvarchar9" 
+            RowOrdinal="0" />
+
+        <Field ID="{a4160129-bf26-46bf-83af-b4be0807862c}"
+            Type="Date" 
+            DisplayName="BirthDate" 
+            Required="TRUE" 
+            EnforceUniqueValues="FALSE" 
+            Indexed="FALSE" 
+            MaxLength="255" 
+            StaticName="BirthDate" 
+            Name="BirthDate" 
+            ColName="nvarchar9" 
+            RowOrdinal="0" />
+
+        <Field ID="{da2bf9d8-edac-4749-b6ea-3ed783d0c9dc}"
+            Name="HireDate"
+            DisplayName="HireDate"
+            Type="Date"
+            StaticName="HireDate"
+            ColName="nvarchar5" 
+            RowOrdinal="0"              
+            EnforceUniqueValues="FALSE"
+            Indexed="FALSE" 
+            MaxLength="255"
+            Required="FALSE" />
+
+        <Field ID="{c5ab0f34-dd2d-40c3-986e-00a1afb26341}"
+            Name="Department"
+            DisplayName="Department"
+            Type="Text"
+            StaticName="Department"
+            ColName="nvarchar5" 
+            RowOrdinal="0"   
+            EnforceUniqueValues="FALSE"
+            Indexed="FALSE" 
+            MaxLength="255"                     
+            Required="TRUE" />
+
+        <Field ID="{678ed098-758c-4967-ba9c-9e749ae178ef}"
+            Name="Team"
+            DisplayName="Team"
+            Type="Text"
+            StaticName="Team"
+            ColName="nvarchar5" 
+            RowOrdinal="0"  
+            EnforceUniqueValues="FALSE"
+            Indexed="FALSE" 
+            MaxLength="255"                     
+            Required="TRUE" />
+
+    </Fields>
+
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="Name"></FieldRef>
+          <FieldRef Name="FirstName"></FieldRef>
+          <FieldRef Name="LastName"></FieldRef>
+          <FieldRef Name="Email"></FieldRef>
+          <FieldRef Name="BirthDate"></FieldRef>
+          <FieldRef Name="HireDate"></FieldRef>
+          <FieldRef Name="Department"></FieldRef>
+          <FieldRef Name="Team"></FieldRef>
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>
