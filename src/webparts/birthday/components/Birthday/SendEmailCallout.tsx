@@ -110,7 +110,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
         <div className={styles.SetSaveBtn}>                                                             
           {/* <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'#d9534f',color:'#fff'}} onClick={this.CancelClicked}>Cancel</DefaultButton></div> */}   
                                                     
-          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Save</DefaultButton></div>
+          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>
                         
         </div>             
       </div>
@@ -119,7 +119,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
   
   SaveDataClicked = async(message: string, image: string) =>
   { 
-    //let userEmail = this.context.pageContext.user.email;
+    let userEmail = this.props.loggedInUserEmail;
     //console.log('userEmail: '+ userEmail);
     if(message == "" || message == null)
     {
@@ -141,6 +141,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
       Title: "Birthday Message",
       EmailSubject: "Happy Birthday",
       EmailBody: message,
+      EmailFrom: userEmail,
       EmailTo: this.props.person.email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });

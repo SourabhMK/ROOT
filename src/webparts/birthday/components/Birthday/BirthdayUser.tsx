@@ -19,7 +19,7 @@ initializeIcons();
 const MyMailIcon = () => <Icon iconName="Mail" />;
 const MyGiftIcon = () => <Icon iconName="GiftBox" />;
 
-//debugger;
+
   export default class BirthdayUser extends React.Component<IBirthdayUserListProps, IBirthdayUserListState> {
 
   constructor(props: IBirthdayUserListProps, state: IBirthdayUserListState) {  
@@ -67,7 +67,6 @@ const MyGiftIcon = () => <Icon iconName="GiftBox" />;
                     <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>
                   </div> */}
                   <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
-                    {/* <i className ="ms-Icon ms-Icon--Mail" aria-hidden="true"></i> */}
                     <MyMailIcon />
                   </div> 
                                     
@@ -83,7 +82,7 @@ const MyGiftIcon = () => <Icon iconName="GiftBox" />;
                     directionalHint={DirectionalHint.rightCenter}
                     doNotLayer={false}
                   >
-                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient}></SendEmailCallout>
+                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} loggedInUserEmail = {this.props.loggedInUserEmail}></SendEmailCallout>
                   </Callout>
                   )}                 
                                       
