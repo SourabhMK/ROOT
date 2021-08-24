@@ -12,8 +12,13 @@ import AssetReservation from './components/AssetReservation';
 import { IAssetReservationProps } from './components/IAssetReservationProps';
 
 export interface IAssetReservationWebPartProps {
+<<<<<<< Updated upstream
   description: string,
   context:any,
+=======
+  description: string;
+  context:any;
+>>>>>>> Stashed changes
 }
 
 export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
