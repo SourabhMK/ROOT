@@ -7,6 +7,7 @@
     "libraryId": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
     "packageManager": "npm",
     "isDomainIsolated": false,
-    "componentType": "webpart"
+    "componentType": "extension",
+    "extensionType": "ListViewCommandSet"
   }
 }

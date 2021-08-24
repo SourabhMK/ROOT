@@ -263,7 +263,15 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   public render(): React.ReactElement<IPeopleProps> {
   return (
     <div>
-      <h1>People Picker Test Example</h1>
+    <iframe 
+    src="https://gns11.sharepoint.com/sites/SiriusTeams/Lists/EmployeeRequest/AllItems.aspx"
+    width="100%"
+    height="100%"
+      />
+
+
+
+      {/* <h1>People Picker Test Example</h1>
       <NormalPeoplePicker
         // eslint-disable-next-line react/jsx-no-bind
         onResolveSuggestions={this.onFilterChanged}
@@ -287,7 +295,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
         onInputChange={onInputChange}
         resolveDelay={300}
         // disabled={isPickerDisabled}
-      />
+      /> */}
 
       {/* <Checkbox
         label="Disable People Picker"
