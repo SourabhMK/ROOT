@@ -7,6 +7,14 @@ import DepartmentalRequest from '../DepartmentalRequest/DepartmentalRequest'
 import { IPeopleState } from './IPeopleState';
 import { IPeopleProps } from './IPeopleProps';
 import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from '@microsoft/sp-http';
+import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
+import PeoplePicker from './PeoplePicker';
+import { DefaultButton, PrimaryButton, CompoundButton } from '@fluentui/react/lib/Button';
+import 'office-ui-fabric-react/dist/css/fabric.css';
+import { IconButton } from '@fluentui/react/lib/Button';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
+initializeIcons();
+import { Icon } from '@fluentui/react/lib/Icon';
 
 
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -102,6 +110,8 @@ export var mru:(IPersonaProps)[]=[];
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
 
+var deptDetails : IDispacherList[] = Array();
+
 
 // export const PeoplePickerTestExample: React.FunctionComponent = (props) => {
   export default class PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState> {
@@ -112,6 +122,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
    this.state = {
     mostRecentlyUsed:[],
     peopleList:[],
+    loadPeoplePicker:0,
     loading:false,
     errorMessage:''
    }
@@ -119,6 +130,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
 
   componentDidMount(){
     this.loadDepartmentOptions();
+    this.loadPeoplePickerInfo();
       // this.testPart();
   }
 
@@ -183,6 +195,78 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   });
    }
 
+
+
+   private loadPeoplePickerInfo():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+        //   // There was an error loading information about people.
+        //   // Notify the user that loading data is finished and return the
+        //   // error message that occurred
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value == 0) {
+          // No results were found. Notify the user that loading data is finished
+          this.setState({
+            loading: false
+          });
+          return;
+        }
+
+        deptDetails = res.value.map((r,index)=>{
+          return{
+            dispatcherDeptName: r.AssignedTo,
+          }
+        })
+  
+    if(deptDetails.length>0){
+    this.setState({
+      loading:false,
+    })   
+    this.testPart();
+    }
+  }, (error: any): void => {
+    // An error has occurred while loading the data. Notify the user
+    // that loading data is finished and return the error message.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    // An exception has occurred while loading the data. Notify the user
+    // that loading data is finished and return the exception.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+   }
+
+   private loadNewGrpName(val){
+     grpName = val;
+     console.log("grpName = " +  val);
+     this.setState({
+       loadPeoplePicker: 1
+     })
+     this.loadDepartmentOptions();
+   }
+
  private testPart():void{
     // people1 = pickerGroupNames;
       //  people1 = people1;
@@ -194,6 +278,12 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       },()=>console.log("peopleList= " + this.state.peopleList))
       console.log("object= " + this.state.mostRecentlyUsed);
   };
+
+  onBackButtonClick(){
+      this.setState({
+        loadPeoplePicker:0
+      })  
+  }
 //   picker = React.useRef(null);
 
    onFilterChanged = (
@@ -263,13 +353,103 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   public render(): React.ReactElement<IPeopleProps> {
   return (
     <div>
-    <iframe 
+    {/* <iframe 
     src="https://gns11.sharepoint.com/sites/SiriusTeams/Lists/EmployeeRequest/AllItems.aspx"
     width="100%"
     height="100%"
-      />
+      /> */}
+{ (this.state.loadPeoplePicker === 0) &&
+      <table className="table table-border">
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Dispatcher Group</th>
+              <th>Assigned To</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              deptDetails.map((res,index)=>{
+                return(
+                  <tr key={index}>
+                    <td>{index+1}</td>
+                    <td>{res.dispatcherDeptName}</td>
+                    <td>
+                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.dispatcherDeptName)} >AssignTo</PrimaryButton>
+                      {/* <button>AssignTo</button> */}
+                      {/* <NormalPeoplePicker
+                               // onFocus={()=>this.loadNewGrpName(res.dispatcherDeptName)}
+                            //  onChange={this.loadNewGrpName}
+                          // eslint-disable-next-line react/jsx-no-bind
+                             onResolveSuggestions={this.onFilterChanged}
+                         // eslint-disable-next-line react/jsx-no-bind
+                          // onEmptyInputFocus={returnMostRecentlyUsed}
+                            getTextFromItem={getTextFromItem}
+                            pickerSuggestionsProps={suggestionProps}
+                            className={'ms-PeoplePicker'}
+                            key={'normal'}
+                          // eslint-disable-next-line react/jsx-no-bind
+                           onRemoveSuggestion={this.onRemoveSuggestion}
+                           onValidateInput={validateInput}
+                           selectionAriaLabel={'Selected contacts'}
+                           removeButtonAriaLabel={'Remove'}
+                          inputProps={{
+                           onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
+                           onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
+                            'aria-label': 'People Picker',
+                           }}
+                         // componentRef={this.picker}
+                          onInputChange={onInputChange}
+                           resolveDelay={300}
+                          // disabled={isPickerDisabled}
+                          
+                        /> */}
+                    </td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+      </table>
+  }
 
-
+  {
+    (this.state.loadPeoplePicker === 1) &&
+    <div className="ms-Grid">
+      <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg12">
+            <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.onBackButtonClick()} ></Icon>
+            </div>
+      </div>
+    <div className="ms-Grid-row">  
+      <h2>Please add user!!</h2>
+    <NormalPeoplePicker
+    // eslint-disable-next-line react/jsx-no-bind
+    onResolveSuggestions={this.onFilterChanged}
+    // eslint-disable-next-line react/jsx-no-bind
+    // onEmptyInputFocus={returnMostRecentlyUsed}
+    getTextFromItem={getTextFromItem}
+    pickerSuggestionsProps={suggestionProps}
+    className={'ms-PeoplePicker'}
+    key={'normal'}
+    // eslint-disable-next-line react/jsx-no-bind
+    onRemoveSuggestion={this.onRemoveSuggestion}
+    onValidateInput={validateInput}
+    selectionAriaLabel={'Selected contacts'}
+    removeButtonAriaLabel={'Remove'}
+    inputProps={{
+      onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
+      onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
+      'aria-label': 'People Picker',
+    }}
+    // componentRef={this.picker}
+    onInputChange={onInputChange}
+    resolveDelay={300}
+    // disabled={isPickerDisabled}
+  /> 
+  </div>  
+  </div>
+  }
 
       {/* <h1>People Picker Test Example</h1>
       <NormalPeoplePicker

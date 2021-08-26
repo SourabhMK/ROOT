@@ -1,5 +1,11 @@
 import { Guid } from '@microsoft/sp-core-library';
 import { override } from '@microsoft/decorators';
+
+// import * as React from 'react';
+// import * as ReactDom from 'react-dom';
+// import { Version } from '@microsoft/sp-core-library';
+
+
 import {
   BaseListViewCommandSet,
   Command,
@@ -9,6 +15,8 @@ import {
 import { Dialog } from '@microsoft/sp-dialog';
 
 import * as strings from 'AssignIssueEcbCommandSetStrings';
+// import PeoplePicker from '../../webparts/departmentalRequest/components/TestFolder/PeoplePicker';
+// import PeoplePickerTestExample from '../../webparts/departmentalRequest/components/TestFolder/PeoplePickerTestExample';
 
 export interface IAssignIssueEcbCommandSetProperties {
   targetUrl: string;
@@ -20,6 +28,24 @@ export default class AssignIssueEcbCommandSet extends BaseListViewCommandSet<IAs
   public onInit(): Promise<void> {
     return Promise.resolve();
   }
+
+  // public render(): void {
+  //   const element: React.ReactElement<IAssignIssueEcbCommandSetProperties> = React.createElement(
+  //     PeoplePickerTestExample,
+  //     {
+  //      // description: this.properties.description,
+  //       webUrl: this.context.pageContext.web.absoluteUrl,
+  //       spHttpClient: this.context.spHttpClient,
+  //       //groupType:this.properties.groupType,
+  //       loggedInUserName:this.context.pageContext.user.displayName,
+  //       loggedInUserEmail:this.context.pageContext.user.email,
+  //       currentUserId:this.context.pageContext.legacyPageContext["userId"],
+  //       targetUrl:this.properties.targetUrl
+  //     }
+  //   );
+
+  //   //ReactDom.render(element, this.domElement);
+  // }
 
   @override
   public onListViewUpdated(event: IListViewCommandSetListViewUpdatedParameters): void {
@@ -38,8 +64,10 @@ export default class AssignIssueEcbCommandSet extends BaseListViewCommandSet<IAs
         const itemId: number = event.selectedRows[0].getValueByName("ID");
         const listId: Guid = this.context.pageContext.list.id;
         Dialog.alert(`Clicked on it`);
+        //PeoplePickerTestExample
+          //this.render();
 
-        window.location.replace(`${this.properties.targetUrl}?ID=${itemId}&List=${listId}`);
+       // window.location.replace(`https://gns11.sharepoint.com/sites/SiriusTeams/Lists/EmployeeRequest/AllItems.aspx?ID=${itemId}&List=${listId}`);
 
         break;
       default:

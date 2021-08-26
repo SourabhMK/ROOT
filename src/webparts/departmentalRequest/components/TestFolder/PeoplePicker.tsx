@@ -35,7 +35,8 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
             loading:false,
             errorMessage:'',
             mostRecentlyUsed:[],
-            peopleList:[]
+            peopleList:[],
+            loadPeoplePicker:0,
         };
       }
       
@@ -133,6 +134,7 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
         <div>
             <h1>People picker</h1>
             {/* <PeoplePickerTestExample deptBelongingNames={pickerGroupNames} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} /> */}
+
         </div>  );
     }
 }
