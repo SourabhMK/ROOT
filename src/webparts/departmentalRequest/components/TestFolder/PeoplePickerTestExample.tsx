@@ -123,6 +123,7 @@ var deptDetails : IDispacherList[] = Array();
     mostRecentlyUsed:[],
     peopleList:[],
     loadPeoplePicker:0,
+    newPeoplePickerUser:'',
     loading:false,
     errorMessage:''
    }
@@ -227,10 +228,19 @@ var deptDetails : IDispacherList[] = Array();
           });
           return;
         }
+        let createdDateFormat = new Date('').toLocaleDateString();
 
         deptDetails = res.value.map((r,index)=>{
           return{
-            dispatcherDeptName: r.AssignedTo,
+            supportDeptName:r.DepartmentGroup,
+            raisedBy:r.AuthorId,
+            issueDate:r.Created,
+            description:r.Description,
+            category:r.Category,
+            department:r.Department,
+            status:r.Status,
+            dispatcherDeptName:r.AssignedTo,
+            reAssignedTo:r.ReAssignTo
           }
         })
   
@@ -283,6 +293,13 @@ var deptDetails : IDispacherList[] = Array();
       this.setState({
         loadPeoplePicker:0
       })  
+  }
+
+   onChangePeoplePickerHandle(newPeoplePickerUser:any){
+    this.setState({
+      newPeoplePickerUser: newPeoplePickerUser.currentTarget.value,
+      loadPeoplePicker:0
+        })    
   }
 //   picker = React.useRef(null);
 
@@ -363,8 +380,16 @@ var deptDetails : IDispacherList[] = Array();
           <thead>
             <tr>
               <th>Index</th>
+              <th>Raised By</th>
+              <th>Issue Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Department</th>
+              <th>Status</th>
               <th>Dispatcher Group</th>
               <th>Assigned To</th>
+              <th>ReAssigned To</th>
+              <th>Update</th>
             </tr>
           </thead>
           <tbody>
@@ -373,9 +398,15 @@ var deptDetails : IDispacherList[] = Array();
                 return(
                   <tr key={index}>
                     <td>{index+1}</td>
+                    <td>{res.raisedBy}</td>
+                    <td>{res.issueDate}</td>
+                    <td>{res.description}</td>
+                    <td>{res.category}</td>
+                    <td>{res.department}</td>
+                    <td>{res.status}</td>
                     <td>{res.dispatcherDeptName}</td>
                     <td>
-                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.dispatcherDeptName)} >AssignTo</PrimaryButton>
+                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.supportDeptName)} >AssignTo</PrimaryButton>
                       {/* <button>AssignTo</button> */}
                       {/* <NormalPeoplePicker
                                // onFocus={()=>this.loadNewGrpName(res.dispatcherDeptName)}
@@ -405,6 +436,10 @@ var deptDetails : IDispacherList[] = Array();
                           
                         /> */}
                     </td>
+                    <td>{res.reAssignedTo}</td>
+                    <td>
+                      <CompoundButton onClick={()=>res.reAssignedTo = this.state.newPeoplePickerUser}>Update</CompoundButton>
+                    </td>
                   </tr>
                 )
               })
@@ -428,6 +463,8 @@ var deptDetails : IDispacherList[] = Array();
     onResolveSuggestions={this.onFilterChanged}
     // eslint-disable-next-line react/jsx-no-bind
     // onEmptyInputFocus={returnMostRecentlyUsed}
+    onChange={(e)=>this.onChangePeoplePickerHandle(e)}
+    // onChange={()=>''}
     getTextFromItem={getTextFromItem}
     pickerSuggestionsProps={suggestionProps}
     className={'ms-PeoplePicker'}

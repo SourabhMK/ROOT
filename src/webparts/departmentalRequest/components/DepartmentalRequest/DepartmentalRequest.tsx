@@ -384,7 +384,8 @@ GetIssueArchiveSettings():void{
      'Status':'Pending',
      'AssignedTo': selectedDispatcherName,
      'ArchivedTimeSpan': departmentFAQ_ArchiveTimeSpan,
-     'DepartmentManagerId': selectedDeptManager
+     'DepartmentManagerId': selectedDeptManager,
+     'DepartmentGroup':selectedDeptGroup,
   });
 
   this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items`, SPHttpClient.configurations.v1, 

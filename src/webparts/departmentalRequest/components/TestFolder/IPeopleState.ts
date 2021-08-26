@@ -7,4 +7,5 @@ export interface IPeopleState {
     mostRecentlyUsed:IPersonaProps[];
     peopleList:IPersonaProps[];
     loadPeoplePicker:number;
+    newPeoplePickerUser:string;
 }
