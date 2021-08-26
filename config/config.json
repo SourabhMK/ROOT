@@ -41,6 +41,14 @@
           "manifest": "./src/webparts/assetReservation/AssetReservationWebPart.manifest.json"
         }
       ]
+    },
+    "assign-issue-ecb-command-set": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/assignIssueEcb/AssignIssueEcbCommandSet.js",
+          "manifest": "./src/extensions/assignIssueEcb/AssignIssueEcbCommandSet.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -51,6 +59,7 @@
     "BirthdayWebPartStrings": "lib/webparts/birthday/loc/{locale}.js",
     "DepartmentalRequestWebPartStrings": "lib/webparts/departmentalRequest/loc/{locale}.js",
     "AssetReservationWebPartStrings": "lib/webparts/assetReservation/loc/{locale}.js",
+    "AssignIssueEcbCommandSetStrings": "lib/extensions/assignIssueEcb/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"
   }
 }

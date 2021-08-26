@@ -3,31 +3,44 @@
   "solution": {
     "name": "root-client-side-solution",
     "id": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
-    "version": "1.0.0.3",
+    "version": "1.0.2.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
     "skipFeatureDeployment": false,
-    "features": [{
-      "title": "root-client-side-solution",
-      "description": "root-client-side-solution",
-      "id": "f7688575-3df5-4ef5-a18a-d81387a8f334",     
-      "version": "1.0.0.0",
-      "assets": {
-        "elementManifests": [
-          "DepartmentalRequestElements.xml",
-          "BirthdayElements.xml"
-        ],
-        "elementFiles":[
-          "schema.xml",
-          "departmentSchema.xml",
-          "departmentalCategorySchema.xml",
-          "IssueArchiveSettingsSchema.xml",
-          "employeeRequestSchema.xml",
-          "EmailSenderschema.xml"
-        ]
+    "features": [
+      {
+        "title": "root-client-side-solution",
+        "description": "root-client-side-solution",
+        "id": "f7688575-3df5-4ef5-a18a-d81387a8f334",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "DepartmentalRequestElements.xml",
+            "BirthdayElements.xml"
+          ],
+          "elementFiles": [
+            "schema.xml",
+            "departmentSchema.xml",
+            "departmentalCategorySchema.xml",
+            "IssueArchiveSettingsSchema.xml",
+            "employeeRequestSchema.xml",
+            "EmailSenderschema.xml"
+          ]
+        }
+      },
+      {
+        "title": "Application Extension - Deployment of custom action.",
+        "description": "Deploys a custom action with ClientSideComponentId association",
+        "id": "67511329-5b29-47ec-b2a8-abfc669a37c9",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "ClientSideInstance.xml"
+          ]
+        }
       }
-    }],
-       
+    ],
     "developer": {
       "name": "",
       "websiteUrl": "",

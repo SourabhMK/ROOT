@@ -4,3 +4,7 @@ export interface IDepartmentList {
     deptManager:number,
     dispatcherName:string
 }
+
+export interface  IDispacherList {
+    dispatcherDeptName:string,
+}
