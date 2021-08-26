@@ -37,7 +37,8 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
             mostRecentlyUsed:[],
             peopleList:[],
             loadPeoplePicker:0,
-            newPeoplePickerUser:''
+            newPeoplePickerUser:'',
+            deptDetails:[]
         };
       }
       

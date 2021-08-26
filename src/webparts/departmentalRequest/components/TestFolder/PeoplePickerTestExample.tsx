@@ -110,7 +110,7 @@ export var mru:(IPersonaProps)[]=[];
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
 
-var deptDetails : IDispacherList[] = Array();
+//var deptDetails : IDispacherList[] = Array();
 
 
 // export const PeoplePickerTestExample: React.FunctionComponent = (props) => {
@@ -125,7 +125,8 @@ var deptDetails : IDispacherList[] = Array();
     loadPeoplePicker:0,
     newPeoplePickerUser:'',
     loading:false,
-    errorMessage:''
+    errorMessage:'',
+    deptDetails:[],
    }
   }
 
@@ -230,21 +231,37 @@ var deptDetails : IDispacherList[] = Array();
         }
         let createdDateFormat = new Date('').toLocaleDateString();
 
-        deptDetails = res.value.map((r,index)=>{
-          return{
-            supportDeptName:r.DepartmentGroup,
-            raisedBy:r.AuthorId,
-            issueDate:r.Created,
-            description:r.Description,
-            category:r.Category,
-            department:r.Department,
-            status:r.Status,
-            dispatcherDeptName:r.AssignedTo,
-            reAssignedTo:r.ReAssignTo
-          }
+        // deptDetails = res.value.map((r,index)=>{
+        //   return{
+        //     supportDeptName:r.DepartmentGroup,
+        //     raisedBy:r.AuthorId,
+        //     issueDate:r.Created,
+        //     description:r.Description,
+        //     category:r.Category,
+        //     department:r.Department,
+        //     status:r.Status,
+        //     dispatcherDeptName:r.AssignedTo,
+        //     reAssignedTo:r.ReAssignTo
+        //   }
+        // })
+        this.setState({
+          deptDetails:res.value.map((r,index)=>{
+            return{
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.AuthorId,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo
+            }
+          }) 
         })
+        console.log("deptDetail = " + this.state.deptDetails[0].supportDeptName);
   
-    if(deptDetails.length>0){
+    if(this.state.deptDetails.length>0){
     this.setState({
       loading:false,
     })   
@@ -297,7 +314,7 @@ var deptDetails : IDispacherList[] = Array();
 
    onChangePeoplePickerHandle(newPeoplePickerUser:any){
     this.setState({
-      newPeoplePickerUser: newPeoplePickerUser.currentTarget.value,
+      newPeoplePickerUser: newPeoplePickerUser[0].text,
       loadPeoplePicker:0
         })    
   }
@@ -394,7 +411,7 @@ var deptDetails : IDispacherList[] = Array();
           </thead>
           <tbody>
             {
-              deptDetails.map((res,index)=>{
+             this.state.deptDetails.map((res,index)=>{
                 return(
                   <tr key={index}>
                     <td>{index+1}</td>
