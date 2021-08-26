@@ -23,7 +23,7 @@ import { IBirthdayProps } from './components/IBirthdayProps';
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { setPortalAttribute } from 'office-ui-fabric-react';
 import { sp } from '@pnp/sp';
-import pnp from 'sp-pnp-js';
+import pnp, { File } from 'sp-pnp-js';
 import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
 
 export interface IBirthdayWebPartProps {
@@ -38,6 +38,7 @@ export interface IBirthdayWebPartProps {
   EndDate: string;
   filePickerResult: IFilePickerResult;
 }
+
 debugger;
 export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebPartProps> {
 
@@ -57,6 +58,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         SiteCollection: this.properties.SiteCollection        
       } 
     );
+    //this.uploadCSV = this.uploadCSV.bind(this);
     ReactDom.render(element, this.domElement);
   }
 
@@ -170,35 +172,107 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
   }
 
   private downloadCsv()
-  {  
-    const link = document.createElement('a');
-    
-    link.href = "https://gns11.sharepoint.com/sites/SiriusTeams/Shared%20Documents/TestingList.csv";
-    link.setAttribute(  
-      'download',
-      `TestingList.csv`,
-    );
+  {   
+    const linkSource = `data:application/csv;base64,${"TmFtZSxMYXN0TmFtZQ0K"}`;
+
+    const downloadLink = document.createElement('a');
+
     // Append to html link element page
-    document.body.appendChild(link);
+    document.body.appendChild(downloadLink);
+
+    downloadLink.href = linkSource;
+    downloadLink.target = '_self';
+    downloadLink.download = "TestingList.csv";
 
     // Start download
-    link.click();
+    downloadLink.click();
+
     // Clean up and remove the link
-    setTimeout(function(){ link.parentNode.removeChild(link); }, 500);    
+    setTimeout(function(){ downloadLink.parentNode.removeChild(downloadLink); }, 500);
   }
 
   protected onPropertyPaneFieldChanged()
   {
-    /* const test = this.properties.filePickerResult;
-    console.log(test);
-    const fileResultContent = this.properties.filePickerResult.downloadFileContent();
-    console.log("fileResultContent: " + fileResultContent);
-    const reader = new FileReader();
-    //reader.readAsDataURL(fileResultContent);
-    reader.onload = async () => {
-      
-     }; */
-    //reader.readAsText(files[0]);
+    if(this.properties.filePickerResult)
+    {
+      let file = this.properties.filePickerResult;
+      let selectedFile =  file.downloadFileContent()
+      .then((res: any): Promise<any> => {     
+        return res;
+      })
+      .then((res: any): void => {
+        if(res)
+        {
+          const reader = new FileReader();        
+          reader.onload = async (e) => {          
+            const text = reader.result;
+            const dataArray = this.csvToArray(text);
+            
+            this.exportDataToList(dataArray);
+          }
+          reader.readAsText(res);               
+        }
+      }, 
+      (error: any): void => {
+        console.log("Error occured.");
+      })
+      .catch((error: any): void => {
+        console.log("Error: " + error);      
+      }); 
+    }      
+  }
+
+  private csvToArray(str, delimiter = ",")
+  {
+    const headers = str.slice(0, str.indexOf("\r\n")).split(delimiter);
+    const rows = str.slice(str.indexOf("\n") + 1).split("\r\n");
+    
+    const arr = rows.map((row) => {
+
+        const values = row.split(delimiter);    
+        const el = headers.reduce(function (object, header, index) {
+          object[header] = values[index];
+          return object;
+        }, {});
+
+        return el;
+    });
+
+    //return an array
+    return arr;
+  }
+
+  private exportDataToList(UserList: any)
+  {
+    for(let i:number = 0; i<UserList.length; ++i)
+    {
+      const requestlistItem: string = JSON.stringify({
+        Name: UserList[i].Name,
+        LastName: UserList[i].LastName,
+        });
+        this.addListItems(requestlistItem);
+    }
+  }
+
+  private addListItems(JsonData: string)
+  {
+    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('TestingList')/items`, SPHttpClient.configurations.v1,  
+    {  
+      headers: {  
+      'Accept': 'application/json;odata=nometadata',  
+      'Content-type': 'application/json;odata=nometadata',  
+      'odata-version': ''  
+      },  
+      body: JsonData  
+    }) 
+    .then((response: SPHttpClientResponse): Promise<void> => {  
+        return response.json();  
+    })  
+    .then((item: any): void => {  
+        console.log('Item has been created.');
+    }, (error: any): void => {  
+        console.log('Error while creating the item: ' + error);
+    }); 
 
   }
 
@@ -221,7 +295,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         filePickerResult: this.properties.filePickerResult,
         onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
         properties: this.properties,
-        onSave: (e: IFilePickerResult) => { this.properties.filePickerResult = e;  },
+        onSave: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },
         onChanged: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },        
         accepts:[".csv"],
         key: "filePickerId",
