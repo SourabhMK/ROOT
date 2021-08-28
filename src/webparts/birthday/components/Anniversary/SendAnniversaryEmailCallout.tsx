@@ -103,7 +103,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
         <div className={styles.SetSaveBtn}>                                                             
           {/* <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'#d9534f',color:'#fff'}} onClick={this.CancelClicked}>Cancel</DefaultButton></div> */}   
                                                     
-          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Save</DefaultButton></div>
+          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>
                         
         </div>             
       </div>
@@ -117,6 +117,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
 
   SaveDataClicked = async(message, image) =>
   {
+    let userEmail = this.props.loggedInUserEmail;
     if(message == "" || message == null)
     {
       this.setState({
@@ -137,6 +138,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
       Title: "Work Anniversary Message",
       EmailSubject: "Happy Work Anniversary",
       EmailBody: message,
+      EmailFrom: userEmail,
       EmailTo: this.props.person.email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });

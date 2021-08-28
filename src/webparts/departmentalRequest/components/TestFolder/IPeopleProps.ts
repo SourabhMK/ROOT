@@ -1,13 +1,10 @@
 import { SPHttpClient } from "@microsoft/sp-http";
-import { DisplayMode } from "@microsoft/sp-core-library";
+import { IPersonaProps } from '@fluentui/react/lib/Persona';
 
-export interface IDepartmentalRequestProps {
-  description: string;
-  groupType:number;
-  //description: string;
-   /**
-   * Absolute URL of the current site
-   */
+export interface IPeopleProps {
+    description: string;
+    groupType:number;
+    deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
      * Instance of the SPHttpClient. Used to retrieve information about

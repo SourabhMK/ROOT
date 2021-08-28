@@ -93,6 +93,7 @@
           <FieldRef Name="EmailBody"></FieldRef>
           <FieldRef Name="EmailTo"></FieldRef>
           <FieldRef Name="EmailCCTo"></FieldRef>
+          <FieldRef Name="EmailFrom"></FieldRef>
           <FieldRef Name="ActivityEmail"></FieldRef>
 
         </ViewFields>

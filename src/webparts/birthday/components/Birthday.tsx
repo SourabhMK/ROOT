@@ -16,6 +16,10 @@ import { Icon } from '@fluentui/react/lib/Icon';
 
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
+
+const headers: HeadersInit = new Headers();
+headers.append("accept", "application/json;odata.metadata=none");
+
 debugger;
 export default class Birthday extends React.Component<IBirthdayProps, IBirthdayState> {  
 
@@ -36,8 +40,23 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     }
   }
 
-  componentDidMount(){     
-    this.LoadBirthdayDetails();    
+  componentDidMount()
+  { 
+     if(this.props.dropdown === "Azure")    
+      this.LoadBirthdayDetails();
+    else
+      this.LoadInternalBirthdayDetails();  
+      /* switch(this.props.dropdown) 
+      {
+        case 'Azure' :
+          this.LoadBirthdayDetails();
+        case 'Internal' :
+          this.LoadInternalBirthdayDetails();
+        case 'External' :
+          console.log("External");
+        case 'API' :
+          console.log("API");
+      } */
   }
 
   private CountStartAndEndDates (): void {
@@ -70,6 +89,39 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private CountDays(month:number, year:number): number {
     return new Date(year, month, 0).getDate();
   }
+
+  private LoadInternalBirthdayDetails()
+  {
+    this.props.spHttpClient
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestingList')/items`, SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((result: SPHttpClientResponse) => {          
+          return result.json();
+        })
+        .then((jsonresult): void => {
+          let people:IBirthday[] = jsonresult.value; 
+          if(people.length > 0)
+          {
+            this.setState({
+              loading:false,
+              BUsers : people,
+            })
+          }
+       
+        }, (error: any): void => {      
+          this.setState({
+            loading: false,
+            errorMessage: error
+          });
+      })
+      .catch((error: any): void => {    
+        this.setState({
+          loading: false,
+          errorMessage: error
+        });
+      });
+  }
    
   LoadBirthdayDetails = async () => {
 
@@ -80,12 +132,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage:null,       
       }) 
 
-      const headers: HeadersInit = new Headers();
+      /* const headers: HeadersInit = new Headers();
       // suppress metadata to minimize the amount of data loaded from SharePoint
-      headers.append("accept", "application/json;odata.metadata=none");
+      headers.append("accept", "application/json;odata.metadata=none"); */
     
       this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,RefinableDate00'&refinementfilters='RefinableDate00:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate00'&refinementfilters='RefinableDate00:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((res: SPHttpClientResponse): Promise<IBirthdayResults> => {          
@@ -221,7 +273,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     headers.append("accept", "application/json;odata.metadata=none");
   
       this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,RefinableDate01'`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate01'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((res: SPHttpClientResponse): Promise<IBirthdayResults> => {          
@@ -310,8 +362,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           </div>
           {/* <div className = { styles.persona_card}>This Month</div> */}
           {  
-            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl}/> : 
-            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} /> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl}/> )
+            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> : 
+            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> )
           }           
                       
         </div>        

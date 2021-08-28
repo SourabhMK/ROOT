@@ -22,7 +22,8 @@ export interface IDepartmentalRequestState {
     myIssueUnlock:number,
     nextCount:number,
     dataFilledCheck:number,
-    raisedIssuesCount:number,
+    initialRaisedCount:number,
+    totalRaisedIssuesCount:number,
     dispatcherViewUnlock:number,
     /**
      * Contains the error message that occurred while loading the data.

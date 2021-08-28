@@ -75,7 +75,7 @@ export default class AnniversaryUser extends React.Component<IAnniversaryUserLis
                   directionalHint={DirectionalHint.rightCenter}
                   doNotLayer={false}
                 >
-                  <SendAnniversaryEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} ></SendAnniversaryEmailCallout>
+                  <SendAnniversaryEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} loggedInUserEmail={this.props.loggedInUserEmail}></SendAnniversaryEmailCallout>
                 </Callout>
                 )}                 
                                     

@@ -5,6 +5,7 @@ export interface IAnniversaryUserListProps {
     people: IAnniversary[];
     spHttpClient: SPHttpClient;
     siteurl: string;
+    loggedInUserEmail:string;
 }
 
 export interface IAnniversaryUserListState {

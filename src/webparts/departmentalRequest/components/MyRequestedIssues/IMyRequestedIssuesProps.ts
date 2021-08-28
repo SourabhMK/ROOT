@@ -1,5 +1,6 @@
 import { SPHttpClient } from "@microsoft/sp-http";
 import { DisplayMode } from "@microsoft/sp-core-library";
+import PeoplePicker from "../TestFolder/PeoplePicker";
 
 export interface IMyRequestedIssuesProps {
   description: string;
@@ -17,6 +18,7 @@ export interface IMyRequestedIssuesProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
   issueDataList:IMyIssueList[];
+  currentUserId:number;
 
 }
 
@@ -28,5 +30,6 @@ export interface IMyIssueList {
   assignedTo:string,
   comment:string,
   status:string,
-  attachments:string
+  attachments:string,
+  test:PeoplePicker,
 }

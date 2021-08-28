@@ -4,7 +4,8 @@ import { SPHttpClient } from "@microsoft/sp-http";
 export interface IBirthdayUserListProps {
     people: IBirthday[]; 
     spHttpClient: SPHttpClient; 
-    siteurl: string;  
+    siteurl: string;
+    loggedInUserEmail: string;  
 }
 
 export interface IBirthdayUserListState {

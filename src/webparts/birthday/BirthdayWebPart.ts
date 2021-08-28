@@ -3,7 +3,10 @@ import * as ReactDom from 'react-dom';
 import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField  
+  PropertyPaneButton,
+  PropertyPaneButtonType,
+  PropertyPaneDynamicField,
+  PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 
 import styles from '../birthday/components/Birthday.module.scss';
@@ -18,6 +21,10 @@ import Birthday from './components/Birthday';
 import { IBirthdayProps } from './components/IBirthdayProps';
 
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
+import { setPortalAttribute } from 'office-ui-fabric-react';
+import { sp } from '@pnp/sp';
+import pnp, { File } from 'sp-pnp-js';
+import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
 
 export interface IBirthdayWebPartProps {
   description: string;
@@ -29,8 +36,10 @@ export interface IBirthdayWebPartProps {
   SiteCollection: string;
   StartDate: string;
   EndDate: string;
+  filePickerResult: IFilePickerResult;
 }
 
+debugger;
 export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebPartProps> {
 
   //private sitecollectionsDropDown: PropertyPaneDropdown;  
@@ -42,12 +51,14 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
+        loggedInUserEmail: this.context.pageContext.user.email,
         dropdown: this.properties.dropdown,
         simpleText: this.properties.simpleText,
         imageUrl: this.properties.imageUrl,
         SiteCollection: this.properties.SiteCollection        
       } 
     );
+    //this.uploadCSV = this.uploadCSV.bind(this);
     ReactDom.render(element, this.domElement);
   }
 
@@ -160,26 +171,153 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     return Version.parse('1.0');
   }
 
+  private downloadCsv()
+  {   
+    const linkSource = `data:application/csv;base64,${"TmFtZSxMYXN0TmFtZQ0K"}`;
+
+    const downloadLink = document.createElement('a');
+
+    // Append to html link element page
+    document.body.appendChild(downloadLink);
+
+    downloadLink.href = linkSource;
+    downloadLink.target = '_self';
+    downloadLink.download = "TestingList.csv";
+
+    // Start download
+    downloadLink.click();
+
+    // Clean up and remove the link
+    setTimeout(function(){ downloadLink.parentNode.removeChild(downloadLink); }, 500);
+  }
+
+  protected onPropertyPaneFieldChanged()
+  {
+    if(this.properties.filePickerResult)
+    {
+      let file = this.properties.filePickerResult;
+      let selectedFile =  file.downloadFileContent()
+      .then((res: any): Promise<any> => {     
+        return res;
+      })
+      .then((res: any): void => {
+        if(res)
+        {
+          const reader = new FileReader();        
+          reader.onload = async (e) => {          
+            const text = reader.result;
+            const dataArray = this.csvToArray(text);
+            
+            this.exportDataToList(dataArray);
+          }
+          reader.readAsText(res);               
+        }
+      }, 
+      (error: any): void => {
+        console.log("Error occured.");
+      })
+      .catch((error: any): void => {
+        console.log("Error: " + error);      
+      }); 
+    }      
+  }
+
+  private csvToArray(str, delimiter = ",")
+  {
+    const headers = str.slice(0, str.indexOf("\r\n")).split(delimiter);
+    const rows = str.slice(str.indexOf("\n") + 1).split("\r\n");
+    
+    const arr = rows.map((row) => {
+
+        const values = row.split(delimiter);    
+        const el = headers.reduce(function (object, header, index) {
+          object[header] = values[index];
+          return object;
+        }, {});
+
+        return el;
+    });
+
+    //return an array
+    return arr;
+  }
+
+  private exportDataToList(UserList: any)
+  {
+    for(let i:number = 0; i<UserList.length; ++i)
+    {
+      const requestlistItem: string = JSON.stringify({
+        Name: UserList[i].Name,
+        LastName: UserList[i].LastName,
+        });
+        this.addListItems(requestlistItem);
+    }
+  }
+
+  private addListItems(JsonData: string)
+  {
+    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('TestingList')/items`, SPHttpClient.configurations.v1,  
+    {  
+      headers: {  
+      'Accept': 'application/json;odata=nometadata',  
+      'Content-type': 'application/json;odata=nometadata',  
+      'odata-version': ''  
+      },  
+      body: JsonData  
+    }) 
+    .then((response: SPHttpClientResponse): Promise<void> => {  
+        return response.json();  
+    })  
+    .then((item: any): void => {  
+        console.log('Item has been created.');
+    }, (error: any): void => {  
+        console.log('Error while creating the item: ' + error);
+    }); 
+
+  }
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
 
     let textControl: any = [];  
-    let imageSourceControl: any = [];  
+    let uploadControl: any = []; 
+    let CSVControl: any = []; 
+    let test: any = [];
       
     if (this.properties.dropdown === "Internal") {  
+      CSVControl = PropertyPaneButton('Csv File', {
+        text: "Download csv template",
+        buttonType: PropertyPaneButtonType.Primary,
+        onClick: this.downloadCsv.bind(this)
+      });
+
+      uploadControl = PropertyFieldFilePicker('filePicker', {
+        context: this.context,
+        filePickerResult: this.properties.filePickerResult,
+        onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+        properties: this.properties,
+        onSave: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },
+        onChanged: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },        
+        accepts:[".csv"],
+        key: "filePickerId",
+        buttonLabel: "Upload Csv file",
+        label: "",
+        hideRecentTab: true,
+        hideStockImages: true,
+        hideOneDriveTab: true,
+        hideSiteFilesTab: true,
+        hideLinkUploadTab: true,        
+        storeLastActiveTab: false
+      });
+
+    }  
+    else if (this.properties.dropdown === "External")
+    {   
       textControl = PropertyPaneTextField('simpleText', {  
         label: "Text",  
         placeholder: "Enter Text"  
-      });  
+      });   
+              
     }  
-    else if (this.properties.dropdown === "External")
-    {  
-      imageSourceControl = PropertyPaneTextField('imageUrl', {  
-        label: "Image URL",  
-        placeholder: "Enter Image URL"  
-      });  
-    }  
-
-   
 
     /* this.sitecollectionsDropDown = new PropertyPaneDropdown('SiteCollection', {
       label: strings.SiteCollectionFieldLabel,
@@ -206,9 +344,9 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
                   onPropertyChange: this.onDropdownChange.bind(this),
                   selectedKey: this.properties.dropdown,
                 }),
-                
-                textControl,
-                imageSourceControl
+                CSVControl,
+                uploadControl,
+                textControl                
               ]
             }
           ]

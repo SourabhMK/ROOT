@@ -18,4 +18,13 @@
         Url="BirthdayAnniversaryImages">
     </ListInstance>
 
+    <ListInstance
+        CustomSchema="UserBirthAnniversaryDetails.xml"
+        FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+        Title="UserBirthAnniversaryDetails"
+        Description="Users details list"
+        TemplateType="100"
+        Url="Lists/UserBirthAnniversaryDetails">
+    </ListInstance>
+
 </Elements>

@@ -5,4 +5,5 @@ export interface ISendAnniversaryEmailCalloutProps {
   person: IAnniversary;
   siteurl: string;
   spHttpClient: SPHttpClient;
+  loggedInUserEmail: string;
 }

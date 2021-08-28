@@ -1,8 +1,22 @@
 import * as React from 'react';
+import styles from './PeoplePickerTestExample.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
-import { IBasePickerSuggestionsProps, NormalPeoplePicker, ValidationState } from '@fluentui/react/lib/Pickers';
+import { IBasePickerSuggestionsProps, IPeoplePickerProps, NormalPeoplePicker, ValidationState } from '@fluentui/react/lib/Pickers';
 //import { people, mru } from '@fluentui/example-data';
+import DepartmentalRequest from '../DepartmentalRequest/DepartmentalRequest'
+import { IPeopleState } from './IPeopleState';
+import { IPeopleProps } from './IPeopleProps';
+import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from '@microsoft/sp-http';
+import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
+import PeoplePicker from './PeoplePicker';
+import { DefaultButton, PrimaryButton, CompoundButton } from '@fluentui/react/lib/Button';
+import 'office-ui-fabric-react/dist/css/fabric.css';
+import { IconButton } from '@fluentui/react/lib/Button';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
+initializeIcons();
+import { Icon } from '@fluentui/react/lib/Icon';
+
 
 const suggestionProps: IBasePickerSuggestionsProps = {
   suggestionsHeaderText: 'Suggested People',
@@ -13,7 +27,7 @@ const suggestionProps: IBasePickerSuggestionsProps = {
   suggestionsAvailableAlertText: 'People Picker Suggestions available',
   suggestionsContainerAriaLabel: 'Suggested contacts',
 };
-
+debugger;
 const checkboxStyles = {
   root: {
     marginTop: 10,
@@ -31,6 +45,10 @@ export interface IExampleExtendedPersonaProps {
     canExpand?: boolean;
   }
 
+  export interface IExtendedPersonaProps {
+    text:string;
+  }
+
   enum PersonaPresence {
     none = 0,
     offline = 1,
@@ -41,7 +59,18 @@ export interface IExampleExtendedPersonaProps {
     busy = 6,
   }  
 
-export const people: (IExampleExtendedPersonaProps & { key: string | number })[] = [
+// export var people1:(IPersonaProps)[]=[
+//   {
+//     text:'Dipal Bhavsar'
+//   },
+//   {
+//     text:'Vrushali'
+//   }
+
+// ]
+
+
+export const people: (IPersonaProps)[] = [
     {
     key: 1,
     imageUrl: ' ',
@@ -50,7 +79,7 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Designer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+     //isValid: true,
     presence: PersonaPresence.online,
   },
   {
@@ -61,7 +90,7 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Designer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+    // isValid: true,
     presence: PersonaPresence.busy,
   },
   {
@@ -72,172 +101,458 @@ export const people: (IExampleExtendedPersonaProps & { key: string | number })[]
     secondaryText: 'Software Developer',
     tertiaryText: 'In a meeting',
     optionalText: 'Available at 4:00pm',
-    isValid: true,
+     //isValid: true,
     presence: PersonaPresence.dnd,
-  },
-  {
-    key: 4,
-    imageUrl: ' ',
-    imageInitials: 'RK',
-    text: 'Roko Kolar',
-    secondaryText: 'Financial Analyst',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.offline,
-  },
-  {
-    key: 5,
-    imageUrl: ' ',
-    imageInitials: 'CB',
-    text: 'Christian Bergqvist',
-    secondaryText: 'Sr. Designer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.online,
-  },
-  {
-    key: 6,
-    imageUrl: ' ',
-    imageInitials: 'VL',
-    text: 'Valentina Lovric',
-    secondaryText: 'Design Developer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.online,
-  },
-  {
-    key: 7,
-    imageUrl: ' ',
-    imageInitials: 'MS',
-    text: 'Maor Sharett',
-    secondaryText: 'UX Designer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.away,
-  },
-  {
-    key: 8,
-    imageUrl: ' ',
-    imageInitials: 'PV',
-    text: 'Anny Lindqvist',
-    secondaryText: 'Designer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.busy,
-  },
-  {
-    key: 9,
-    imageUrl: ' ',
-    imageInitials: 'AR',
-    text: 'Aron Reid',
-    secondaryText: 'Designer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.dnd,
-  },
-  {
-    key: 10,
-    imageUrl: ' ',
-    imageInitials: 'AL',
-    text: 'Alix Lundberg',
-    secondaryText: 'Software Developer',
-    tertiaryText: 'In a meeting',
-    optionalText: 'Available at 4:00pm',
-    isValid: true,
-    presence: PersonaPresence.offline,
-  },
+  }
 ];
 
-export const mru = people.slice(0, 5);
+export var mru:(IPersonaProps)[]=[];
 
+var grpName:string = 'IT Support';
+var pickerGroupNames:(IPersonaProps)[]=[];
+
+//var deptDetails : IDispacherList[] = Array();
+
+
+// export const PeoplePickerTestExample: React.FunctionComponent = (props) => {
+  export default class PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState> {
+
+ 
+ constructor(props){
+   super(props)
+   this.state = {
+    mostRecentlyUsed:[],
+    peopleList:[],
+    loadPeoplePicker:0,
+    newPeoplePickerUser:'',
+    loading:false,
+    errorMessage:'',
+    deptDetails:[],
+    indexSelect:0,
+    homeButton:0,
+    idSelect:0
+   }
+  }
+
+  componentDidMount(){
+    this.loadDepartmentOptions();
+    this.loadPeoplePickerInfo();
+      // this.testPart();
+  }
+
+  private loadDepartmentOptions():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${grpName}')/Users?`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+        //   // There was an error loading information about people.
+        //   // Notify the user that loading data is finished and return the
+        //   // error message that occurred
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value == 0) {
+          // No results were found. Notify the user that loading data is finished
+          this.setState({
+            loading: false
+          });
+          return;
+        }
+
+        pickerGroupNames = res.value.map((r,index)=>{
+          return{
+            text:r.Title,
+          }
+        })
   
+    if(pickerGroupNames.length>0){
+    this.setState({
+      loading:false,
+    })   
+    this.testPart();
+    }
+  }, (error: any): void => {
+    // An error has occurred while loading the data. Notify the user
+    // that loading data is finished and return the error message.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    // An exception has occurred while loading the data. Notify the user
+    // that loading data is finished and return the exception.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+   }
 
-export const PeoplePickerTestExample: React.FunctionComponent = () => { 
-  const [delayResults, setDelayResults] = React.useState(false);
-  const [isPickerDisabled, setIsPickerDisabled] = React.useState(false);
-  const [mostRecentlyUsed, setMostRecentlyUsed] = React.useState<IPersonaProps[]>(mru);
-  const [peopleList, setPeopleList] = React.useState<IPersonaProps[]>(people);
 
-  const picker = React.useRef(null);
 
-  const onFilterChanged = (
+   private loadPeoplePickerInfo():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title&$expand=Author &$orderby=ID desc`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+        //   // There was an error loading information about people.
+        //   // Notify the user that loading data is finished and return the
+        //   // error message that occurred
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value == 0) {
+          // No results were found. Notify the user that loading data is finished
+          this.setState({
+            loading: false
+          });
+          return;
+        }
+        let createdDateFormat = new Date('').toLocaleDateString();
+
+        // deptDetails = res.value.map((r,index)=>{
+        //   return{
+        //     supportDeptName:r.DepartmentGroup,
+        //     raisedBy:r.AuthorId,
+        //     issueDate:r.Created,
+        //     description:r.Description,
+        //     category:r.Category,
+        //     department:r.Department,
+        //     status:r.Status,
+        //     dispatcherDeptName:r.AssignedTo,
+        //     reAssignedTo:r.ReAssignTo
+        //   }
+        // })
+        this.setState({
+          deptDetails:res.value.map((r,index)=>{
+            return{
+              ticketNumber:`Inc_${r.Department}_000${r.ID}`,
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.Author.Title,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo,
+              dataId:r.ID
+            }
+          }) 
+        })
+        console.log("deptDetail = " + this.state.deptDetails[0].supportDeptName);
+  
+    if(this.state.deptDetails.length>0){
+    this.setState({
+      loading:false,
+    })   
+    this.testPart();
+    }
+  }, (error: any): void => {
+    // An error has occurred while loading the data. Notify the user
+    // that loading data is finished and return the error message.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    // An exception has occurred while loading the data. Notify the user
+    // that loading data is finished and return the exception.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+   }
+
+   private loadNewGrpName(val,indexId){
+     grpName = val;
+     console.log("grpName = " +  val);
+     console.log("index = " +  indexId);
+     this.setState({
+       loadPeoplePicker: 1,
+       idSelect:indexId
+
+      //  homeButton:1
+     })
+     this.loadDepartmentOptions();
+    console.log("object = " + this.state.deptDetails[indexId].reAssignedTo);
+   }
+
+ private testPart():void{
+    // people1 = pickerGroupNames;
+      //  people1 = people1;
+     mru = pickerGroupNames.slice(0, 5);
+    
+      this.setState({
+        peopleList:pickerGroupNames,
+        mostRecentlyUsed:mru,
+      },()=>console.log("peopleList= " + this.state.peopleList))
+      console.log("object= " + this.state.mostRecentlyUsed);
+  };
+
+  onBackButtonClick(){
+      this.setState({
+        loadPeoplePicker:0,
+        homeButton:0
+      })  
+  }
+
+  async onChangePeoplePickerHandle(newPeoplePickerUser:any,idRequest:number){
+   await this.setState({
+      newPeoplePickerUser: newPeoplePickerUser[0].text,
+      //loadPeoplePicker:0
+        },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
+  }
+
+  addReAssignedToData(newReAssignedToUser:any,idRequest:number){
+      console.log("newReAssignedToUser = " + newReAssignedToUser + idRequest);
+      console.log("newReAssignedToUser = " + newReAssignedToUser);
+
+    const spOpts: string = JSON.stringify({
+      'ReAssignTo': newReAssignedToUser
+    })
+
+    this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items('${idRequest}')`, SPHttpClient.configurations.v1, 
+    {
+      body:spOpts
+    })
+        .then((response: SPHttpClientResponse) => {
+          // Access properties of the response object. 
+          console.log(`Status code: ${response.status}`);
+          console.log(`Status text: ${response.statusText}`);
+  
+          //response.json() returns a promise so you get access to the json in the resolve callback.
+          response.json().then((responseJSON: JSON) => {
+            console.log(responseJSON);
+            // this.myIssue();
+          });
+        });
+  }
+
+  onSubmitHandle(){
+    this.setState({
+      loadPeoplePicker:0
+    })
+  }
+
+  homeButtonClick(){
+    this.setState({
+      homeButton:1,
+    })
+  }
+
+//   picker = React.useRef(null);
+
+   onFilterChanged = (
     filterText: string,
     currentPersonas: IPersonaProps[],
     limitResults?: number,
   ): IPersonaProps[] | Promise<IPersonaProps[]> => {
     if (filterText) {
-      let filteredPersonas: IPersonaProps[] = filterPersonasByText(filterText);
+      let filteredPersonas: IPersonaProps[] = this.filterPersonasByText(filterText);
 
       filteredPersonas = removeDuplicates(filteredPersonas, currentPersonas);
       filteredPersonas = limitResults ? filteredPersonas.slice(0, limitResults) : filteredPersonas;
-      return filterPromise(filteredPersonas);
+      return this.filterPromise(filteredPersonas);
     } else {
       return [];
     }
   };
 
-  const filterPersonasByText = (filterText: string): IPersonaProps[] => {
-    return peopleList.filter(item => doesTextStartWith(item.text as string, filterText));
+   filterPersonasByText = (filterText: string): IPersonaProps[] => {
+    return this.state.peopleList.filter(item => doesTextStartWith(item.text as string, filterText));
   };
 
-  const filterPromise = (personasToReturn: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
-    if (delayResults) {
-      return convertResultsToPromise(personasToReturn);
-    } else {
+   filterPromise = (personasToReturn: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
+    // if (delayResults) {
+    //   return convertResultsToPromise(personasToReturn);
+    // } else {
       return personasToReturn;
-    }
+    // }
   };
 
-  const returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
-    return filterPromise(removeDuplicates(mostRecentlyUsed, currentPersonas));
+   returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
+    return this.filterPromise(removeDuplicates(this.state.mostRecentlyUsed, currentPersonas));
   };
 
-  const onRemoveSuggestion = (item: IPersonaProps): void => {
-    const indexPeopleList: number = peopleList.indexOf(item);
-    const indexMostRecentlyUsed: number = mostRecentlyUsed.indexOf(item);
+   onRemoveSuggestion = (item: IPersonaProps): void => {
+    const indexPeopleList: number = this.state.peopleList.indexOf(item);
+    const indexMostRecentlyUsed: number = this.state.mostRecentlyUsed.indexOf(item);
 
     if (indexPeopleList >= 0) {
-      const newPeople: IPersonaProps[] = peopleList
+      const newPeople: IPersonaProps[] = this.state.peopleList
         .slice(0, indexPeopleList)
-        .concat(peopleList.slice(indexPeopleList + 1));
-      setPeopleList(newPeople);
+        .concat(this.state.peopleList.slice(indexPeopleList + 1));
+      // setPeopleList(newPeople);
+      this.setState({
+        peopleList:newPeople
+      })
     }
 
     if (indexMostRecentlyUsed >= 0) {
-      const newSuggestedPeople: IPersonaProps[] = mostRecentlyUsed
+      const newSuggestedPeople: IPersonaProps[] = this.state.mostRecentlyUsed
         .slice(0, indexMostRecentlyUsed)
-        .concat(mostRecentlyUsed.slice(indexMostRecentlyUsed + 1));
-      setMostRecentlyUsed(newSuggestedPeople);
+        .concat(this.state.mostRecentlyUsed.slice(indexMostRecentlyUsed + 1));
+      // setMostRecentlyUsed(newSuggestedPeople);
+      this.setState({
+        mostRecentlyUsed:newSuggestedPeople
+      })
     }
   };
 
-  const onDisabledButtonClick = (): void => {
-    setIsPickerDisabled(!isPickerDisabled);
-  };
+  // const onDisabledButtonClick = (): void => {
+  //   setIsPickerDisabled(!isPickerDisabled);
+  // };
 
-  const onToggleDelayResultsChange = (): void => {
-    setDelayResults(!delayResults);
-  };
-
+  // const onToggleDelayResultsChange = (): void => {
+  //   setDelayResults(!delayResults);
+  // };
+  public render(): React.ReactElement<IPeopleProps> {
   return (
-    <div>
+    <div className={styles.peoplePickerTestExample}>
+    {/* <iframe 
+    src="https://gns11.sharepoint.com/sites/SiriusTeams/Lists/EmployeeRequest/AllItems.aspx"
+    width="100%"
+    height="100%"
+      /> */}
+      {(this.state.homeButton === 0) && (this.state.loadPeoplePicker === 0) &&
+      <div className="ms-Grid">
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg12">
+             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+          </div>
+        </div>
+        <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12">
+      <table className={styles.tableSet} >
+          <thead>
+            <tr>
+              <th>Ticket Number</th>
+              <th>Raised By</th>
+              <th>Issue Date</th>
+              {/* <th>Description</th>
+              <th>Category</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Dispatcher Group</th>
+              <th>Assigned To</th>
+              <th>ReAssigned To</th> */}
+              {/* <th>Update</th> */}
+            </tr>
+          </thead>
+          <tbody>
+            {
+             this.state.deptDetails.map((res,index)=>{
+             var issuedDate = new Date(res.issueDate).toLocaleDateString();
+                return(
+                  <tr onClick={()=>this.loadNewGrpName(res.supportDeptName,res.dataId)} key={index}>
+                    <td>{res.ticketNumber}</td>
+                    <td>{res.raisedBy}</td>
+                    <td>{issuedDate}</td>
+                    {/* <td>
+                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.supportDeptName,index)} >AssignTo</PrimaryButton>
+                    </td>
+                    <td>{res.reAssignedTo}</td> */}
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+  }
+  {
+    (this.state.loadPeoplePicker === 1) && (this.state.homeButton === 0) &&
+    <div className="ms-Grid">
+      <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-lg12">
+            <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.onBackButtonClick()} ></Icon>
+            </div>
+      </div>
+    <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12">
+      <h2>Please Assign User</h2>
+    <NormalPeoplePicker
+    // eslint-disable-next-line react/jsx-no-bind
+    onResolveSuggestions={this.onFilterChanged}
+    // eslint-disable-next-line react/jsx-no-bind
+    // onEmptyInputFocus={returnMostRecentlyUsed}
+    onChange={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
+    // onChange={()=>''}
+    getTextFromItem={getTextFromItem}
+    pickerSuggestionsProps={suggestionProps}
+    className={`ms-PeoplePicker ${styles.normalPickerInput}`}
+    key={'normal'}
+    // eslint-disable-next-line react/jsx-no-bind
+    onRemoveSuggestion={this.onRemoveSuggestion}
+    onValidateInput={validateInput}
+    selectionAriaLabel={'Selected contacts'}
+    removeButtonAriaLabel={'Remove'}
+    inputProps={{
+      onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
+      onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
+      'aria-label': 'People Picker',
+    }}
+    // componentRef={this.picker}
+    onInputChange={onInputChange}
+    resolveDelay={300}
+    // disabled={isPickerDisabled}
+  /> 
+  </div>
+  </div>  
+  <div className="ms-Grid-row">
+    <div className="ms-Grid-col ms-lg12">
+      <DefaultButton style={{marginTop:'20px'}} onClick={()=>this.onSubmitHandle()}>Submit</DefaultButton>
+    </div>
+  </div>
+  </div>
+  }
+
+  {(this.state.homeButton === 1) &&
+              <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+  }
+
+      {/* <h1>People Picker Test Example</h1>
       <NormalPeoplePicker
         // eslint-disable-next-line react/jsx-no-bind
-        onResolveSuggestions={onFilterChanged}
+        onResolveSuggestions={this.onFilterChanged}
         // eslint-disable-next-line react/jsx-no-bind
-        onEmptyInputFocus={returnMostRecentlyUsed}
+        // onEmptyInputFocus={returnMostRecentlyUsed}
         getTextFromItem={getTextFromItem}
         pickerSuggestionsProps={suggestionProps}
         className={'ms-PeoplePicker'}
         key={'normal'}
         // eslint-disable-next-line react/jsx-no-bind
-        onRemoveSuggestion={onRemoveSuggestion}
+        onRemoveSuggestion={this.onRemoveSuggestion}
         onValidateInput={validateInput}
         selectionAriaLabel={'Selected contacts'}
         removeButtonAriaLabel={'Remove'}
@@ -246,28 +561,30 @@ export const PeoplePickerTestExample: React.FunctionComponent = () => {
           onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
           'aria-label': 'People Picker',
         }}
-        componentRef={picker}
+        // componentRef={this.picker}
         onInputChange={onInputChange}
         resolveDelay={300}
-        disabled={isPickerDisabled}
-      />
-      <Checkbox
+        // disabled={isPickerDisabled}
+      /> */}
+
+      {/* <Checkbox
         label="Disable People Picker"
         checked={isPickerDisabled}
         // eslint-disable-next-line react/jsx-no-bind
         onChange={onDisabledButtonClick}
         styles={checkboxStyles}
-      />
-      <Checkbox
+      /> */}
+      {/* <Checkbox
         label="Delay Suggestion Results"
         defaultChecked={delayResults}
         // eslint-disable-next-line react/jsx-no-bind
         onChange={onToggleDelayResultsChange}
         styles={checkboxStyles}
-      />
+      /> */}
     </div>
   );
-};
+}
+}
 
 function doesTextStartWith(text: string, filterText: string): boolean {
   return text.toLowerCase().indexOf(filterText.toLowerCase()) === 0;

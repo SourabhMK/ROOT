@@ -17,4 +17,5 @@ export interface IDispatcherViewProps {
 
     loggedInUserName: string;
     loggedInUserEmail: string;
+    currentUserId:number;
 }

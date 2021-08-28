@@ -3,7 +3,7 @@
   "solution": {
     "name": "root-client-side-solution",
     "id": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
-    "version": "1.0.0.3",
+    "version": "1.0.2.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
     "skipFeatureDeployment": false,
@@ -26,10 +26,22 @@
           "employeeRequestSchema.xml",
           "EmailSenderschema.xml",
           "RoomsSchema.xml"
-        ]
+        ]   
+        }
+      },
+      {
+        "title": "Application Extension - Deployment of custom action.",
+        "description": "Deploys a custom action with ClientSideComponentId association",
+        "id": "67511329-5b29-47ec-b2a8-abfc669a37c9",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "ClientSideInstance.xml"
+          ]
+        }
       }
-    }],
-       
+    ],
     "developer": {
       "name": "",
       "websiteUrl": "",
