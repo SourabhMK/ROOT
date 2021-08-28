@@ -1,21 +1,17 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.e_a_8474018e {
-  padding: 10px 0!important;
-}
-
-.rooms {
+.peoplePickerTestExample {
   .container {
     max-width: 700px;
     margin: 0px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
-    padding: 10px;
   }
 
   .row {
     @include ms-Grid-row;
     @include ms-fontColor-white;
-    background-color: $ms-color-themeDark;
+    //background-color: $ms-color-themeDark;
+    background-color: $ms-color-themePrimary;
     padding: 20px;
   }
 
@@ -28,12 +24,9 @@
   }
 
   .title {
-    //@include ms-font-xl;
     @include ms-font-l;
     @include ms-fontColor-black;
-    //text-decoration: underline;
-    //border-bottom: 1px solid gray;
-    font-size: 25px;
+    border-bottom: 1px solid gray;
   }
 
   .subTitle {
@@ -41,36 +34,55 @@
     @include ms-fontColor-white;
   }
 
-  // .description {
-  //   @include ms-font-l;
-  //   @include ms-fontColor-white;
-  // }
-
   .description {
-    @include ms-Grid-row;
-    @include ms-fontColor-white;
-    margin: 0 -8px;
-    box-sizing: border-box;
-    zoom: 1;
-    color: rgb(239, 135, 0);    
-    padding: 11px 12px;
-    font-size: 12px;
-    margin: 0!important;
-    border-bottom: 1px solid #cacaca;
-    word-wrap: break-word;
+    @include ms-font-l;
+    @include ms-fontColor-black;
   }
 
-  .roomIcon{
-    padding-right: 7px;
-    font-size: xx-large;
-  }
-  ///////////////////////////////////
-
-  .searchButton{
-    top:"29px";
+  .SetDisplay{
+    display: flex;
+    //margin-bottom: 5px;
   }
 
-  ///////////////////////////////////
+  .dropdownStyle{
+    font-size: large;
+    color: red;
+  }
+
+  .tableSet {
+    border-collapse: collapse;
+    width: 100%;
+   }
+   
+   .tableSet td, .tableSet th {
+    border: 1px solid #ddd;
+    padding: 8px;
+   }
+   .tableSet tr:nth-child(odd){background-color: #e7b510;}
+   .tableSet tr:nth-child(even){background-color: #e7b510;}
+   
+   .tableSet tr:hover {background-color: #af9500;}
+   
+   .tableSet th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #725dbe;
+    color: white;
+   }
+
+   .normalPickerInput{
+     width:50%;
+   }
+
+  .block {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px black solid;
+    text-align: center;
+    color:white;
+    background-color: gray;
+  }
 
   .button {
     // Our button
@@ -79,8 +91,7 @@
 
     // Primary Button
     min-width: 80px;
-    //background-color: $ms-color-themePrimary;
-    background-color: orangered;
+    background-color: $ms-color-themePrimary;
     border-color: $ms-color-themePrimary;
     color: $ms-color-white;
 
@@ -105,18 +116,10 @@
       margin: 0 4px;
       vertical-align: top;
       display: inline-block;
+      color: white;
     }
   }
 }
-
-.mt10{
-  margin-top: 10px;
-}
-
-.SetLabelWeight{
-  font-weight: 600!important;
-}
-
-.selected{
-  border:3px 3px solid rgb(239, 135, 0);
+.raisebtn .ms-Button-textContainer{
+  text-align: center!important;
 }

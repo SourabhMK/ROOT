@@ -2,6 +2,8 @@ import { SPHttpClient } from "@microsoft/sp-http";
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
 
 export interface IPeopleProps {
+    description: string;
+    groupType:number;
     deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**

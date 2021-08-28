@@ -384,7 +384,8 @@ GetIssueArchiveSettings():void{
      'Status':'Pending',
      'AssignedTo': selectedDispatcherName,
      'ArchivedTimeSpan': departmentFAQ_ArchiveTimeSpan,
-     'DepartmentManagerId': selectedDeptManager
+     'DepartmentManagerId': selectedDeptManager,
+     'DepartmentGroup':selectedDeptGroup,
   });
 
   this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items`, SPHttpClient.configurations.v1, 
@@ -692,7 +693,7 @@ GetIssueArchiveSettings():void{
             // <DispatcherView groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
             // <PeoplePicker currentUserId={this.props.currentUserId} deptBelongingNames={[]} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  />
             //  <PeoplePickerTestExample />
-            <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
+            <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} groupType={this.props.groupType} description={this.props.description} />
           }
       </div>
     );

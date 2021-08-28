@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styles from './PeoplePickerTestExample.module.scss';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
 import { IBasePickerSuggestionsProps, IPeoplePickerProps, NormalPeoplePicker, ValidationState } from '@fluentui/react/lib/Pickers';
@@ -110,7 +111,7 @@ export var mru:(IPersonaProps)[]=[];
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
 
-var deptDetails : IDispacherList[] = Array();
+//var deptDetails : IDispacherList[] = Array();
 
 
 // export const PeoplePickerTestExample: React.FunctionComponent = (props) => {
@@ -123,8 +124,13 @@ var deptDetails : IDispacherList[] = Array();
     mostRecentlyUsed:[],
     peopleList:[],
     loadPeoplePicker:0,
+    newPeoplePickerUser:'',
     loading:false,
-    errorMessage:''
+    errorMessage:'',
+    deptDetails:[],
+    indexSelect:0,
+    homeButton:0,
+    idSelect:0
    }
   }
 
@@ -202,7 +208,7 @@ var deptDetails : IDispacherList[] = Array();
     // suppress metadata to minimize the amount of data loaded from SharePoint
     headers.append("accept", "application/json;odata.metadata=none");
     this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*`,
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title&$expand=Author &$orderby=ID desc`,
       SPHttpClient.configurations.v1, {
         headers: headers
       })
@@ -227,14 +233,41 @@ var deptDetails : IDispacherList[] = Array();
           });
           return;
         }
+        let createdDateFormat = new Date('').toLocaleDateString();
 
-        deptDetails = res.value.map((r,index)=>{
-          return{
-            dispatcherDeptName: r.AssignedTo,
-          }
+        // deptDetails = res.value.map((r,index)=>{
+        //   return{
+        //     supportDeptName:r.DepartmentGroup,
+        //     raisedBy:r.AuthorId,
+        //     issueDate:r.Created,
+        //     description:r.Description,
+        //     category:r.Category,
+        //     department:r.Department,
+        //     status:r.Status,
+        //     dispatcherDeptName:r.AssignedTo,
+        //     reAssignedTo:r.ReAssignTo
+        //   }
+        // })
+        this.setState({
+          deptDetails:res.value.map((r,index)=>{
+            return{
+              ticketNumber:`Inc_${r.Department}_000${r.ID}`,
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.Author.Title,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo,
+              dataId:r.ID
+            }
+          }) 
         })
+        console.log("deptDetail = " + this.state.deptDetails[0].supportDeptName);
   
-    if(deptDetails.length>0){
+    if(this.state.deptDetails.length>0){
     this.setState({
       loading:false,
     })   
@@ -258,13 +291,18 @@ var deptDetails : IDispacherList[] = Array();
   });
    }
 
-   private loadNewGrpName(val){
+   private loadNewGrpName(val,indexId){
      grpName = val;
      console.log("grpName = " +  val);
+     console.log("index = " +  indexId);
      this.setState({
-       loadPeoplePicker: 1
+       loadPeoplePicker: 1,
+       idSelect:indexId
+
+      //  homeButton:1
      })
      this.loadDepartmentOptions();
+    console.log("object = " + this.state.deptDetails[indexId].reAssignedTo);
    }
 
  private testPart():void{
@@ -281,9 +319,55 @@ var deptDetails : IDispacherList[] = Array();
 
   onBackButtonClick(){
       this.setState({
-        loadPeoplePicker:0
+        loadPeoplePicker:0,
+        homeButton:0
       })  
   }
+
+  async onChangePeoplePickerHandle(newPeoplePickerUser:any,idRequest:number){
+   await this.setState({
+      newPeoplePickerUser: newPeoplePickerUser[0].text,
+      //loadPeoplePicker:0
+        },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
+  }
+
+  addReAssignedToData(newReAssignedToUser:any,idRequest:number){
+      console.log("newReAssignedToUser = " + newReAssignedToUser + idRequest);
+      console.log("newReAssignedToUser = " + newReAssignedToUser);
+
+    const spOpts: string = JSON.stringify({
+      'ReAssignTo': newReAssignedToUser
+    })
+
+    this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items('${idRequest}')`, SPHttpClient.configurations.v1, 
+    {
+      body:spOpts
+    })
+        .then((response: SPHttpClientResponse) => {
+          // Access properties of the response object. 
+          console.log(`Status code: ${response.status}`);
+          console.log(`Status text: ${response.statusText}`);
+  
+          //response.json() returns a promise so you get access to the json in the resolve callback.
+          response.json().then((responseJSON: JSON) => {
+            console.log(responseJSON);
+            // this.myIssue();
+          });
+        });
+  }
+
+  onSubmitHandle(){
+    this.setState({
+      loadPeoplePicker:0
+    })
+  }
+
+  homeButtonClick(){
+    this.setState({
+      homeButton:1,
+    })
+  }
+
 //   picker = React.useRef(null);
 
    onFilterChanged = (
@@ -352,85 +436,81 @@ var deptDetails : IDispacherList[] = Array();
   // };
   public render(): React.ReactElement<IPeopleProps> {
   return (
-    <div>
+    <div className={styles.peoplePickerTestExample}>
     {/* <iframe 
     src="https://gns11.sharepoint.com/sites/SiriusTeams/Lists/EmployeeRequest/AllItems.aspx"
     width="100%"
     height="100%"
       /> */}
-{ (this.state.loadPeoplePicker === 0) &&
-      <table className="table table-border">
+      {(this.state.homeButton === 0) && (this.state.loadPeoplePicker === 0) &&
+      <div className="ms-Grid">
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg12">
+             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+          </div>
+        </div>
+        <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12">
+      <table className={styles.tableSet} >
           <thead>
             <tr>
-              <th>Index</th>
+              <th>Ticket Number</th>
+              <th>Raised By</th>
+              <th>Issue Date</th>
+              {/* <th>Description</th>
+              <th>Category</th>
+              <th>Department</th>
+              <th>Status</th>
               <th>Dispatcher Group</th>
               <th>Assigned To</th>
+              <th>ReAssigned To</th> */}
+              {/* <th>Update</th> */}
             </tr>
           </thead>
           <tbody>
             {
-              deptDetails.map((res,index)=>{
+             this.state.deptDetails.map((res,index)=>{
+             var issuedDate = new Date(res.issueDate).toLocaleDateString();
                 return(
-                  <tr key={index}>
-                    <td>{index+1}</td>
-                    <td>{res.dispatcherDeptName}</td>
-                    <td>
-                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.dispatcherDeptName)} >AssignTo</PrimaryButton>
-                      {/* <button>AssignTo</button> */}
-                      {/* <NormalPeoplePicker
-                               // onFocus={()=>this.loadNewGrpName(res.dispatcherDeptName)}
-                            //  onChange={this.loadNewGrpName}
-                          // eslint-disable-next-line react/jsx-no-bind
-                             onResolveSuggestions={this.onFilterChanged}
-                         // eslint-disable-next-line react/jsx-no-bind
-                          // onEmptyInputFocus={returnMostRecentlyUsed}
-                            getTextFromItem={getTextFromItem}
-                            pickerSuggestionsProps={suggestionProps}
-                            className={'ms-PeoplePicker'}
-                            key={'normal'}
-                          // eslint-disable-next-line react/jsx-no-bind
-                           onRemoveSuggestion={this.onRemoveSuggestion}
-                           onValidateInput={validateInput}
-                           selectionAriaLabel={'Selected contacts'}
-                           removeButtonAriaLabel={'Remove'}
-                          inputProps={{
-                           onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-                           onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
-                            'aria-label': 'People Picker',
-                           }}
-                         // componentRef={this.picker}
-                          onInputChange={onInputChange}
-                           resolveDelay={300}
-                          // disabled={isPickerDisabled}
-                          
-                        /> */}
+                  <tr onClick={()=>this.loadNewGrpName(res.supportDeptName,res.dataId)} key={index}>
+                    <td>{res.ticketNumber}</td>
+                    <td>{res.raisedBy}</td>
+                    <td>{issuedDate}</td>
+                    {/* <td>
+                      <PrimaryButton onClick={()=>this.loadNewGrpName(res.supportDeptName,index)} >AssignTo</PrimaryButton>
                     </td>
+                    <td>{res.reAssignedTo}</td> */}
                   </tr>
                 )
               })
             }
           </tbody>
       </table>
+      </div>
+    </div>
+  </div>
   }
-
   {
-    (this.state.loadPeoplePicker === 1) &&
+    (this.state.loadPeoplePicker === 1) && (this.state.homeButton === 0) &&
     <div className="ms-Grid">
       <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-lg12">
             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.onBackButtonClick()} ></Icon>
             </div>
       </div>
-    <div className="ms-Grid-row">  
-      <h2>Please add user!!</h2>
+    <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12">
+      <h2>Please Assign User</h2>
     <NormalPeoplePicker
     // eslint-disable-next-line react/jsx-no-bind
     onResolveSuggestions={this.onFilterChanged}
     // eslint-disable-next-line react/jsx-no-bind
     // onEmptyInputFocus={returnMostRecentlyUsed}
+    onChange={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
+    // onChange={()=>''}
     getTextFromItem={getTextFromItem}
     pickerSuggestionsProps={suggestionProps}
-    className={'ms-PeoplePicker'}
+    className={`ms-PeoplePicker ${styles.normalPickerInput}`}
     key={'normal'}
     // eslint-disable-next-line react/jsx-no-bind
     onRemoveSuggestion={this.onRemoveSuggestion}
@@ -447,8 +527,18 @@ var deptDetails : IDispacherList[] = Array();
     resolveDelay={300}
     // disabled={isPickerDisabled}
   /> 
-  </div>  
   </div>
+  </div>  
+  <div className="ms-Grid-row">
+    <div className="ms-Grid-col ms-lg12">
+      <DefaultButton style={{marginTop:'20px'}} onClick={()=>this.onSubmitHandle()}>Submit</DefaultButton>
+    </div>
+  </div>
+  </div>
+  }
+
+  {(this.state.homeButton === 1) &&
+              <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
   }
 
       {/* <h1>People Picker Test Example</h1>
