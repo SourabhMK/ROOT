@@ -15,7 +15,8 @@
       "assets": {
         "elementManifests": [
           "DepartmentalRequestElements.xml",
-          "BirthdayElements.xml"
+          "BirthdayElements.xml",
+          "RoomsElement.xml"
         ],
         "elementFiles":[
           "schema.xml",
@@ -23,7 +24,8 @@
           "departmentalCategorySchema.xml",
           "IssueArchiveSettingsSchema.xml",
           "employeeRequestSchema.xml",
-          "EmailSenderschema.xml"
+          "EmailSenderschema.xml",
+          "RoomsSchema.xml"
         ]
       }
     }],

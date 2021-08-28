@@ -10,12 +10,17 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'AssetReservationWebPartStrings';
 import AssetReservation from './components/AssetReservation';
 import { IAssetReservationProps } from './components/IAssetReservationProps';
+import { SPHttpClient } from '@pnp/sp';
+
 
 export interface IAssetReservationWebPartProps {
   description: string,
   context:any,
+  siteurl: string,
+  spHttpClient: SPHttpClient,
 }
 
+debugger;
 export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
 
   public render(): void {
@@ -23,7 +28,9 @@ export default class AssetReservationWebPart extends BaseClientSideWebPart<IAsse
       AssetReservation,
       {
         description: this.properties.description,
-        context:this.properties.context
+        context:this.properties.context,
+        siteurl: this.context.pageContext.web.absoluteUrl,
+        spHttpClient: this.context.spHttpClient,
       }
     );
 

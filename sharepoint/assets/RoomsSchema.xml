@@ -1,0 +1,36 @@
+<List xmlns:ows="Microsoft SharePoint" Title="Rooms" EnableContentTypes="FALSE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Rooms" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>
+    <!-- <ContentTypes>
+      <ContentTypeRef ID="0x010042D0C1C200A14B6887742B6344675C8B" />
+    </ContentTypes> -->
+    <Fields>  
+         <Field ID="{99dce1bc-3d88-49be-b975-7c75dc80703d}" Type="Text" Name="Title" DisplayName="Title" Required="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" FromBaseType="TRUE" ColName="nvarchar5" RowOrdinal="0" />       
+         <Field ID="{4eba15dc-96e6-4bad-9dd0-d800dc40e6b2}" Type="Note" DisplayName="Description" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" NumLines="3" RichText="FALSE" Sortable="FALSE"  SourceID="{$ListId:Lists/Rooms;}" StaticName="Description" Name="Description" ColName="ntext2" RowOrdinal="0" />
+         <Field ID="{a5505eeb-90b9-45cb-9f32-284b78dc95b1}" Type="URL" DisplayName="Photo" Required="FALSE" EnforceUniqueValues="FALSE" Indexed="FALSE" Format="Image"  SourceID="{$ListId:Lists/Rooms;}" StaticName="Photo" Name="Photo" ColName="nvarchar3" RowOrdinal="0" ColName2="nvarchar4" RowOrdinal2="0" CustomFormatter="" />               
+    </Fields>
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+					<FieldRef Name="LinkTitle" />
+					<FieldRef Name="Description" />
+					<FieldRef Name="Photo" />
+					<FieldRef Name="ID" />
+		</ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

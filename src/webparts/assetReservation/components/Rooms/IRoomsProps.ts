@@ -4,6 +4,8 @@ import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 export interface IRoomsProps {
     description: string; 
     context:any;
+    siteurl: string;
+    spHttpClient: SPHttpClient;
     //roomsOptionsName: IDropdownOption[];
 }
 

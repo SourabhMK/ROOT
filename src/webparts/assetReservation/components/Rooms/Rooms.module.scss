@@ -41,9 +41,28 @@
     @include ms-fontColor-white;
   }
 
+  // .description {
+  //   @include ms-font-l;
+  //   @include ms-fontColor-white;
+  // }
+
   .description {
-    @include ms-font-l;
+    @include ms-Grid-row;
     @include ms-fontColor-white;
+    margin: 0 -8px;
+    box-sizing: border-box;
+    zoom: 1;
+    color: rgb(239, 135, 0);    
+    padding: 11px 12px;
+    font-size: 12px;
+    margin: 0!important;
+    border-bottom: 1px solid #cacaca;
+    word-wrap: break-word;
+  }
+
+  .roomIcon{
+    padding-right: 7px;
+    font-size: xx-large;
   }
   ///////////////////////////////////
 
@@ -88,4 +107,16 @@
       display: inline-block;
     }
   }
+}
+
+.mt10{
+  margin-top: 10px;
+}
+
+.SetLabelWeight{
+  font-weight: 600!important;
+}
+
+.selected{
+  border:3px 3px solid rgb(239, 135, 0);
 }
