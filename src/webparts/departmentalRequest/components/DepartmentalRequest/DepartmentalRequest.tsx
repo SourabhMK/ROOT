@@ -693,7 +693,7 @@ GetIssueArchiveSettings():void{
             // <DispatcherView groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
             // <PeoplePicker currentUserId={this.props.currentUserId} deptBelongingNames={[]} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  />
             //  <PeoplePickerTestExample />
-            <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} />
+            <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} groupType={this.props.groupType} description={this.props.description} />
           }
       </div>
     );

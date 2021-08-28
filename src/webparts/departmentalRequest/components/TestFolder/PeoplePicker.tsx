@@ -38,7 +38,10 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
             peopleList:[],
             loadPeoplePicker:0,
             newPeoplePickerUser:'',
-            deptDetails:[]
+            deptDetails:[],
+            indexSelect:0,
+            homeButton:0,
+            idSelect:0
         };
       }
       

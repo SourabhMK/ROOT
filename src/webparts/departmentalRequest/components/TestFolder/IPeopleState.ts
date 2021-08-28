@@ -11,4 +11,7 @@ export interface IPeopleState {
     loadPeoplePicker:number;
     newPeoplePickerUser:string;
     deptDetails:IDispacherList[];
+    indexSelect:number;
+    homeButton:number;
+    idSelect:number;
 }

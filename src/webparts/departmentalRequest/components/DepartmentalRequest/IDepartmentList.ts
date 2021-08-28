@@ -6,6 +6,7 @@ export interface IDepartmentList {
 }
 
 export interface  IDispacherList {
+    ticketNumber:string;
     dispatcherDeptName:string;
     supportDeptName:string;
     raisedBy:string;
@@ -15,4 +16,5 @@ export interface  IDispacherList {
     department:string;
     status:string;
     reAssignedTo:string;
+    dataId:number;
 }
