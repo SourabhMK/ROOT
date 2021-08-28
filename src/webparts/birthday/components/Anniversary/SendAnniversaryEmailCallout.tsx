@@ -40,7 +40,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Anniversary'`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,FileLeafRef,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Anniversary'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -50,7 +50,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
           Images = [];          
           for(let i=0; i<jsonresult.value.length; ++i)
           {
-            Images.push(jsonresult.value[i].Title);
+            Images.push(jsonresult.value[i].FileLeafRef);
           }
           this.setState({
             images: Images
@@ -78,7 +78,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     return (
       <div className={(styles.calloutCard,styles.emailMainContent)}>
         <h3 className={styles.SendEmailh3}>
-          Send Message to {this.props.person.firstName}
+          Send Message to {this.props.person.FirstName}
         </h3>        
           <div className={styles.mt10}>
             <TextField label="Personal Message" className={styles.emailTextarea}multiline rows={3} onChange={e => this.handleChange(e.currentTarget.value)}/>
@@ -110,11 +110,6 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     );    
   }
 
-  private CancelClicked ()
-  {
-   
-  }
-
   SaveDataClicked = async(message, image) =>
   {
     let userEmail = this.props.loggedInUserEmail;
@@ -139,7 +134,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
       EmailSubject: "Happy Work Anniversary",
       EmailBody: message,
       EmailFrom: userEmail,
-      EmailTo: this.props.person.email,
+      EmailTo: this.props.person.Email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });
 

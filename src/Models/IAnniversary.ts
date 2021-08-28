@@ -1,8 +1,10 @@
 export interface IAnniversary{
-    name: string;
-    firstName: string;
-    lastName: string;   
-    email: string;
+    Name: string;
+    FirstName: string;
+    LastName: string;   
+    Email: string;
     photoUrl: string;
-    hiredate: any;    
+    Hiredate: any;    
+    //Department: string;
+    //Team: string;
   }

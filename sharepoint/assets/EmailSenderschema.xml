@@ -77,7 +77,8 @@
             ShowInDisplayForm="TRUE" 
             ShowInEditForm="TRUE" 
             ShowInNewForm="TRUE"            
-            Required="FALSE" />
+            Required="FALSE"
+            Format="Image" />
 
     </Fields>
 

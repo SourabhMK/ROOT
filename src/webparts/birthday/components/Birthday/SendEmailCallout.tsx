@@ -46,7 +46,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`https://gns11.sharepoint.com/sites/SiriusTeams/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
+        .get(`https://gns11.sharepoint.com/sites/SiriusTeams/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,FileLeafRef,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
         //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Birthday'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
@@ -57,7 +57,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
           Images = [];         
           for(let i=0; i<jsonresult.value.length; ++i)
           {
-            Images.push(jsonresult.value[i].Title);
+            Images.push(jsonresult.value[i].FileLeafRef);
           }
           this.setState({
             images: Images
@@ -85,7 +85,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
     return (
       <div className={(styles.calloutCard,styles.emailMainContent)}>
         <h3 className={styles.SendEmailh3}>
-          Send Message to {this.props.person.firstName}
+          Send Message to {this.props.person.FirstName}
         </h3>        
           <div className={styles.mt10}>
             <TextField label="Personal Message" className={styles.emailTextarea}multiline rows={3} onChange={e => this.handleChange(e.currentTarget.value)}/>
@@ -142,7 +142,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
       EmailSubject: "Happy Birthday",
       EmailBody: message,
       EmailFrom: userEmail,
-      EmailTo: this.props.person.email,
+      EmailTo: this.props.person.Email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });
 

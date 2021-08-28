@@ -1,8 +1,10 @@
 export interface IBirthday{
-    name: string;
-    firstName: string;
-    lastName: string;   
-    email: string;
+    Name: string;
+    FirstName: string;
+    LastName: string;   
+    Email: string;
     photoUrl: string;
-    birthdate: any; 
+    Birthdate: any; 
+    //Department: string;
+    //Team: string;
   }

@@ -13,6 +13,7 @@ import BirthdayUser from './Birthday/BirthdayUser';
 import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
+import { Props } from '../../departmentalRequest/components/TestFolder/PeoplePicker';
 
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
@@ -41,22 +42,53 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   }
 
   componentDidMount()
-  { 
-     if(this.props.dropdown === "Azure")    
-      this.LoadBirthdayDetails();
-    else
-      this.LoadInternalBirthdayDetails();  
-      /* switch(this.props.dropdown) 
-      {
-        case 'Azure' :
-          this.LoadBirthdayDetails();
-        case 'Internal' :
+  {        
+    this.CheckBirthdayDataSource();         
+  }
+
+  componentDidUpdate(prevProps: IBirthdayProps) : void
+  {
+    //check if properties has been changed
+    if(this.props.dropdown !== prevProps.dropdown)
+    {
+      if(this.state.count === 1)
+        this.CheckBirthdayDataSource();
+      else if(this.state.count === 2)
+        this.CheckAnniversaryDataSource();
+      else
+        this.CheckBirthdayDataSource();
+    }
+  }
+
+  private CheckAnniversaryDataSource()
+  {
+    switch(this.props.dropdown) 
+    {
+      case 'Azure' :
+          this.LoadAnniversaryDetails();       
+      case 'Internal' :
+          this.LoadInternalAnniversaryDetails();
+      case 'External' :
+        console.log("External");
+      case 'API' :
+        console.log("API");
+    }
+  }
+
+  private CheckBirthdayDataSource()
+  {
+    //check the value of dropdown from propert pane and call the method accordingly to fetch the user data.
+    switch(this.props.dropdown) 
+    {
+      case 'Azure' :
+          this.LoadBirthdayDetails();       
+      case 'Internal' :
           this.LoadInternalBirthdayDetails();
-        case 'External' :
-          console.log("External");
-        case 'API' :
-          console.log("API");
-      } */
+      case 'External' :
+        console.log("External");
+      case 'API' :
+        console.log("API");
+    }
   }
 
   private CountStartAndEndDates (): void {
@@ -93,7 +125,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private LoadInternalBirthdayDetails()
   {
     this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestingList')/items`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -103,6 +135,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           let people:IBirthday[] = jsonresult.value; 
           if(people.length > 0)
           {
+            people = this.getPhotoURL(people);
             this.setState({
               loading:false,
               BUsers : people,
@@ -122,6 +155,51 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         });
       });
   }
+
+  private LoadInternalAnniversaryDetails()
+  {
+    this.props.spHttpClient
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((result: SPHttpClientResponse) => {          
+          return result.json();
+        })
+        .then((jsonresult): void => {
+          let people:IAnniversary[] = jsonresult.value; 
+          if(people.length > 0)
+          {
+            people = this.getPhotoURL(people);
+            this.setState({
+              loading:false,
+              AUsers : people,
+            })
+          }
+       
+        }, (error: any): void => {      
+          this.setState({
+            loading: false,
+            errorMessage: error
+          });
+      })
+      .catch((error: any): void => {    
+        this.setState({
+          loading: false,
+          errorMessage: error
+        });
+      });
+  }
+
+  private getPhotoURL(people)
+  {
+    for(let i: number = 0;i<people.length; ++i)
+    {
+      let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));
+      let imageURL: string = `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + people[i].Email}`;
+      people[i].photoUrl = imageURL;
+    }
+    return people;
+  }
    
   LoadBirthdayDetails = async () => {
 
@@ -132,10 +210,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage:null,       
       }) 
 
-      /* const headers: HeadersInit = new Headers();
-      // suppress metadata to minimize the amount of data loaded from SharePoint
-      headers.append("accept", "application/json;odata.metadata=none"); */
-    
       this.props.spHttpClient
         .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate00'&refinementfilters='RefinableDate00:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
           headers: headers
@@ -145,9 +219,9 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         })
         .then((res: IBirthdayResults): void => {
           if (res.error) {
-          //   // There was an error loading information about people.
-          //   // Notify the user that loading data is finished and return the
-          //   // error message that occurred
+            // There was an error loading information about people.
+            // Notify the user that loading data is finished and return the
+            // error message that occurred
             this.setState({
               loading: false,
               errorMessage: res.error.message,
@@ -166,12 +240,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         
           let people: IBirthday[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
-            name: this._getValueFromSearchResult('PreferredName', r.Cells),
-            firstName: this._getValueFromSearchResult('FirstName', r.Cells),
-            lastName: this._getValueFromSearchResult('LastName', r.Cells),     
-            email: this._getValueFromSearchResult('WorkEmail', r.Cells),
+            Name: this._getValueFromSearchResult('PreferredName', r.Cells),
+            FirstName: this._getValueFromSearchResult('FirstName', r.Cells),
+            LastName: this._getValueFromSearchResult('LastName', r.Cells),     
+            Email: this._getValueFromSearchResult('WorkEmail', r.Cells),
             photoUrl: `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,
-            birthdate:  this._getValueFromSearchResult('RefinableDate00', r.Cells)
+            Birthdate:  this._getValueFromSearchResult('RefinableDate00', r.Cells)
           };
       });
       
@@ -182,17 +256,13 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             BUsers : people,
           })
         }
-      }, (error: any): void => {
-      // An error has occurred while loading the data. Notify the user
-      // that loading data is finished and return the error message.
+      }, (error: any): void => {      
       this.setState({
         loading: false,
         errorMessage: error
       });
     })
     .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
       this.setState({
         loading: false,
         errorMessage: error
@@ -203,11 +273,11 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private SortBirthday(BirthUsers: IBirthday[])
   {
     return BirthUsers.sort((a, b) => {
-      if(a.birthdate > b.birthdate)
+      if(a.Birthdate > b.Birthdate)
       {
         return 1;
       }
-      if(a.birthdate < b.birthdate)
+      if(a.Birthdate < b.Birthdate)
       {
         return -1;
       }
@@ -218,11 +288,11 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private SortAnniversary(AnniUsers: IAnniversary[])
   {
     return AnniUsers.sort((a, b) => {
-      if(a.hiredate > b.hiredate)
+      if(a.Hiredate > b.Hiredate)
       {
         return 1;
       }
-      if(a.hiredate < b.hiredate)
+      if(a.Hiredate < b.Hiredate)
       {
         return -1;
       }
@@ -238,7 +308,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       colorBirthday:"white",
       colorAnniversary:"black",    
     })
-    this.LoadBirthdayDetails();
+    this.CheckBirthdayDataSource();
   }
 
   AnniversaryClicked = () =>{
@@ -249,7 +319,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       colorBirthday:"black",
       colorAnniversary:"white",    
     })
-    this.LoadAnniversaryDetails();
+    this.CheckAnniversaryDataSource();
   }
   
   private _getValueFromSearchResult(key: string, cells: ICell[]): string {
@@ -288,7 +358,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             return;
           }
           if (res.PrimaryQueryResult.RelevantResults.TotalRows == 0) {
-            // No results were found. Notify the user that loading data is finished
             this.setState({
               loading: false
             });
@@ -299,12 +368,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         
           let people: IAnniversary[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
-            name: this._getValueFromSearchResult('PreferredName', r.Cells),
-            firstName: this._getValueFromSearchResult('FirstName', r.Cells),
-            lastName: this._getValueFromSearchResult('LastName', r.Cells),     
-            email: this._getValueFromSearchResult('WorkEmail', r.Cells),
+            Name: this._getValueFromSearchResult('PreferredName', r.Cells),
+            FirstName: this._getValueFromSearchResult('FirstName', r.Cells),
+            LastName: this._getValueFromSearchResult('LastName', r.Cells),     
+            Email: this._getValueFromSearchResult('WorkEmail', r.Cells),
             photoUrl: `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,            
-            hiredate: this._getValueFromSearchResult('RefinableDate01', r.Cells)
+            Hiredate: this._getValueFromSearchResult('RefinableDate01', r.Cells)
           };
         });
     
@@ -314,12 +383,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           let currentMonthPeople: IAnniversary[] = [];
           for(let i=0; i<people.length;++i)
           {    
-            hday = new Date(people[i].hiredate).getDate();       
-            hmonth = new Date(people[i].hiredate).getMonth() + 1;
+            hday = new Date(people[i].Hiredate).getDate();       
+            hmonth = new Date(people[i].Hiredate).getMonth() + 1;
             if(hmonth == currentMonth)
             {
               hireDate = hmonth < 10 ? hday < 10 ? '2000-0' + hmonth + '-0' + hday : '2000-0' + hmonth + '-' + hday : hday < 10 ? '2000-' + hmonth + '-0' + hday : '2000' + hmonth + '-' + hday;
-              people[i].hiredate = hireDate;               
+              people[i].Hiredate = hireDate;               
               currentMonthPeople.push(people[i]);
             }            
           }         
@@ -360,12 +429,10 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
                                                       
             <div><DefaultButton className={styles.birthTabBtn} style={{backgroundColor:this.state.bgColorAnniversary, color:this.state.colorAnniversary}} onClick={this.AnniversaryClicked}><h3>Anniversary</h3></DefaultButton></div>              
           </div>
-          {/* <div className = { styles.persona_card}>This Month</div> */}
           {  
             ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> : 
             (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> )
           }           
-                      
         </div>        
       </div>
     )    
