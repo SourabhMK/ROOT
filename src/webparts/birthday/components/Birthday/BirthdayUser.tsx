@@ -19,7 +19,7 @@ initializeIcons();
 const MyMailIcon = () => <Icon iconName="Mail" />;
 const MyGiftIcon = () => <Icon iconName="GiftBox" />;
 
-
+debugger;
   export default class BirthdayUser extends React.Component<IBirthdayUserListProps, IBirthdayUserListState> {
 
   constructor(props: IBirthdayUserListProps, state: IBirthdayUserListState) {  
@@ -48,20 +48,20 @@ const MyGiftIcon = () => <Icon iconName="GiftBox" />;
         
         {this.props.people.map((p, i) => {
             let finalbirthdate;
-            if(p.birthdate === "")
+            if(p.Birthdate === "" || p.Birthdate === undefined)
             {
-              finalbirthdate = p.birthdate;
+              finalbirthdate = p.Birthdate;
             }
             else
             {
-              let birthdate = new Date(p.birthdate);
+              let birthdate = new Date(p.Birthdate);
               finalbirthdate = new Intl.DateTimeFormat('en-US', {day: '2-digit',month: 'long'}).format(birthdate); 
             }   
             
             return(  
               
                 <div className = {styles.persona_card}> 
-                  <Persona primaryText={`${p.name}`} secondaryText={finalbirthdate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
+                  <Persona primaryText={`${p.Name}`} secondaryText={finalbirthdate} tertiaryText={p.Email} imageUrl={p.photoUrl} imageAlt={p.Name} size={PersonaSize.size72} />
                   
                   {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
                     <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>

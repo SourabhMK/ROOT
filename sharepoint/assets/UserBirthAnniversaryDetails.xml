@@ -50,7 +50,7 @@
             RowOrdinal="0" />
 
         <Field ID="{a4160129-bf26-46bf-83af-b4be0807862c}"
-            Type="Date" 
+            Type="DateTime" 
             DisplayName="BirthDate" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
@@ -59,19 +59,21 @@
             StaticName="BirthDate" 
             Name="BirthDate" 
             ColName="nvarchar9" 
-            RowOrdinal="0" />
+            RowOrdinal="0"
+            Format="DateOnly" />
 
         <Field ID="{da2bf9d8-edac-4749-b6ea-3ed783d0c9dc}"
             Name="HireDate"
             DisplayName="HireDate"
-            Type="Date"
+            Type="DateTime"
             StaticName="HireDate"
             ColName="nvarchar5" 
             RowOrdinal="0"              
             EnforceUniqueValues="FALSE"
             Indexed="FALSE" 
             MaxLength="255"
-            Required="FALSE" />
+            Required="TRUE"
+            Format="DateOnly" />
 
         <Field ID="{c5ab0f34-dd2d-40c3-986e-00a1afb26341}"
             Name="Department"

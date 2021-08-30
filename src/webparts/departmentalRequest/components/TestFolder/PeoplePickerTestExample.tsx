@@ -59,17 +59,6 @@ export interface IExampleExtendedPersonaProps {
     busy = 6,
   }  
 
-// export var people1:(IPersonaProps)[]=[
-//   {
-//     text:'Dipal Bhavsar'
-//   },
-//   {
-//     text:'Vrushali'
-//   }
-
-// ]
-
-
 export const people: (IPersonaProps)[] = [
     {
     key: 1,
@@ -251,7 +240,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
         this.setState({
           deptDetails:res.value.map((r,index)=>{
             return{
-              ticketNumber:`Inc_${r.Department}_000${r.ID}`,
+              ticketNumber:`INC_${r.Department}_000${r.ID}`,
               supportDeptName:r.DepartmentGroup,
               raisedBy:r.Author.Title,
               issueDate:r.Created,
@@ -324,9 +313,9 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       })  
   }
 
-  async onChangePeoplePickerHandle(newPeoplePickerUser:any,idRequest:number){
+  async onChangePeoplePickerHandle(newPeoplePicker:any,idRequest:number){
    await this.setState({
-      newPeoplePickerUser: newPeoplePickerUser[0].text,
+      newPeoplePickerUser: newPeoplePicker[0].text
       //loadPeoplePicker:0
         },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
   }
@@ -335,26 +324,181 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       console.log("newReAssignedToUser = " + newReAssignedToUser + idRequest);
       console.log("newReAssignedToUser = " + newReAssignedToUser);
 
-    const spOpts: string = JSON.stringify({
-      'ReAssignTo': newReAssignedToUser
-    })
+      const headers: HeadersInit = new Headers();
+      // suppress metadata to minimize the amount of data loaded from SharePoint
+      headers.append("accept", "application/json;odata.metadata=none");
+      this.props.spHttpClient
+        .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items('${idRequest}')?$select=*,ReAssignTo/Id&$expand=ReAssignTo`,
+        SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((res: SPHttpClientResponse): Promise<any> => {
+          return res.json();
+        })
+        .then((res: any): void => {
+          if (res.error) {
+             this.setState({
+               loading: false,
+               errorMessage: res.error.message,
+                });
+            return;
+          }
+          if (res.value == 0) {
+            // No results were found. Notify the user that loading data is finished
+            this.setState({
+              loading: false
+            });
+            return;
+          }
 
-    this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items('${idRequest}')`, SPHttpClient.configurations.v1, 
-    {
-      body:spOpts
+          ///////////////////////////////////////////////////////////
+          
+            // this.loadIdFromUserName(newReAssignedToUser);
+
+          ////////////////////////////////////////////////////////////
+          var metaTest ={
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            'ReAssignToId': 9
+          }
+          const spOpts: string = JSON.stringify({
+            // metaTest
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            'ReAssignToId': 9
+                // 'Comment': 'Comment is working'
+                // OnOffBoardTask:1
+          })
+      
+          this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items(${res.Id})`, SPHttpClient.configurations.v1, 
+          {
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            headers: {  
+              'Accept': 'application/json',  
+              'Content-type': 'application/json',  
+              // 'odata-version': '3.0',  
+              'IF-MATCH': '*',  
+              'X-HTTP-Method': 'MERGE',
+              // "X-RequestDigest": $("#__REQUESTDIGEST").val()
+            },  
+            // body:spOpts
+            body:spOpts
+          })
+              .then((response: SPHttpClientResponse) => {
+                // Access properties of the response object. 
+                console.log(`Status code: ${response.status}`);
+                console.log(`Status text: ${response.statusText}`);
+        
+                //response.json() returns a promise so you get access to the json in the resolve callback.
+                response.json().then((responseJSON: JSON) => {
+                  console.log(responseJSON);
+                  // this.myIssue();
+                });
+              });
+
+
+    }, (error: any): void => {
+      // An error has occurred while loading the data. Notify the user
+      // that loading data is finished and return the error message.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
     })
-        .then((response: SPHttpClientResponse) => {
-          // Access properties of the response object. 
-          console.log(`Status code: ${response.status}`);
-          console.log(`Status text: ${response.statusText}`);
+    .catch((error: any): void => {
+      // An exception has occurred while loading the data. Notify the user
+      // that loading data is finished and return the exception.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+      });
+    
+
+    // const spOpts: string = JSON.stringify({
+    //   'ReAssignToId': '9'
+    //       // 'Comment': 'Comment is working'
+    //       // OnOffBoardTask:1
+    // })
+
+    // this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items('${idRequest}')`, SPHttpClient.configurations.v1, 
+    // {
+    //   body:spOpts
+    // })
+    //     .then((response: SPHttpClientResponse) => {
+    //       // Access properties of the response object. 
+    //       console.log(`Status code: ${response.status}`);
+    //       console.log(`Status text: ${response.statusText}`);
   
-          //response.json() returns a promise so you get access to the json in the resolve callback.
-          response.json().then((responseJSON: JSON) => {
-            console.log(responseJSON);
-            // this.myIssue();
-          });
-        });
+    //       //response.json() returns a promise so you get access to the json in the resolve callback.
+    //       response.json().then((responseJSON: JSON) => {
+    //         console.log(responseJSON);
+    //         // this.myIssue();
+    //       });
+    //     });
   }
+
+
+  loadIdFromUserName(newReAssignedToUser){
+      const headers: HeadersInit = new Headers();
+      // suppress metadata to minimize the amount of data loaded from SharePoint
+      headers.append("accept", "application/json;odata.metadata=none");
+      this.props.spHttpClient
+        .get(`${this.props.webUrl}/_api/web/siteusers?$filter= UserName eq '${newReAssignedToUser}'`,
+        SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((res: SPHttpClientResponse): Promise<any> => {
+          return res.json();
+        })
+        .then((res: any): void => {
+          if (res.error) {
+          //   // There was an error loading information about people.
+          //   // Notify the user that loading data is finished and return the
+          //   // error message that occurred
+             this.setState({
+               loading: false,
+               errorMessage: res.error.message,
+                });
+            return;
+          }
+          if (res.value == 0) {
+            // No results were found. Notify the user that loading data is finished
+            this.setState({
+              loading: false
+            });
+            return;
+          }
+  
+          pickerGroupNames = res.value.map((r,index)=>{
+            return{
+              text:r.Title,
+            }
+          })
+    
+      if(pickerGroupNames.length>0){
+      this.setState({
+        loading:false,
+      })   
+      this.testPart();
+      }
+    }, (error: any): void => {
+      // An error has occurred while loading the data. Notify the user
+      // that loading data is finished and return the error message.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+    })
+    .catch((error: any): void => {
+      // An exception has occurred while loading the data. Notify the user
+      // that loading data is finished and return the exception.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+    });
+     
+  }
+
 
   onSubmitHandle(){
     this.setState({

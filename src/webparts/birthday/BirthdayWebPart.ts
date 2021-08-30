@@ -39,11 +39,14 @@ export interface IBirthdayWebPartProps {
   filePickerResult: IFilePickerResult;
 }
 
+export interface IBirthdayWebPartState
+{
+  dataArray: [];
+}
+
 debugger;
 export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebPartProps> {
 
-  //private sitecollectionsDropDown: PropertyPaneDropdown;  
-  
   public render(): void {
     const element: React.ReactElement<IBirthdayProps> = React.createElement(
       Birthday,
@@ -95,7 +98,6 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       }, 2000);
     });   
   }
-
   
 
   /*private loadItems(): Promise<IDropdownOption[]> {
@@ -191,9 +193,9 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     setTimeout(function(){ downloadLink.parentNode.removeChild(downloadLink); }, 500);
   }
 
-  protected onPropertyPaneFieldChanged()
+  protected UploadCSV()
   {
-    if(this.properties.filePickerResult)
+    if(this.properties.filePickerResult.fileName !== "")
     {
       let file = this.properties.filePickerResult;
       let selectedFile =  file.downloadFileContent()
@@ -204,7 +206,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         if(res)
         {
           const reader = new FileReader();        
-          reader.onload = async (e) => {          
+          reader.onload = async (e) => {           
             const text = reader.result;
             const dataArray = this.csvToArray(text);
             
@@ -228,16 +230,15 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     const rows = str.slice(str.indexOf("\n") + 1).split("\r\n");
     
     const arr = rows.map((row) => {
-
+      if(row.length !== 0){
         const values = row.split(delimiter);    
-        const el = headers.reduce(function (object, header, index) {
+        const el = headers.reduce(function (object, header, index) {          
           object[header] = values[index];
-          return object;
+          return object;                
         }, {});
-
         return el;
+      }        
     });
-
     //return an array
     return arr;
   }
@@ -246,17 +247,26 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
   {
     for(let i:number = 0; i<UserList.length; ++i)
     {
-      const requestlistItem: string = JSON.stringify({
-        Name: UserList[i].Name,
-        LastName: UserList[i].LastName,
-        });
-        this.addListItems(requestlistItem);
+      if(UserList[i] !== undefined)
+      {
+        let birthDate = new Date(UserList[i].BirthDate).toLocaleDateString();
+        //let hireDate = new Date(UserList[i].HireDate).toLocaleDateString();
+        const requestlistItem: string = JSON.stringify({
+          Name: UserList[i].Name,
+          FirstName: UserList[i].FirstName,
+          LastName: UserList[i].LastName,
+          Email: UserList[i].Email,                           
+          Department: UserList[i].Department,
+          Team: UserList[i].Team
+          });
+          this.addListItems(requestlistItem);
+      }  
     }
   }
 
   private addListItems(JsonData: string)
   {
-    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('TestingList')/items`, SPHttpClient.configurations.v1,  
+    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1,  
     {  
       headers: {  
       'Accept': 'application/json;odata=nometadata',  
@@ -293,7 +303,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       uploadControl = PropertyFieldFilePicker('filePicker', {
         context: this.context,
         filePickerResult: this.properties.filePickerResult,
-        onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+        onPropertyChange: this.UploadCSV.bind(this),
         properties: this.properties,
         onSave: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },
         onChanged: (e: IFilePickerResult) => { this.properties.filePickerResult = e; },        
