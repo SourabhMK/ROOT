@@ -15,6 +15,8 @@ export default class AssetReservation extends React.Component<IAssetReservationP
               <p className={ styles.subTitle }>Room Reservation widget helps to add reservation and find available slot for room reservation</p> */}
               <Rooms description={this.props.description}
               context={this.props.context}
+              siteurl={this.props.siteurl}
+              spHttpClient={this.props.spHttpClient}
               //roomsOptionsName={this.props.roomsOptionsName}
               />
             {/* </div>

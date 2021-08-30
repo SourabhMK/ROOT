@@ -18,7 +18,8 @@ import {
 import { Icon } from '@fluentui/react/lib/Icon';
 import { IconButton } from '@fluentui/react/lib/Button';
 //import pnp, { Web } from 'sp-pnp-js';
-
+import { RoomsImages }  from './RoomsImages';
+import Iframe from 'react-iframe';
 
 const stackTokens = { childrenGap: 50  };
 
@@ -27,12 +28,13 @@ const stackTokens = { childrenGap: 50  };
 //   dropdown: { width: 150 },
 // };
 
+const MyRoomIcon = () => <Icon iconName="AddHome" className = {styles.roomIcon} />;
+
 const optionsRoomsName: IDropdownOption[] = [
-  { key: 'Room1', text: 'Conferance Room 1 ', itemType: DropdownMenuItemType.Header },
-  { key: 'Room2', text: 'Conferance Room 2' },
-  { key: 'Room3', text: 'Conferance Room 3' },
-  { key: 'Room4', text: 'Conferance Room 4' },
-  { key: 'Room5', text: 'Small Meeting Room' }
+  { key: 'RoomFilter1', text: 'Location ', itemType: DropdownMenuItemType.Header },
+  { key: 'RoomFilter1', text: 'Area' },
+  { key: 'RoomFilter1', text: 'Building Floor' },
+  { key: 'RoomFilter1', text: 'Room Size' } 
 ];
 
 
@@ -59,13 +61,13 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     }
 
     public componentDidMount(): void {
-      // this.GetDepartment().then((DeptName: any): void => {
-      //   let DepartmentObject=DeptName.value;  
-      //   this.state.DepartmentItems.push( {key:"0", text:"All"});         
-      //     for (let i = 0; i < DepartmentObject.length; i++) {  
-      //       this.state.DepartmentItems.push(     
+      // this.Getrooms().then((RoomName: any): void => {
+      //   let RoomObject=RoomName.value;  
+      //   this.state.RoomtItems.push( {key:"0", text:"All"});         
+      //     for (let i = 0; i < RoomObject.length; i++) {  
+      //       this.state.RoomItems.push(     
       //         {  key: i.toString(),
-      //           text:DepartmentObject[i].Title,
+      //           text:RoomObject[i].Title,
       //         });        
       //     }
       // }); 
@@ -84,8 +86,9 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     //           titles.push(item.Title);
     //         });       
     //         this.setState({titles});
+    //         console.log("roomsOptionsName", roomsOptionsName);
     //       }
-
+          
     //       )
     //   }
 
@@ -93,48 +96,63 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
 
       return (
         <div className={ styles.rooms }>
-               <div className={ styles.container }>
-                <div className={ styles.row }> 
-                    <div className={ styles.column }> 
-                    <Icon iconName="AddHome" />
-                    <span className={ styles.title }> Rooms Reservation </span>
-                    </div>
+          <div className={ styles.container }>
+            <div className={styles.description}>                        
+              <h1 style={{margin:'0'}}><MyRoomIcon/>Rooms Reservation</h1>
+            </div> 
+                     {/* <div className={ styles.row }> 
+                  <Icon iconName="AddHome" />
+                    <span className={ styles.title }> Rooms Reservation </span> 
+                      <div className={ styles.column }>                     
+                      </div>
+                    </div>*/}
+            
+            <div className="ms-Grid" >                              
+                {/* <div className="ms-Grid-col ms-u-sm1">                     
+                       <IconButton iconProps={{ iconName: 'ImageCrosshair' }} title="View Selected Room" ariaLabel="DisplayImage" />                      
+                </div>               */}                                                                                           
+             <div className="ms-Grid-row"  >
+                <div className="ms-Grid-col ms-u-sm2">
+                    <a href="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx" target="_self"> 
+                    <IconButton iconProps={{ iconName: 'AddEvent' }} title="Add Room Reservation" ariaLabel="AddRoom" />
+                    </a>
                 </div>
-                </div> 
-               <div className="ms-Grid" >
-               <div className="ms-Grid-row"  >
-                {/* { this.props.isRoomSearchDisplay &&  */}
-                <div className="ms-Grid-col ms-u-sm10">
+                <div className="ms-Grid-col ms-u-sm4">
                     <Stack tokens={stackTokens}>
                       <Dropdown
-                        placeholder="Reserve your Room"
+                        placeholder="Filter your Room Options"
                         //label="Rooms"
                         options={optionsRoomsName}
                         //styles={dropdownStyles}
-                        styles={{ dropdown: { width: 600 } }}
+                        styles={{ dropdown: { width: 200 } }}
                         //onChange={this._onChange_Rooms}
                       />
                     </Stack>
                 </div> 
-                <div className="ms-Grid-col ms-u-sm1">
-                       {/* <img src=""> */}
-                       <IconButton iconProps={{ iconName: 'ImageCrosshair' }} title="View Selected Room" ariaLabel="DisplayImage" />
-                       {/* </img> */}
-                </div>              
-                {/* { this.props.isAddRoomButtonDisplay &&  */}
-                <div className="ms-Grid-col ms-u-sm1">
-                    <a href="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx" target="_self"> 
-                    <IconButton iconProps={{ iconName: 'AddEvent' }} title="Add Room Reservation" ariaLabel="AddRoom" />
-                    </a>
-                </div>  
-                                   
-                {/* }               */}
-               {/* <div className="ms-Grid-col ms-u-sm2">
-                  <DefaultButton style={{top:"29px"}}  onClick={SearchClick} className={styles.button}> Search </DefaultButton>
-               </div> */}
-            </div>
-          </div>
-          </div>
+                
+                <div className="ms-Grid-col ms-u-sm6">
+                <RoomsImages siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient}></RoomsImages>
+                </div>
+                
+             </div>
+             </div>
+             <div>
+             <Iframe url="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx"
+                    width="100%"
+                    height="800px"/>
+              </div>
+             {/* <div className="ms-Grid" >
+              <div className="ms-Grid-row"  >
+                <div className="ms-Grid-col ms-u-sm12">
+                <Iframe url="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx"
+                    width="100%"
+                    height="100%"/>                    
+                </div>
+               </div>
+             </div> */}
+          
+        </div>  
+      </div>
       );
     }
   }
