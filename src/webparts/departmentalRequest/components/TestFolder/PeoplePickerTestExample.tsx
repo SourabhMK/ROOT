@@ -16,6 +16,9 @@ import { IconButton } from '@fluentui/react/lib/Button';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 initializeIcons();
 import { Icon } from '@fluentui/react/lib/Icon';
+import { Dropdown, IDropdown, IDropdownOption } from 'office-ui-fabric-react';
+import { Item } from '@pnp/sp/items';
+import { result } from 'lodash';
 
 
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -119,7 +122,8 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     deptDetails:[],
     indexSelect:0,
     homeButton:0,
-    idSelect:0
+    idSelect:0,
+    deptListDropDown:[]
    }
   }
 
@@ -128,7 +132,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     this.loadPeoplePickerInfo();
       // this.testPart();
   }
-
+//TODO: REMOVE THIS METHOD AFTER TSTING
   private loadDepartmentOptions():void{
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -163,6 +167,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
         pickerGroupNames = res.value.map((r,index)=>{
           return{
             text:r.Title,
+            id:r.Id
           }
         })
   
@@ -189,6 +194,32 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     });
   });
    }
+
+   private loadDepartmentOptionsByGroupName(groupName):Promise<IDropdownOption[]>{
+    const headers: HeadersInit = new Headers();
+    headers.append("accept", "application/json;odata.metadata=none");
+    return this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${groupName}')/Users?`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any) => {
+        var groupUser:IDropdownOption[]=res.value.map((r,index)=>{
+          return{
+            text:r.Title,
+            id:r.Id
+          }
+        })
+      return Promise.resolve(groupUser);
+  }) 
+  
+  //  return pickerGroupNames;
+   }
+
+
 
 
 
@@ -499,6 +530,42 @@ var pickerGroupNames:(IPersonaProps)[]=[];
      
   }
 
+  getUserByDept(control,reAssignTo,department){
+    grpName= department;
+    // this.loadDepartmentOptions();
+    this.loadDepartmentOptionsByGroupName(department)
+    .then(
+      data=>{
+          console.log(data);
+          this.setState({
+            deptListDropDown:data
+          },()=>console.log(this.state.deptListDropDown[0].id))
+      }
+    )
+    // .then(
+    //   data=>{
+    //   var dropdown = document.getElementById(control);
+    //   if(dropdown != null || dropdown != undefined ){
+    //     data.map((result,index)=>{
+    //       var option = document.createElement("option");
+    //       option.text = result.text,
+    //       option.value = result.id,
+    //       dropdown.add(option);
+    //     })
+    //     // option.text = "Kiwi";
+    //     // var sel = x.options[x.selectedIndex];
+    //     // x.add(option, sel);
+    //     console.log(dropdown);
+
+
+    //   }
+    //     console.log(data);
+    //     console.log(control);
+    //     console.log(control);
+    //   }
+    // )
+  }
+
 
   onSubmitHandle(){
     this.setState({
@@ -601,6 +668,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
               <th>Ticket Number</th>
               <th>Raised By</th>
               <th>Issue Date</th>
+              <th>Assign To</th>
               {/* <th>Description</th>
               <th>Category</th>
               <th>Department</th>
@@ -616,10 +684,35 @@ var pickerGroupNames:(IPersonaProps)[]=[];
              this.state.deptDetails.map((res,index)=>{
              var issuedDate = new Date(res.issueDate).toLocaleDateString();
                 return(
-                  <tr onClick={()=>this.loadNewGrpName(res.supportDeptName,res.dataId)} key={index}>
+                  <tr
+                  //  onClick={()=>this.loadNewGrpName(res.supportDeptName,res.dataId)} 
+                  //  key={index}
+                   >
                     <td>{res.ticketNumber}</td>
                     <td>{res.raisedBy}</td>
                     <td>{issuedDate}</td>
+                    <td>
+                      {/* <select
+                       id={res.ticketNumber + '_dropDown'} 
+                       placeholder={'Select option'}
+                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',res.reAssignedTo,res.supportDeptName)}
+                      >
+                        {this.state.deptListDropDown.map((item,index)=>
+                          (
+                            <option key={item.id} value={item.text} >
+                              {item.text}
+                            </option>
+                          )
+                        )}
+                      </select> */}
+                      <Dropdown
+                       id={res.ticketNumber + '_dropDown'} 
+                       placeholder='Select option'
+                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',res.reAssignedTo,res.supportDeptName)} 
+                      options={this.state.deptListDropDown}>
+
+                      </Dropdown>
+                    </td>
                     {/* <td>
                       <PrimaryButton onClick={()=>this.loadNewGrpName(res.supportDeptName,index)} >AssignTo</PrimaryButton>
                     </td>
@@ -650,7 +743,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     onResolveSuggestions={this.onFilterChanged}
     // eslint-disable-next-line react/jsx-no-bind
     // onEmptyInputFocus={returnMostRecentlyUsed}
-    items={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
+    // items={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
     onChange={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
     // onChange={()=>''}
     getTextFromItem={getTextFromItem}
