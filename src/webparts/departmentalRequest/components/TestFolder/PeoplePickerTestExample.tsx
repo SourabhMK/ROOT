@@ -353,7 +353,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
 
           ///////////////////////////////////////////////////////////
           
-            // this.loadIdFromUserName(newReAssignedToUser);
+            this.loadIdFromUserName(newReAssignedToUser);
 
           ////////////////////////////////////////////////////////////
           var metaTest ={
@@ -650,6 +650,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     onResolveSuggestions={this.onFilterChanged}
     // eslint-disable-next-line react/jsx-no-bind
     // onEmptyInputFocus={returnMostRecentlyUsed}
+    items={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
     onChange={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
     // onChange={()=>''}
     getTextFromItem={getTextFromItem}
