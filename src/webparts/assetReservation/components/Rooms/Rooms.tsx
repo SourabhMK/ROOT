@@ -41,6 +41,14 @@ const optionsRoomsName: IDropdownOption[] = [
 //Primary Button
 //const stackTokens: IStackTokens = { childrenGap: 40 };
 
+// interface IRoomsState {     
+//   roomsFilter: string[];
+//   errorMessage: string;
+// } 
+
+let RoomsFilter: string[] = [];
+
+debugger;
 export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
   
     constructor(props:IRoomsProps, state:IRoomsState) { 
@@ -56,7 +64,9 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     //   );
       this.state = {
         //items: this.roomsOptionsName,
-        roomsOptionsName:[],
+        //roomsOptionsName:[],
+        roomsFilter: [],
+        errorMessage : ""
       };
     }
 
@@ -74,6 +84,7 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
 
 
       //this._getListroomsOptionsName(); 
+      this._getRoomsFilter();
     }
 
     // private _getListroomsOptionsName():void
@@ -91,6 +102,30 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
           
     //       )
     //   }
+
+    _getRoomsFilter = async () =>
+  {    
+    const headers: HeadersInit = new Headers();
+    headers.append("accept", "application/json;odata.metadata=none");
+
+        await this.props.spHttpClient
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomsFilter')/items?$select=ID,Title`, SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((result: SPHttpClientResponse) => {          
+          return result.json();
+        })
+        .then((jsonresult) => {
+          RoomsFilter = [];         
+          for(let i=0; i<jsonresult.value.length; ++i)
+          {
+            RoomsFilter.push(jsonresult.value[i].Title);
+          }
+          this.setState({
+            roomsFilter: RoomsFilter
+          })
+        })      
+  }  
 
     public render(): React.ReactElement<IRoomsProps> {
 
@@ -123,6 +158,9 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
                         placeholder="Filter your Room Options"
                         //label="Rooms"
                         options={optionsRoomsName}
+                        // {this.state.roomsFilter.map((room, index) => {
+                        //    return { key: 'RoomFilter1', text: 'Area' }
+                        //   })} 
                         //styles={dropdownStyles}
                         styles={{ dropdown: { width: 200 } }}
                         //onChange={this._onChange_Rooms}

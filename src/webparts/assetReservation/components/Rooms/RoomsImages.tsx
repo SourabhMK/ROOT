@@ -92,7 +92,7 @@ export class RoomsImages extends React.Component<IRoomsImagesProps, IRoomsImages
           <div className={styles.mt10}>
             <Carousel
                 pagination={false}
-                itemsToShow={1}
+                itemsToShow={3}
                 itemsToScroll={1}
                 isRTL={false}
                 focusOnSelect={true}>
