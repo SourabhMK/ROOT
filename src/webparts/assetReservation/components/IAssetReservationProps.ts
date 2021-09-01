@@ -6,5 +6,6 @@ export interface IAssetReservationProps {
   context:any;
   siteurl: string;
   spHttpClient: SPHttpClient;
+  //roomsSizeDataChangeEvent();
   //roomsOptionsName:IDropdownOption[];
 }

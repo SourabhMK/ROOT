@@ -98,7 +98,7 @@ export class RoomsImages extends React.Component<IRoomsImagesProps, IRoomsImages
                 focusOnSelect={true}>
                    {this.state.images.map((img, index) => {
                     return <img src={`${this.props.siteurl}/Images1/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
-                  })}     
+                  })}                     
             </Carousel>
             <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
           </div>
