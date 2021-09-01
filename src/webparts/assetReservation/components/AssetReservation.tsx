@@ -5,6 +5,8 @@ import { IRoomsProps} from './Rooms/IRoomsProps';
 import Rooms from '../components/Rooms/Rooms';
 
 export default class AssetReservation extends React.Component<IAssetReservationProps, {}> {
+
+  //roomsSizeDataChange(){alert("Hello");}
   public render(): React.ReactElement<IAssetReservationProps> {
     return (
       <div className={ styles.assetReservation }>
@@ -17,8 +19,10 @@ export default class AssetReservation extends React.Component<IAssetReservationP
               context={this.props.context}
               siteurl={this.props.siteurl}
               spHttpClient={this.props.spHttpClient}
+              //roomsSizeDataChange={this.props.roomsSizeDataChangeEvent}
               //roomsOptionsName={this.props.roomsOptionsName}
               />
+
             {/* </div>
           </div>
         </div> */}
