@@ -123,7 +123,12 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     indexSelect:0,
     homeButton:0,
     idSelect:0,
-    deptListDropDown:[]
+    deptListDropDown:[],
+    passAssignedToUser:{
+      id:0,
+      text:''
+    },
+    deleteSelectedTicket:''
    }
   }
 
@@ -344,11 +349,14 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       })  
   }
 
-  async onChangePeoplePickerHandle(newPeoplePicker:any,idRequest:number){
-   await this.setState({
-      newPeoplePickerUser: newPeoplePicker[0].text
-      //loadPeoplePicker:0
-        },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
+   onSubmitDropDownHandle(newPeoplePicker:any,idRequest:number,assignedToUser,ticketNumberCheck){
+  //  await this.setState({
+  //     newPeoplePickerUser: newPeoplePicker[0].text
+  //     //loadPeoplePicker:0
+  //       },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
+        if(this.state.deleteSelectedTicket === ticketNumberCheck){
+        this.addReAssignedToData(assignedToUser,idRequest);
+        }
   }
 
   addReAssignedToData(newReAssignedToUser:any,idRequest:number){
@@ -384,17 +392,16 @@ var pickerGroupNames:(IPersonaProps)[]=[];
 
           ///////////////////////////////////////////////////////////
           
-            this.loadIdFromUserName(newReAssignedToUser);
 
           ////////////////////////////////////////////////////////////
           var metaTest ={
             // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
-            'ReAssignToId': 9
+            'ReAssignToId': newReAssignedToUser.id
           }
           const spOpts: string = JSON.stringify({
             // metaTest
             // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
-            'ReAssignToId': 9
+            'ReAssignToId': newReAssignedToUser.id
                 // 'Comment': 'Comment is working'
                 // OnOffBoardTask:1
           })
@@ -403,9 +410,9 @@ var pickerGroupNames:(IPersonaProps)[]=[];
           {
             // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
             headers: {  
-              'Accept': 'application/json',  
-              'Content-type': 'application/json',  
-              // 'odata-version': '3.0',  
+              'Accept': 'application/json;odata=nometadata',  
+              'Content-type': 'application/json;odata=nometadata',  
+              'odata-version': '',  
               'IF-MATCH': '*',  
               'X-HTTP-Method': 'MERGE',
               // "X-RequestDigest": $("#__REQUESTDIGEST").val()
@@ -417,13 +424,23 @@ var pickerGroupNames:(IPersonaProps)[]=[];
                 // Access properties of the response object. 
                 console.log(`Status code: ${response.status}`);
                 console.log(`Status text: ${response.statusText}`);
-        
+                
                 //response.json() returns a promise so you get access to the json in the resolve callback.
-                response.json().then((responseJSON: JSON) => {
+
+              })
+                .then((responseJSON: any) => {
+                  var items = this.state.deptDetails.filter(item=> item.dataId !==idRequest);
+                  this.setState({
+                    deptDetails:items,
+                    deptListDropDown:[],
+                    passAssignedToUser:{
+                      id:null,
+                      text:''
+                    }
+                  },()=>{console.log("deptDetails = " + this.state.deptDetails[0].ticketNumber); console.log("passAssignedToUser= " + this.state.passAssignedToUser.id)})
                   console.log(responseJSON);
                   // this.myIssue();
                 });
-              });
 
 
     }, (error: any): void => {
@@ -442,95 +459,10 @@ var pickerGroupNames:(IPersonaProps)[]=[];
         errorMessage: error
       });
       });
-    
-
-    // const spOpts: string = JSON.stringify({
-    //   'ReAssignToId': '9'
-    //       // 'Comment': 'Comment is working'
-    //       // OnOffBoardTask:1
-    // })
-
-    // this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items('${idRequest}')`, SPHttpClient.configurations.v1, 
-    // {
-    //   body:spOpts
-    // })
-    //     .then((response: SPHttpClientResponse) => {
-    //       // Access properties of the response object. 
-    //       console.log(`Status code: ${response.status}`);
-    //       console.log(`Status text: ${response.statusText}`);
-  
-    //       //response.json() returns a promise so you get access to the json in the resolve callback.
-    //       response.json().then((responseJSON: JSON) => {
-    //         console.log(responseJSON);
-    //         // this.myIssue();
-    //       });
-    //     });
   }
 
 
-  loadIdFromUserName(newReAssignedToUser){
-      const headers: HeadersInit = new Headers();
-      // suppress metadata to minimize the amount of data loaded from SharePoint
-      headers.append("accept", "application/json;odata.metadata=none");
-      this.props.spHttpClient
-        .get(`${this.props.webUrl}/_api/web/siteusers?$filter= UserName eq '${newReAssignedToUser}'`,
-        SPHttpClient.configurations.v1, {
-          headers: headers
-        })
-        .then((res: SPHttpClientResponse): Promise<any> => {
-          return res.json();
-        })
-        .then((res: any): void => {
-          if (res.error) {
-          //   // There was an error loading information about people.
-          //   // Notify the user that loading data is finished and return the
-          //   // error message that occurred
-             this.setState({
-               loading: false,
-               errorMessage: res.error.message,
-                });
-            return;
-          }
-          if (res.value == 0) {
-            // No results were found. Notify the user that loading data is finished
-            this.setState({
-              loading: false
-            });
-            return;
-          }
-  
-          pickerGroupNames = res.value.map((r,index)=>{
-            return{
-              text:r.Title,
-            }
-          })
-    
-      if(pickerGroupNames.length>0){
-      this.setState({
-        loading:false,
-      })   
-      this.testPart();
-      }
-    }, (error: any): void => {
-      // An error has occurred while loading the data. Notify the user
-      // that loading data is finished and return the error message.
-      this.setState({
-        loading: false,
-        errorMessage: error
-      });
-    })
-    .catch((error: any): void => {
-      // An exception has occurred while loading the data. Notify the user
-      // that loading data is finished and return the exception.
-      this.setState({
-        loading: false,
-        errorMessage: error
-      });
-    });
-     
-  }
-
-  getUserByDept(control,reAssignTo,department){
+  getUserByDept(control,reAssignTo,department,idNumber){
     grpName= department;
     // this.loadDepartmentOptions();
     this.loadDepartmentOptionsByGroupName(department)
@@ -538,32 +470,12 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       data=>{
           console.log(data);
           this.setState({
-            deptListDropDown:data
+            deptListDropDown:data,
+            idSelect:idNumber
           },()=>console.log(this.state.deptListDropDown[0].id))
       }
     )
-    // .then(
-    //   data=>{
-    //   var dropdown = document.getElementById(control);
-    //   if(dropdown != null || dropdown != undefined ){
-    //     data.map((result,index)=>{
-    //       var option = document.createElement("option");
-    //       option.text = result.text,
-    //       option.value = result.id,
-    //       dropdown.add(option);
-    //     })
-    //     // option.text = "Kiwi";
-    //     // var sel = x.options[x.selectedIndex];
-    //     // x.add(option, sel);
-    //     console.log(dropdown);
-
-
-    //   }
-    //     console.log(data);
-    //     console.log(control);
-    //     console.log(control);
-    //   }
-    // )
+  
   }
 
 
@@ -577,6 +489,15 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     this.setState({
       homeButton:1,
     })
+  }
+
+  onUserSelect(userName,selectedName, ticketNumber){
+    this.setState({
+      passAssignedToUser:selectedName,
+      deleteSelectedTicket:ticketNumber
+    },()=> console.log(this.state.passAssignedToUser.id))
+    console.log(userName,selectedName);
+
   }
 
 //   picker = React.useRef(null);
@@ -660,8 +581,17 @@ var pickerGroupNames:(IPersonaProps)[]=[];
              <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
           </div>
         </div>
-        <div className="ms-Grid-row">
+      {
+      // (this.state.deptDetails.length === 0) &&
+      //   <div>
+      //   <h2>You have no tickets to be dispatched</h2>
+      //   {/* <h2>{"deptLength= " + this.state.deptDetails.length}</h2> */}
+      //   </div>
+      }
+      {(this.state.deptDetails.length > 0) &&
+      <div className="ms-Grid-row">
       <div className="ms-Grid-col ms-lg12">
+      {/* <h2>{"deptLength= " + this.state.deptDetails.length}</h2> */}
       <table className={styles.tableSet} >
           <thead>
             <tr>
@@ -669,6 +599,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
               <th>Raised By</th>
               <th>Issue Date</th>
               <th>Assign To</th>
+              <th>Update</th>
               {/* <th>Description</th>
               <th>Category</th>
               <th>Department</th>
@@ -708,8 +639,11 @@ var pickerGroupNames:(IPersonaProps)[]=[];
                       <Dropdown
                        id={res.ticketNumber + '_dropDown'} 
                        placeholder='Select option'
-                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',res.reAssignedTo,res.supportDeptName)} 
-                      options={this.state.deptListDropDown}>
+                       defaultSelectedKey={" "}
+                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',res.reAssignedTo,res.supportDeptName,res.dataId)} 
+                      options={this.state.deptListDropDown}
+                      onChange={(e,selectedName)=>this.onUserSelect(e,selectedName,res.ticketNumber)}
+                      >
 
                       </Dropdown>
                     </td>
@@ -717,6 +651,9 @@ var pickerGroupNames:(IPersonaProps)[]=[];
                       <PrimaryButton onClick={()=>this.loadNewGrpName(res.supportDeptName,index)} >AssignTo</PrimaryButton>
                     </td>
                     <td>{res.reAssignedTo}</td> */}
+                    <td>
+                      <DefaultButton onClick={(e)=>this.onSubmitDropDownHandle(e,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}>Submit</DefaultButton>
+                    </td>
                   </tr>
                 )
               })
@@ -725,6 +662,13 @@ var pickerGroupNames:(IPersonaProps)[]=[];
       </table>
       </div>
     </div>
+  }
+  {(this.state.deptDetails.length === 0) &&
+       <div>
+        <h2>You have no tickets to be dispatched</h2>
+        {/* <h2>{"deptLength= " + this.state.deptDetails.length}</h2> */}
+       </div>
+      }
   </div>
   }
   {
@@ -744,7 +688,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     // eslint-disable-next-line react/jsx-no-bind
     // onEmptyInputFocus={returnMostRecentlyUsed}
     // items={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
-    onChange={(e)=>this.onChangePeoplePickerHandle(e,this.state.idSelect)}
+    onChange={(e)=>this.onSubmitDropDownHandle(e,this.state.idSelect,this.state.passAssignedToUser,this.state.deleteSelectedTicket)}
     // onChange={()=>''}
     getTextFromItem={getTextFromItem}
     pickerSuggestionsProps={suggestionProps}
