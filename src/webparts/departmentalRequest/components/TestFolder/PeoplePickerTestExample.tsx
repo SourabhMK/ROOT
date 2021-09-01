@@ -62,6 +62,17 @@ export interface IExampleExtendedPersonaProps {
     busy = 6,
   }  
 
+// export var people1:(IPersonaProps)[]=[
+//   {
+//     text:'Dipal Bhavsar'
+//   },
+//   {
+//     text:'Vrushali'
+//   }
+
+// ]
+
+
 export const people: (IPersonaProps)[] = [
     {
     key: 1,
