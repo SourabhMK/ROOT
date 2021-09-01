@@ -42,7 +42,12 @@ export default class PeoplePicker extends React.Component<IPeopleProps, IPeopleS
             indexSelect:0,
             homeButton:0,
             idSelect:0,
-            deptListDropDown:[]
+            deptListDropDown:[],
+            passAssignedToUser:{
+              id:0,
+              text:''
+            },
+            deleteSelectedTicket:''
         };
       }
       

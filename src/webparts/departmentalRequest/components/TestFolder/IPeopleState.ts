@@ -3,6 +3,10 @@ import {IExampleExtendedPersonaProps} from './PeoplePickerTestExample';
 import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
 import { IDropdown, IDropdownOption } from 'office-ui-fabric-react';
 
+export interface passUser{
+    id:number;
+    text:string;
+}
 
 export interface IPeopleState {
     loading:false;
@@ -15,5 +19,7 @@ export interface IPeopleState {
     indexSelect:number;
     homeButton:number;
     idSelect:number;
-    deptListDropDown:IDropdownOption[]
+    deptListDropDown:IDropdownOption[];
+    passAssignedToUser:passUser;
+    deleteSelectedTicket:string;
 }
