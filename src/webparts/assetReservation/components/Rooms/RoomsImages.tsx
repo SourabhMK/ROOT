@@ -21,7 +21,7 @@ interface IRoomsImagesState {
 } 
 
 let Images: string[] = [];
-debugger;
+//debugger;
 export class RoomsImages extends React.Component<IRoomsImagesProps, IRoomsImagesState> { 
 
   constructor(props: IRoomsImagesProps, state:IRoomsImagesState) {
