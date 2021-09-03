@@ -3,7 +3,6 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import styles from './Rooms.module.scss';
 import { IRoomsProps } from './IRoomsProps';
 import { IRoomsState } from './IRoomsState';
-import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import { Dropdown, DropdownMenuItemType, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import {
@@ -19,6 +18,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import { IconButton } from '@fluentui/react/lib/Button';
 //import pnp, { Web } from 'sp-pnp-js';
 import { RoomsImages }  from './RoomsImages';
+import Carousel from 'react-elastic-carousel';
 import Iframe from 'react-iframe';
 
 const stackTokens = { childrenGap: 50  };
@@ -80,6 +80,8 @@ let RoomsFilter: IDropdownOption[] = [];
 // let RoomsSizeData:IDropdownOption[] = [];
 let RoomsPictureData:any;
 
+let Images: string[] = [];
+
 debugger;
 export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
   
@@ -94,11 +96,14 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
         roomsPictureData:[],
         roomLocationId:0,
         roomAreaId:0,
-        roomBuildingFloorId:"",
-        roomSizeId:"",
+        roomBuildingFloorId:0,
+        roomSizeId:0,
         roomsAreaDropdownDisplay:false,
         roomsBuildingFloorDropdownDisplay:false,
         roomsSizeDropdownDisplay:false,
+        //Image Display purpose
+        selectedImage: "",
+        images:[],
         errorMessage : ""
       };
     }
@@ -110,6 +115,7 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
       this._getRoomBuildingFloor(this.state.roomAreaId, this.state.roomBuildingFloorId);
       this._getRoomSize(this.state.roomBuildingFloorId, this.state.roomSizeId);
       this._getRoomPicture(this.state.roomSizeId);
+      this._getRoomsImages();
     }   
 
   _getRoomsFilter = async () =>
@@ -118,7 +124,8 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomsFilter')/items?$select=ID,Title`, SPHttpClient.configurations.v1, {
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomsFilter')/items?$select=ID,Title`, 
+          SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -200,19 +207,20 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
             };
           });
 
-          // const TestoptionsRoomsArea = [];
-          // for(var i=0;i<jsonresult.value.length;++i){
-          //   if(jsonresult.value[i].roomLocationId === this.state.roomLocationId){
-          //     TestoptionsRoomsArea.push(jsonresult.value[i].roomLocationId.Title)
-          //   }
-          // }
-          // console.log("TestoptionsRoomsArea =>" + TestoptionsRoomsArea)
+          const TestoptionsRoomsArea = [];
+          for(var i=0;i<jsonresult.value.length;++i){
+            if(jsonresult.value[i].roomLocationId === this.state.roomLocationId){
+              TestoptionsRoomsArea.push(jsonresult.value[i].roomLocationId.Title)
+            }
+          }
+          console.log("TestoptionsRoomsArea =>" + TestoptionsRoomsArea)
 
           this.setState({
             roomsAreaData: optionsRoomsArea
           },()=>console.log("roomsAreaData =>" + this.state.roomsAreaData)
           )
-        })      
+        })
+        this._getRoomBuildingFloor(this.state.roomAreaId,this.state.roomBuildingFloorId);      
    } 
 
    _getRoomBuildingFloor = async (roomAreaId,roomBuildingFloorId) =>
@@ -221,7 +229,7 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomBuildingFloor')/items?$select=ID,Title,Description,IsActive,RoomAreaId/Id&$expand=RoomAreaId/Id,RoomAreaId/Title&$filter=RoomAreaId/Id eq '3'`,
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomBuildingFloor')/items?$select=ID,Title,Description,IsActive,RoomAreaId/Id&$expand=RoomAreaId/Id,RoomAreaId/Title&$filter=RoomAreaId/Id eq '${this.state.roomAreaId}'`,
         //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomBuildingFloor')/items?$select=ID,Title,Description,IsActive`, 
           SPHttpClient.configurations.v1, {
           headers: headers
@@ -246,7 +254,8 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
             roomsBuildingFloorData: optionsRoomsBuildingFloor
           },()=>console.log("roomsBuildingFloorData =>" + this.state.roomsBuildingFloorData)
           )
-        })      
+        })
+        this._getRoomSize(this.state.roomBuildingFloorId,this.state.roomSizeId);     
     }
 
   _getRoomSize = async (roomBuildingFloorId,roomSizeId) =>
@@ -255,8 +264,8 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
     headers.append("accept", "application/json;odata.metadata=none");
 
         await this.props.spHttpClient
-        //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomSize')/items?$select=ID,Title,Description,IsActive,RoomBuildingFloorId/Id&$expand=RoomBuildingFloorId/Id,RoomBuildingFloorId/Title&$filter=RoomBuildingFloorId eq '2'`,
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomSize')/items?$select=ID,Title,Description,IsActive`, 
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomSize')/items?$select=ID,Title,Description,IsActive,RoomBuildingFloorId/Id&$expand=RoomBuildingFloorId/Id,RoomBuildingFloorId/Title&$filter=RoomBuildingFloorId eq '${this.state.roomBuildingFloorId}'`,
+        //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomSize')/items?$select=ID,Title,Description,IsActive`, 
         SPHttpClient.configurations.v1, {
           headers: headers
         })
@@ -280,16 +289,20 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
             roomsSizeData: optionsRoomsSize
           },()=>console.log("roomsSizeData =>" + this.state.roomsSizeData)
           )
-        })      
+        }) 
+        this._getRoomPicture(this.state.roomSizeId);     
   } 
 
   _getRoomPicture = async (roomSizeId) =>
   {    
     const headers: HeadersInit = new Headers();
     headers.append("accept", "application/json;odata.metadata=none");
-
+   
         await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomPicture')/items?$select=ID,Title,Description,IsActive`, SPHttpClient.configurations.v1, {
+        //.get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomPicture')/items?$select=ID,Title,ImageWidth,ImageHeight,Description,IsActive,RoomSizeIdId&$filter=RoomSizeIdId eq '${this.state.roomBuildingFloorId}'`, 
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('RoomPicture')/items?$select=ID,Title,Description,IsActive`, 
+        SPHttpClient.configurations.v1, 
+        {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -308,6 +321,40 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
         })      
   }
 
+  _getRoomsImages = async () =>
+  {    
+    const headers: HeadersInit = new Headers();
+    headers.append("accept", "application/json;odata.metadata=none");
+
+        await this.props.spHttpClient
+        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('Images')/items?$select=ID,Title,ImageWidth,ImageHeight&$filter=Category eq 'Room'`, 
+          SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((result: SPHttpClientResponse) => {          
+          return result.json();
+        })
+        .then((jsonresult) => {
+          Images = [];         
+          for(let i=0; i<jsonresult.value.length; ++i)
+          {
+            Images.push(jsonresult.value[i].Title);
+          }
+          this.setState({
+            images: Images
+          })
+        })      
+  }  
+
+  handleClick = async(image) => {
+
+     await this.setState({
+      selectedImage:image,
+      errorMessage: ""
+     })
+    alert("Selected Image: " + this.state.selectedImage);
+  }
+
     public render(): React.ReactElement<IRoomsProps> {
 
       return (
@@ -320,13 +367,13 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
                 {/* <div className="ms-Grid-col ms-u-sm1">                     
                        <IconButton iconProps={{ iconName: 'ImageCrosshair' }} title="View Selected Room" ariaLabel="DisplayImage" />                      
                 </div>               */}                                                                                           
-             <div className="ms-Grid-row"  >
-                <div className="ms-Grid-col ms-u-sm2">
+               <div className="ms-Grid-row"  >
+                 <div className="ms-Grid-col ms-u-sm2">
                     <a href="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx" target="_self"> 
                     <IconButton iconProps={{ iconName: 'AddEvent' }} title="Add Room Reservation" ariaLabel="AddRoom" />
                     </a>
-                </div>
-                <div className="ms-Grid-col ms-u-sm2">
+                 </div>
+                 <div className="ms-Grid-col ms-u-sm2">
                     <Stack tokens={stackTokens}>
                       <Dropdown
                         placeholder="Select Location"
@@ -338,8 +385,8 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
                         styles={{ dropdown: { width: 120 } }}                      
                       />
                     </Stack>
-                </div>
-                <div className="ms-Grid-col ms-u-sm2">
+                  </div>
+                  <div className="ms-Grid-col ms-u-sm2">
                     <Stack tokens={stackTokens}>
                       <Dropdown
                         placeholder="Select Area"
@@ -380,24 +427,50 @@ export default class rooms extends React.Component<IRoomsProps, IRoomsState> {
                       />
                     </Stack>
                   </div>
-                
-                <div className="ms-Grid-col ms-u-sm6">
-                {/* <RoomsImages siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient}></RoomsImages> */}
+              </div> 
+              <div className="ms-Grid-row"  >
+                <div className="ms-Grid-col ms-u-sm12">
+                  <div className={styles.mt10}>
+                    <label className={styles.SetLabelWeight}>Select Rooms Images:</label>
+                    <div className={styles.mt10}>
+                      <Carousel
+                          pagination={false}
+                          itemsToShow={3}
+                          itemsToScroll={1}
+                          isRTL={false}
+                          //onChange={(e,roomSizeId)=>this._getRoomPicture(roomSizeId)}
+                          focusOnSelect={true}>
+                            {this.state.roomsPictureData.map((img, index) => {
+                              return <img src={`${this.props.siteurl}/RoomPicture/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
+                            })}                     
+                      </Carousel> 
+                      <label className={styles.SetLabelWeight}>Select Rooms Images (Library : Images):</label>
+                      <Carousel
+                          pagination={false}
+                          itemsToShow={3}
+                          itemsToScroll={1}
+                          isRTL={false}
+                          focusOnSelect={true}>
+                            {this.state.images.map((img, index) => {
+                              return <img src={`${this.props.siteurl}/Images1/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
+                            })}                     
+                      </Carousel>                    
+                    </div>
+                  </div>
                 </div>
-                {/* <div className="ms-Grid-col">
+              </div>                                
+              <div className="ms-Grid-row"  >
+                <div className="ms-Grid-col ms-u-sm12">
+                   {/* <Iframe url="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx"
+                          width="100%"
+                          height="800px"/> */}
+                  {/* <RoomsImages siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient}></RoomsImages> */}
+                </div>
+              </div>                                
+             
+          {/* ms-Grid closed */}
+          </div>
 
-                </div> */}
-                
-             </div>
-             </div>
-              <div>
-               {/* <Iframe url="https://champion1.sharepoint.com/sites/SPMall/IPDevV2/Lists/RoomReservation/calendar.aspx"
-                    width="100%"
-                    height="800px"/> */}
-                <RoomsImages siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} >
-                {/* onChange={(e,roomSizeId)=>this._getRoomPicture(roomSizeId)} */}
-                   </RoomsImages>
-              </div>         
         </div>  
       </div>
       );
