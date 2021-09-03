@@ -21,7 +21,7 @@ interface IRoomsImagesState {
 } 
 
 let Images: string[] = [];
-debugger;
+//debugger;
 export class RoomsImages extends React.Component<IRoomsImagesProps, IRoomsImagesState> { 
 
   constructor(props: IRoomsImagesProps, state:IRoomsImagesState) {
@@ -92,13 +92,13 @@ export class RoomsImages extends React.Component<IRoomsImagesProps, IRoomsImages
           <div className={styles.mt10}>
             <Carousel
                 pagination={false}
-                itemsToShow={1}
+                itemsToShow={3}
                 itemsToScroll={1}
                 isRTL={false}
                 focusOnSelect={true}>
                    {this.state.images.map((img, index) => {
                     return <img src={`${this.props.siteurl}/Images1/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
-                  })}     
+                  })}                     
             </Carousel>
             <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
           </div>

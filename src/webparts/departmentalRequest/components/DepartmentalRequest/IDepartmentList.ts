@@ -5,6 +5,16 @@ export interface IDepartmentList {
     dispatcherName:string
 }
 
+export interface passUser{
+    id:number;
+    text:string;
+}
+
+export interface reAssignedUser{
+    Id:number;
+    Title:string;
+}
+
 export interface  IDispacherList {
     ticketNumber:string;
     dispatcherDeptName:string;
@@ -15,6 +25,6 @@ export interface  IDispacherList {
     category:string;
     department:string;
     status:string;
-    reAssignedTo:string;
+    reAssignedTo:reAssignedUser;
     dataId:number;
 }

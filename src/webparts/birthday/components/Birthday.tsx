@@ -15,6 +15,7 @@ import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
 
+
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
 

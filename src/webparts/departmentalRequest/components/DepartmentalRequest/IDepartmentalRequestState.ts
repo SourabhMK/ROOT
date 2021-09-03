@@ -8,23 +8,24 @@ export interface IDepartmentalRequestState {
     // Users : IUserAll[],
     // Followers : IFollowers[],
     // Following : IFollowers[],
-    count:number,
-    bgColorRaiseRequest:string,
-    bgColorFollowers:string,
-    bgColorFollowing:string,
-    colorRaiseRequest:string,
-    colorFollowers:string,
-    colorFollowing:string,
-    loading:boolean,
-    selectedDept:string,
-    selectedDeptCategory:string,
-    requestDescription:string,
-    myIssueUnlock:number,
-    nextCount:number,
-    dataFilledCheck:number,
-    initialRaisedCount:number,
-    totalRaisedIssuesCount:number,
-    dispatcherViewUnlock:number,
+    count:number;
+    bgColorRaiseRequest:string;
+    bgColorFollowers:string;
+    bgColorFollowing:string;
+    colorRaiseRequest:string;
+    colorFollowers:string;
+    colorFollowing:string;
+    loading:boolean;
+    selectedDept:string;
+    selectedDeptCategory:string;
+    requestDescription:string;
+    myIssueUnlock:number;
+    nextCount:number;
+    dataFilledCheck:number;
+    initialRaisedCount:number;
+    totalRaisedIssuesCount:number
+    dispatcherViewUnlock:number;
+    assignedToViewUnlock:number;
     /**
      * Contains the error message that occurred while loading the data.
      * If no error message occurred, null.
