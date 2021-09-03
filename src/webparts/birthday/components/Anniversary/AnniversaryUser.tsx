@@ -33,28 +33,30 @@ export default class AnniversaryUser extends React.Component<IAnniversaryUserLis
     return (
       <div>
         {!this.props.people &&
-        <Placeholder 
-          iconName = ''
-          iconText = 'No Work Annversaries in this month.'
-          description = ''/>
+        <div>
+          <Placeholder 
+            iconName = ''
+            iconText = 'No Work Annversaries in this month.'
+            description = ''/>
+        </div>
       }
       {this.props.people &&
       <div>
       {this.props.people.map((p, i) => {
 
         let finalhiredate;
-        if(p.Hiredate === "" || p.Hiredate === undefined)
+        if(p.hireDate === "" || p.hireDate === undefined)
         {
-          finalhiredate = p.Hiredate;
+          finalhiredate = p.hireDate;
         }
         else
         {
-          let hiredate = new Date(p.Hiredate);
+          let hiredate = new Date(p.hireDate);
           finalhiredate = new Intl.DateTimeFormat('en-US', {day: '2-digit',month: 'long'}).format(hiredate); 
         } 
           return(                
               <div className = {styles.persona_card}> 
-                <Persona primaryText={p.Name} secondaryText={finalhiredate} tertiaryText={p.Email} imageUrl={p.photoUrl} imageAlt={p.Name} size={PersonaSize.size72} />
+                <Persona primaryText={p.name} secondaryText={finalhiredate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
                 
                 {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
                   <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>

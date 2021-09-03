@@ -78,7 +78,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     return (
       <div className={(styles.calloutCard,styles.emailMainContent)}>
         <h3 className={styles.SendEmailh3}>
-          Send Message to {this.props.person.FirstName}
+          Send Message to {this.props.person.firstName}
         </h3>        
           <div className={styles.mt10}>
             <TextField label="Personal Message" className={styles.emailTextarea}multiline rows={3} onChange={e => this.handleChange(e.currentTarget.value)}/>
@@ -134,7 +134,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
       EmailSubject: "Happy Work Anniversary",
       EmailBody: message,
       EmailFrom: userEmail,
-      EmailTo: this.props.person.Email,
+      EmailTo: this.props.person.email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });
 

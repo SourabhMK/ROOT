@@ -4,6 +4,7 @@ import { IBirthdayProps } from './IBirthdayProps';
 import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
+import { HttpClient, HttpClientResponse } from "@microsoft/sp-http";
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { IBirthday} from '../../../Models/IBirthday';
 import { IAnniversary } from '../../../Models/IAnniversary';
@@ -13,7 +14,6 @@ import BirthdayUser from './Birthday/BirthdayUser';
 import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
-import { Props } from '../../departmentalRequest/components/TestFolder/PeoplePicker';
 
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
@@ -60,37 +60,92 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     }
   }
 
-  private CheckAnniversaryDataSource()
-  {
-    switch(this.props.dropdown) 
-    {
-      case 'Azure' :
-          this.LoadAnniversaryDetails();       
-      case 'Internal' :
-          this.LoadInternalAnniversaryDetails();
-      case 'External' :
-        console.log("External");
-      case 'API' :
-        console.log("API");
-    }
-  }
-
   private CheckBirthdayDataSource()
   {
     //check the value of dropdown from propert pane and call the method accordingly to fetch the user data.
-    switch(this.props.dropdown) 
-    {
-      case 'Azure' :
-          this.LoadBirthdayDetails();       
-      case 'Internal' :
-          this.LoadInternalBirthdayDetails();
-      case 'External' :
-        console.log("External");
-      case 'API' :
-        console.log("API");
+    {this.props.dropdown === 'Azure' && 
+      this.LoadBirthdayDetails();
+    }
+    {this.props.dropdown === 'Internal' && 
+      this.LoadInternalDetails();
+    }
+    {this.props.dropdown === 'External' && 
+      console.log("External");
+    }
+    {this.props.dropdown === 'API' && 
+      this._getThirdPartyBirthdayAPI();
     }
   }
 
+  private CheckAnniversaryDataSource()
+  {
+    {this.props.dropdown === 'Azure' && 
+      this.LoadAnniversaryDetails();
+    }
+    {this.props.dropdown === 'Internal' && 
+      this.LoadInternalDetails();
+    }
+    {this.props.dropdown === 'External' && 
+      console.log("External");
+    }
+    {this.props.dropdown === 'API' && 
+      this._getThirdPartyBirthdayAPI();      
+    }
+  }
+
+  private _getThirdPartyBirthdayAPI()
+  {
+    this.props.myHttpClient.get('https://gnsemplist.azurewebsites.net/Employee', HttpClient.configurations.v1, {
+      headers: headers
+    })
+    .then((response: HttpClientResponse) => {  
+      return response.json();  
+    })
+    .then((jsonresult): void => { 
+      if(this.state.count === 0 || this.state.count === 1)
+      {
+        let people:IBirthday[] = jsonresult;    
+        
+        if(people.length > 0)
+        {
+         // people = this.getPhotoURL(people);
+          let currentMonthPeople = this._getBirthdayForSorting(people);
+          let currentMonthPeopleFinal = this.SortBirthday(currentMonthPeople);
+          this.setState({
+            loading:false,
+            BUsers : currentMonthPeopleFinal,
+          })
+        }
+      }
+      if(this.state.count === 2)
+      {
+        let people:IAnniversary[] = jsonresult;
+       
+        if(people.length > 0)
+        {
+          //people = this.getPhotoURL(people);
+          let currentMonthPeople = this._getAnniversaryForSorting(people);
+          let currentMonthPeopleFinal = this.SortAnniversary(currentMonthPeople);
+          this.setState({
+            loading:false,
+            AUsers : currentMonthPeopleFinal,
+          })
+        }
+      }
+    }, (error: any): void => {      
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+    })
+    .catch((error: any): void => {
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+    });
+  }
+  
   private CountStartAndEndDates (): void {
     let newDate = new Date();
     let date = newDate.getDate();
@@ -122,26 +177,46 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     return new Date(year, month, 0).getDate();
   }
 
-  private LoadInternalBirthdayDetails()
+  private LoadInternalDetails()
   {
+    //let currentMonth = new Date().getMonth() + 1;
     this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1, {
+        //.get(`${this.props.siteurl}/_vti_bin/listdata.svc/TestUserList?$filter=month(BirthDate) eq ${currentMonth} or month(HireDate) eq ${currentMonth}`, SPHttpClient.configurations.v1, {
+          .get(`${this.props.siteurl}/_api/web/lists/getbytitle('UserDetails')/items`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
           return result.json();
         })
         .then((jsonresult): void => {
-          let people:IBirthday[] = jsonresult.value; 
-          if(people.length > 0)
+          if(this.state.count === 0 || this.state.count === 1)
           {
-            people = this.getPhotoURL(people);
-            this.setState({
-              loading:false,
-              BUsers : people,
-            })
+            let people:IBirthday[] = jsonresult.value; 
+            if(people.length > 0)
+            {
+              people = this.getPhotoURL(people);
+              let currentMonthPeople = this._getBirthdayForSorting(people);
+              let currentMonthPeopleFinal = this.SortBirthday(currentMonthPeople);
+              this.setState({
+                loading:false,
+                BUsers : currentMonthPeopleFinal,
+              })
+            }
           }
-       
+          if(this.state.count === 2)
+          {
+            let people:IAnniversary[] = jsonresult.value; 
+            if(people.length > 0)
+            {
+              people = this.getPhotoURL(people);
+              let currentMonthPeople = this._getAnniversaryForSorting(people);
+              let currentMonthPeopleFinal = this.SortAnniversary(currentMonthPeople);
+              this.setState({
+                loading:false,
+                AUsers : currentMonthPeopleFinal,
+              })
+            }
+          }
         }, (error: any): void => {      
           this.setState({
             loading: false,
@@ -156,7 +231,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       });
   }
 
-  private LoadInternalAnniversaryDetails()
+  /* private LoadInternalAnniversaryDetails()
   {
     this.props.spHttpClient
         .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1, {
@@ -188,14 +263,14 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
           errorMessage: error
         });
       });
-  }
+  } */
 
   private getPhotoURL(people)
   {
+    let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));
     for(let i: number = 0;i<people.length; ++i)
-    {
-      let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));
-      let imageURL: string = `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + people[i].Email}`;
+    {     
+      let imageURL: string = `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + people[i].email}`;
       people[i].photoUrl = imageURL;
     }
     return people;
@@ -240,12 +315,12 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         
           let people: IBirthday[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
-            Name: this._getValueFromSearchResult('PreferredName', r.Cells),
-            FirstName: this._getValueFromSearchResult('FirstName', r.Cells),
-            LastName: this._getValueFromSearchResult('LastName', r.Cells),     
-            Email: this._getValueFromSearchResult('WorkEmail', r.Cells),
+            name: this._getValueFromSearchResult('PreferredName', r.Cells),
+            firstName: this._getValueFromSearchResult('FirstName', r.Cells),
+            lastName: this._getValueFromSearchResult('LastName', r.Cells),     
+            email: this._getValueFromSearchResult('WorkEmail', r.Cells),
             photoUrl: `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,
-            Birthdate:  this._getValueFromSearchResult('RefinableDate00', r.Cells)
+            birthDate:  this._getValueFromSearchResult('RefinableDate00', r.Cells)
           };
       });
       
@@ -273,11 +348,11 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private SortBirthday(BirthUsers: IBirthday[])
   {
     return BirthUsers.sort((a, b) => {
-      if(a.Birthdate > b.Birthdate)
+      if(a.birthDate > b.birthDate)
       {
         return 1;
       }
-      if(a.Birthdate < b.Birthdate)
+      if(a.birthDate < b.birthDate)
       {
         return -1;
       }
@@ -288,11 +363,11 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
   private SortAnniversary(AnniUsers: IAnniversary[])
   {
     return AnniUsers.sort((a, b) => {
-      if(a.Hiredate > b.Hiredate)
+      if(a.hireDate > b.hireDate)
       {
         return 1;
       }
-      if(a.Hiredate < b.Hiredate)
+      if(a.hireDate < b.hireDate)
       {
         return -1;
       }
@@ -368,34 +443,22 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         
           let people: IAnniversary[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
-            Name: this._getValueFromSearchResult('PreferredName', r.Cells),
-            FirstName: this._getValueFromSearchResult('FirstName', r.Cells),
-            LastName: this._getValueFromSearchResult('LastName', r.Cells),     
-            Email: this._getValueFromSearchResult('WorkEmail', r.Cells),
+            name: this._getValueFromSearchResult('PreferredName', r.Cells),
+            firstName: this._getValueFromSearchResult('FirstName', r.Cells),
+            lastName: this._getValueFromSearchResult('LastName', r.Cells),     
+            email: this._getValueFromSearchResult('WorkEmail', r.Cells),
             photoUrl: `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + this._getValueFromSearchResult('WorkEmail', r.Cells)}`,            
-            Hiredate: this._getValueFromSearchResult('RefinableDate01', r.Cells)
+            hireDate: this._getValueFromSearchResult('RefinableDate01', r.Cells)
           };
         });
     
-        if(people.length>0){            
-          let currentMonth = new Date().getMonth() + 1;
-          let hmonth, hday, hireDate;
-          let currentMonthPeople: IAnniversary[] = [];
-          for(let i=0; i<people.length;++i)
-          {    
-            hday = new Date(people[i].Hiredate).getDate();       
-            hmonth = new Date(people[i].Hiredate).getMonth() + 1;
-            if(hmonth == currentMonth)
-            {
-              hireDate = hmonth < 10 ? hday < 10 ? '2000-0' + hmonth + '-0' + hday : '2000-0' + hmonth + '-' + hday : hday < 10 ? '2000-' + hmonth + '-0' + hday : '2000' + hmonth + '-' + hday;
-              people[i].Hiredate = hireDate;               
-              currentMonthPeople.push(people[i]);
-            }            
-          }         
-          currentMonthPeople = this.SortAnniversary(currentMonthPeople);
+        if(people.length>0)
+        {
+          let currentMonthPeople = this._getAnniversaryForSorting(people);                 
+          let currentMonthPeopleFinal = this.SortAnniversary(currentMonthPeople);
           this.setState({
             loading:false,
-            AUsers : currentMonthPeople,
+            AUsers : currentMonthPeopleFinal,
           })
         }
       }, (error: any): void => {
@@ -415,6 +478,44 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       });
     });
   } 
+
+  private _getAnniversaryForSorting(people: IAnniversary[])
+  {
+    let currentMonth = new Date().getMonth() + 1;
+    let hmonth, hday, hireDate;
+    let currentMonthPeople: IAnniversary[] = [];
+    for(let i=0; i<people.length;++i)
+    {    
+      hday = new Date(people[i].hireDate).getDate();       
+      hmonth = new Date(people[i].hireDate).getMonth() + 1;
+      if(hmonth == currentMonth)
+      {
+        hireDate = hmonth < 10 ? hday < 10 ? '2000-0' + hmonth + '-0' + hday : '2000-0' + hmonth + '-' + hday : hday < 10 ? '2000-' + hmonth + '-0' + hday : '2000' + hmonth + '-' + hday;
+        people[i].hireDate = hireDate;               
+        currentMonthPeople.push(people[i]);
+      }            
+    } 
+    return currentMonthPeople; 
+  }
+
+  private _getBirthdayForSorting(people: IBirthday[])
+  {
+    let currentMonth = new Date().getMonth() + 1;
+    let bmonth, bday, birthDate;
+    let currentMonthPeople: IBirthday[] = [];
+    for(let i=0; i<people.length;++i)
+    {    
+      bday = new Date(people[i].birthDate).getDate();       
+      bmonth = new Date(people[i].birthDate).getMonth() + 1;
+      if(bmonth == currentMonth)
+      {
+        birthDate = bmonth < 10 ? bday < 10 ? '2000-0' + bmonth + '-0' + bday : '2000-0' + bmonth + '-' + bday : bday < 10 ? '2000-' + bmonth + '-0' + bday : '2000' + bmonth + '-' + bday;
+        people[i].birthDate = birthDate;               
+        currentMonthPeople.push(people[i]);
+      }            
+    } 
+    return currentMonthPeople;
+  }
 
   public render(): React.ReactElement<IBirthdayProps> {    
     return(

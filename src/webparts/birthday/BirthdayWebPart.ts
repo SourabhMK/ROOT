@@ -24,12 +24,14 @@ import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { setPortalAttribute } from 'office-ui-fabric-react';
 import { sp } from '@pnp/sp';
 import pnp, { File } from 'sp-pnp-js';
+import { HttpClient } from "@microsoft/sp-http"; 
 import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
 
 export interface IBirthdayWebPartProps {
   description: string;
   siteurl: string;
   spHttpClient: SPHttpClient;
+  myHttpClient: HttpClient;
   dropdown: string; 
   simpleText: string;
   imageUrl: string;
@@ -37,11 +39,6 @@ export interface IBirthdayWebPartProps {
   StartDate: string;
   EndDate: string;
   filePickerResult: IFilePickerResult;
-}
-
-export interface IBirthdayWebPartState
-{
-  dataArray: [];
 }
 
 debugger;
@@ -54,6 +51,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         description: this.properties.description,
         siteurl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
+        myHttpClient: this.context.httpClient,
         loggedInUserEmail: this.context.pageContext.user.email,
         dropdown: this.properties.dropdown,
         simpleText: this.properties.simpleText,
@@ -184,7 +182,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
 
     downloadLink.href = linkSource;
     downloadLink.target = '_self';
-    downloadLink.download = "TestingList.csv";
+    downloadLink.download = "UserDetails.csv";
 
     // Start download
     downloadLink.click();
@@ -249,15 +247,19 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     {
       if(UserList[i] !== undefined)
       {
-        let birthDate = new Date(UserList[i].BirthDate).toLocaleDateString();
-        //let hireDate = new Date(UserList[i].HireDate).toLocaleDateString();
+        let birthDate = new Date(UserList[i].BirthDate);
+        let birthDateFinal = new Date(birthDate.getTime() - (birthDate.getTimezoneOffset() * 60000));
+        let hireDate = new Date(UserList[i].HireDate);
+        let hireDateFinal = new Date(hireDate.getTime() - (hireDate.getTimezoneOffset() * 60000));
         const requestlistItem: string = JSON.stringify({
-          Name: UserList[i].Name,
-          FirstName: UserList[i].FirstName,
-          LastName: UserList[i].LastName,
-          Email: UserList[i].Email,                           
-          Department: UserList[i].Department,
-          Team: UserList[i].Team
+          'name': UserList[i].Name,
+          'firstName': UserList[i].FirstName,
+          'lastName': UserList[i].LastName,
+          'email': UserList[i].Email,
+          'birthDate': birthDateFinal, 
+          'hireDate': hireDateFinal,                           
+          'department': UserList[i].Department,
+          'team': UserList[i].Team
           });
           this.addListItems(requestlistItem);
       }  
@@ -266,7 +268,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
 
   private addListItems(JsonData: string)
   {
-    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1,  
+    this.context.spHttpClient.post(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('UserDetails')/items`, SPHttpClient.configurations.v1,  
     {  
       headers: {  
       'Accept': 'application/json;odata=nometadata',  

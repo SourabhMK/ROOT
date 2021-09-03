@@ -4,12 +4,15 @@ import { IBirthdayUserListProps, IBirthdayUserListState } from './IBirthdayUserL
 import { escape, fromPairs } from '@microsoft/sp-lodash-subset';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
-import { MSGraphClient } from '@microsoft/sp-http';
-import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
+import { TextField } from '@fluentui/react/lib/TextField';
+//import { MSGraphClient } from '@microsoft/sp-http';
+//import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 //import useMsGraphProvider, { IMSGraphInterface } from './msGraphProvider';
 import { Callout, DirectionalHint } from 'office-ui-fabric-react/lib/Callout';
 import { SendEmailCallout } from "./SendEmailCallout";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
+import { Dialog, DialogFooter, DialogType } from '@fluentui/react/lib/Dialog';
 import {
   Persona,
   PersonaSize
@@ -17,7 +20,7 @@ import {
 
 initializeIcons();
 const MyMailIcon = () => <Icon iconName="Mail" />;
-const MyGiftIcon = () => <Icon iconName="GiftBox" />;
+const MyTeamsIcon = () => <Icon iconName="TeamsLogo" />;
 
 debugger;
   export default class BirthdayUser extends React.Component<IBirthdayUserListProps, IBirthdayUserListState> {
@@ -27,7 +30,10 @@ debugger;
     this.state = {
       showCallOut: false,
       calloutElement: null,
-      person: null
+      person: null,
+      email: null,
+      hideDialog: true,
+      currentMessage: ""
     };
 
     this._onCalloutDismiss = this._onCalloutDismiss.bind(this);
@@ -37,10 +43,12 @@ debugger;
     return (
         <div>
           {!this.props.people &&
-          <Placeholder 
-            iconName = ''
-            iconText = 'No Birthdays in this month.'
-            description = ''/>
+          <div>
+            <Placeholder 
+              iconName = ''
+              iconText = 'No Birthdays in this month.'
+              description = ''/>
+          </div>
         }
         {this.props.people &&
         
@@ -48,28 +56,27 @@ debugger;
         
         {this.props.people.map((p, i) => {
             let finalbirthdate;
-            if(p.Birthdate === "" || p.Birthdate === undefined)
+            if(p.birthDate === "" || p.birthDate === undefined)
             {
-              finalbirthdate = p.Birthdate;
+              finalbirthdate = p.birthDate;
             }
             else
             {
-              let birthdate = new Date(p.Birthdate);
+              let birthdate = new Date(p.birthDate);
               finalbirthdate = new Intl.DateTimeFormat('en-US', {day: '2-digit',month: 'long'}).format(birthdate); 
             }   
             
             return(  
               
                 <div className = {styles.persona_card}> 
-                  <Persona primaryText={`${p.Name}`} secondaryText={finalbirthdate} tertiaryText={p.Email} imageUrl={p.photoUrl} imageAlt={p.Name} size={PersonaSize.size72} />
+                  <Persona primaryText={`${p.name}`} secondaryText={finalbirthdate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />                  
                   
-                  {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
-                    <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>
-                  </div> */}
                   <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
-                    <MyMailIcon />
-                  </div> 
-                                    
+                    <MyMailIcon />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  </div>&nbsp; 
+                  <div onClick={this._onSendTeamsMsgClicked(i, p.email)} className={styles.persona}>
+                    <MyTeamsIcon />
+                  </div>                  
                   { this.state.showCallOut && this.state.calloutElement === i && (
                   <Callout
                     className={this.state.showCallOut ? styles.calloutShow: styles.callout}
@@ -83,9 +90,29 @@ debugger;
                     doNotLayer={false}
                   >
                     <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} loggedInUserEmail = {this.props.loggedInUserEmail}></SendEmailCallout>
-                  </Callout>
-                  )}                 
-                                      
+                  </Callout> 
+                  )} 
+
+                  { !this.state.hideDialog && 
+                    <Dialog
+                    hidden={this.state.hideDialog}
+                    onDismiss={this._closeDialog}
+                    dialogContentProps={{
+                      type: DialogType.largeHeader,
+                      title: ""                      
+                    }}
+                    modalProps={{
+                      isBlocking: false,
+                      styles: { main: { minWidth: 600 } }
+                    }}
+                    >                    
+                      <TextField required onChange={evt => this.updateInputValue(evt)} value={this.state.currentMessage} label="Message" multiline resizable={true} />
+                      <DialogFooter>
+                        <PrimaryButton onClick={() => this._sendMessage()} text="Send" />
+                        <DefaultButton onClick={this._closeDialog} text="Cancel" />
+                      </DialogFooter>
+                    </Dialog>
+                  }                
                 </div>
             );                                                      
           })}
@@ -95,11 +122,45 @@ debugger;
     );
   }
 
+  _closeDialog = async () => {
+    await this.setState({ 
+      hideDialog: true,
+      currentMessage: "" 
+    });
+  }
+
+  _sendMessage = async () => {
+    await this.setState({ 
+      hideDialog: true,
+      currentMessage: "" 
+    });
+  }
+
+  private updateInputValue(evt) {
+    this.setState({
+      currentMessage: evt.target.value
+    });
+  }
+
   private _onSendEmailClicked = (index, person) => event => {
     this.setState({
       showCallOut: !this.state.showCallOut,
       calloutElement: index,
       person: person
+    });
+  }
+
+  private _onSendTeamsMsgClicked = (index, email) => event => {
+    this.setState({
+      calloutElement: index,
+      email: email,
+      hideDialog: false
+    });
+  }
+
+  private _onCalloutDismiss = (event) => {
+    this.setState({
+      showCallOut: false,
     });
   }
 
@@ -170,12 +231,4 @@ debugger;
       let chatOfUser = await msGraphProvider.createUsersChat(userIdToSendMessage, currentUserId);
       let result = await msGraphProvider.sendMessage(chatOfUser, "Happy Birthday");      
   } */
-
-
-  private _onCalloutDismiss = (event) => {
-    this.setState({
-      showCallOut: false,
-    });
-  }
-
 }

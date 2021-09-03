@@ -12,4 +12,7 @@ export interface IBirthdayUserListState {
     showCallOut: boolean;
     calloutElement: number;
     person: IBirthday;
+    email: string;
+    hideDialog: boolean;
+    currentMessage: string;
 }

@@ -3,70 +3,70 @@
     <Fields>
         <Field ID="{58e15479-fdc8-48fd-b548-15df2f8cc931}"
             Type="Text" 
-            DisplayName="Name" 
+            DisplayName="name" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
             Indexed="FALSE" 
             MaxLength="255" 
-            StaticName="Name" 
-            Name="Name" 
+            StaticName="name" 
+            Name="name" 
             ColName="nvarchar3" 
             RowOrdinal="0" />
 
          <Field ID="{6c514b1d-c641-4a50-8637-c1d7f26c7624}"
             Type="Text" 
-            DisplayName="FirstName" 
+            DisplayName="firstName" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
             Indexed="FALSE" 
             MaxLength="255"
-            StaticName="FirstName" 
-            Name="FirstName" 
+            StaticName="firstName" 
+            Name="firstName" 
             ColName="ntext2" 
             RowOrdinal="0" />
 
         <Field ID="{1eecfa22-30ca-4fd1-91db-ee1776f43211}"
             Type="Text" 
-            DisplayName="LastName" 
+            DisplayName="lastName" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
             Indexed="FALSE" 
             MaxLength="255" 
-            StaticName="LastName"
-            Name="LastName" 
+            StaticName="lastName"
+            Name="lastName" 
             ColName="nvarchar4" 
             RowOrdinal="0" />
 
         <Field ID="{a7e7e5ae-f9e7-4f54-8f8e-03b2ef987469}"
             Type="Text" 
-            DisplayName="Email" 
+            DisplayName="email" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
             Indexed="FALSE" 
             MaxLength="255" 
-            StaticName="Email" 
-            Name="Email" 
+            StaticName="email" 
+            Name="email" 
             ColName="nvarchar9" 
             RowOrdinal="0" />
 
         <Field ID="{a4160129-bf26-46bf-83af-b4be0807862c}"
             Type="DateTime" 
-            DisplayName="BirthDate" 
+            DisplayName="birthDate" 
             Required="TRUE" 
             EnforceUniqueValues="FALSE" 
             Indexed="FALSE" 
             MaxLength="255" 
-            StaticName="BirthDate" 
-            Name="BirthDate" 
+            StaticName="birthDate" 
+            Name="birthDate" 
             ColName="nvarchar9" 
             RowOrdinal="0"
             Format="DateOnly" />
 
         <Field ID="{da2bf9d8-edac-4749-b6ea-3ed783d0c9dc}"
-            Name="HireDate"
-            DisplayName="HireDate"
+            Name="hireDate"
+            DisplayName="hireDate"
             Type="DateTime"
-            StaticName="HireDate"
+            StaticName="hireDate"
             ColName="nvarchar5" 
             RowOrdinal="0"              
             EnforceUniqueValues="FALSE"
@@ -76,10 +76,10 @@
             Format="DateOnly" />
 
         <Field ID="{c5ab0f34-dd2d-40c3-986e-00a1afb26341}"
-            Name="Department"
-            DisplayName="Department"
+            Name="department"
+            DisplayName="department"
             Type="Text"
-            StaticName="Department"
+            StaticName="department"
             ColName="nvarchar5" 
             RowOrdinal="0"   
             EnforceUniqueValues="FALSE"
@@ -88,10 +88,10 @@
             Required="TRUE" />
 
         <Field ID="{678ed098-758c-4967-ba9c-9e749ae178ef}"
-            Name="Team"
-            DisplayName="Team"
+            Name="team"
+            DisplayName="team"
             Type="Text"
-            StaticName="Team"
+            StaticName="team"
             ColName="nvarchar5" 
             RowOrdinal="0"  
             EnforceUniqueValues="FALSE"
@@ -109,14 +109,14 @@
         <Toolbar Type="Standard" />
         <ViewFields>
           <FieldRef Name="LinkTitle"></FieldRef>
-          <FieldRef Name="Name"></FieldRef>
-          <FieldRef Name="FirstName"></FieldRef>
-          <FieldRef Name="LastName"></FieldRef>
-          <FieldRef Name="Email"></FieldRef>
-          <FieldRef Name="BirthDate"></FieldRef>
-          <FieldRef Name="HireDate"></FieldRef>
-          <FieldRef Name="Department"></FieldRef>
-          <FieldRef Name="Team"></FieldRef>
+          <FieldRef Name="name"></FieldRef>
+          <FieldRef Name="firstName"></FieldRef>
+          <FieldRef Name="lastName"></FieldRef>
+          <FieldRef Name="email"></FieldRef>
+          <FieldRef Name="birthDate"></FieldRef>
+          <FieldRef Name="hireDate"></FieldRef>
+          <FieldRef Name="department"></FieldRef>
+          <FieldRef Name="team"></FieldRef>
         </ViewFields>
         <Query>
           <OrderBy>

@@ -10,7 +10,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/files";
 import "@pnp/sp/folders";
 import Carousel from 'react-elastic-carousel';
-import { TextField } from '@fluentui/react/lib/TextField'
+import { TextField } from '@fluentui/react/lib/TextField';
 import { Checkbox } from '@fluentui/react';
 
 interface ISendEmailCalloutState {   
@@ -71,7 +71,6 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
       selectedImage:image,
       errorMessage: ""
     })
-    //alert("Selected Image: " + this.state.selectedImage);
   }
   
   handleChange = async(birthmessage :string) => {
@@ -85,7 +84,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
     return (
       <div className={(styles.calloutCard,styles.emailMainContent)}>
         <h3 className={styles.SendEmailh3}>
-          Send Message to {this.props.person.FirstName}
+          Send Message to {this.props.person.firstName}
         </h3>        
           <div className={styles.mt10}>
             <TextField label="Personal Message" className={styles.emailTextarea}multiline rows={3} onChange={e => this.handleChange(e.currentTarget.value)}/>
@@ -107,11 +106,8 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
           </div>
         </div>
         
-        <div className={styles.SetSaveBtn}>                                                             
-          {/* <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'#d9534f',color:'#fff'}} onClick={this.CancelClicked}>Cancel</DefaultButton></div> */}   
-                                                    
-          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>
-                        
+        <div className={styles.SetSaveBtn}>         
+          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>                        
         </div>             
       </div>
     );
@@ -120,7 +116,6 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
   SaveDataClicked = async(message: string, image: string) =>
   { 
     let userEmail = this.props.loggedInUserEmail;
-    //console.log('userEmail: '+ userEmail);
     if(message == "" || message == null)
     {
       this.setState({
@@ -142,7 +137,7 @@ export class SendEmailCallout extends React.Component<ISendEmailCalloutProps, IS
       EmailSubject: "Happy Birthday",
       EmailBody: message,
       EmailFrom: userEmail,
-      EmailTo: this.props.person.Email,
+      EmailTo: this.props.person.email,
       ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
       });
 
