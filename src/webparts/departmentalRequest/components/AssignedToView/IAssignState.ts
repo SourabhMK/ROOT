@@ -1,5 +1,5 @@
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
-import {IExampleExtendedPersonaProps} from './PeoplePickerTestExample';
+// import {IExampleExtendedPersonaProps} from './PeoplePickerTestExample';
 import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
 import { IDropdown, IDropdownOption } from 'office-ui-fabric-react';
 
@@ -8,7 +8,7 @@ export interface passUser{
     text:string;
 }
 
-export interface IPeopleState {
+export interface IAssignState {
     loading:false;
     errorMessage:string;
     mostRecentlyUsed:IPersonaProps[];
@@ -22,4 +22,9 @@ export interface IPeopleState {
     deptListDropDown:IDropdownOption[];
     passAssignedToUser:passUser;
     deleteSelectedTicket:string;
+    statusOptions:IDropdownOption[];
+    statusCompletedCheck:number;
+    assignedIssuesButton:number;
+    allIssuesButton:number;
+    allDetails:IDispacherList[];
 }

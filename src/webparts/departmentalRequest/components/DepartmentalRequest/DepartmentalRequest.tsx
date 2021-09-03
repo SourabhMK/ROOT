@@ -34,8 +34,8 @@ import {
 } from '@microsoft/sp-property-pane';
 //import DepartmentSelect from '../MyRequestedIssues/MyRequestedIssues';
 import DispatcherView from '../DispatcherView/DispatcherView';
+import AssignedToView from '../AssignedToView/AssignedToView';
 // import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
-import PeoplePicker from '../TestFolder/PeoplePicker'
 const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
 const columnProps: Partial<IStackProps> = {
@@ -79,6 +79,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       selectedDeptCategory:"",
       requestDescription:"",
       dispatcherViewUnlock:0,
+      assignedToViewUnlock:0
     }
     this.handleChange = this.handleChange.bind(this);
     this.onChangeDeptHandle = this.onChangeDeptHandle.bind(this);
@@ -535,12 +536,18 @@ GetIssueArchiveSettings():void{
       dispatcherViewUnlock: 1,
     })
   }
+
+  assignedToViewClick=()=>{
+    this.setState({
+      assignedToViewUnlock:1
+    })
+  }
   
   public render(): React.ReactElement<IDepartmentalRequestProps> {
     return (
       <div className={ styles.departmentalRequest }>
         {/* Main page display */}
-        {(this.state.count === 0) && (this.state.myIssueUnlock === 0)&& (this.state.dispatcherViewUnlock === 0) &&
+        {(this.state.count === 0) && (this.state.myIssueUnlock === 0)&& (this.state.dispatcherViewUnlock === 0) && (this.state.assignedToViewUnlock === 0) &&
           <div className="ms-Grid" dir="ltr">
             <h1>Welcome to Departmental Request Facility!!</h1>
             <div className="ms-Grid-row">
@@ -548,7 +555,7 @@ GetIssueArchiveSettings():void{
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'left'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
               </div>
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}}>Assigned Issues</CompoundButton>
+                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.assignedToViewClick}>Assigned Issues</CompoundButton>
               </div>
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.dispatcherViewClick}>Dispatcher View</CompoundButton>
@@ -694,6 +701,10 @@ GetIssueArchiveSettings():void{
             // <PeoplePicker currentUserId={this.props.currentUserId} deptBelongingNames={[]} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  />
             //  <PeoplePickerTestExample />
             <PeoplePickerTestExample deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} groupType={this.props.groupType} description={this.props.description} />
+          }
+          {
+            (this.state.assignedToViewUnlock === 1) &&
+            <AssignedToView deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} groupType={this.props.groupType} description={this.props.description}/>
           }
       </div>
     );

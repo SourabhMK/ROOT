@@ -13,7 +13,7 @@ import BirthdayUser from './Birthday/BirthdayUser';
 import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
-import { Props } from '../../departmentalRequest/components/TestFolder/PeoplePicker';
+
 
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
