@@ -8,7 +8,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 
 const MyApplicationFeedIcon = () => <Icon iconName="OfficeChat" className = {styles.applicationFeedIcon} />;
 
-let ApplicationFeedData: any = [];
+let AppFeed: any = [];
 
 export default class ApplicationFeed extends React.Component<IApplicationFeedProps,IApplicationFeedState, {}> {
 
@@ -31,6 +31,22 @@ export default class ApplicationFeed extends React.Component<IApplicationFeedPro
   componentDidMount()
   {
     this._getApplicationFeedData();
+    // this._getApplicationFeedData().then((AppFeed: any): void=>{
+    //   for (let i = 0; i < AppFeed.value.length; i++) { 
+    //     this.state.applicationFeedData.push({
+    //       Id:AppFeed.value[i].Id,
+    //       Title:AppFeed.value[i].Title,
+    //       URL:AppFeed.value[i].URL,
+    //       Order:AppFeed.value[i].Order0
+    //     });     
+    //     }
+    //     this.setState({
+    //       applicationFeedData: this.state.applicationFeedData
+    //     },()=>console.log("applicationFeedData =>" + this.state.applicationFeedData)
+    //     )
+    // })
+
+
   } 
 
   _getApplicationFeedData = async () =>
@@ -47,20 +63,20 @@ export default class ApplicationFeed extends React.Component<IApplicationFeedPro
           return result.json();
         })
         .then((jsonresult) => {
-          ApplicationFeedData = [];         
+          AppFeed = [];         
           for(let i=0; i<jsonresult.value.length; ++i)
           {
-            //ApplicationFeedData.push({
-              this.state.applicationFeedData.push({
+            AppFeed.push({
+              //this.state.applicationFeedData.push({
               Id:jsonresult.value[i].Id,
               Title:jsonresult.value[i].Title,
               URL:jsonresult.value[i].URL,
               Order:jsonresult.value[i].Order0
             });
           }
-          console.log("applicationFeed Data Array=>" + ApplicationFeedData);
+          console.log("applicationFeed Data Array=>" + AppFeed);
           this.setState({
-            //applicationFeedData: ApplicationFeedData
+            applicationFeedData: AppFeed
           },()=>console.log("applicationFeedData =>" + this.state.applicationFeedData)
           )
         })      
@@ -74,7 +90,7 @@ export default class ApplicationFeed extends React.Component<IApplicationFeedPro
             <div className={styles.description}>                        
               <h1 style={{margin:'0'}}><MyApplicationFeedIcon/> Application Feed </h1>
             </div>
-            <div className={styles.myTable}>
+            {/* <div className={styles.myTable}>
               <h1> Static Data </h1>
               <table> 
               <tr><td><a href="https://www.google.com" title="Google" target='_blank'>Google</a></td></tr>
@@ -82,12 +98,13 @@ export default class ApplicationFeed extends React.Component<IApplicationFeedPro
               <tr><td><a href="https://login.paylocity.com" title="Payroll" target='_blank'>Payroll</a></td></tr>
               <tr><td><a href="https://www.eyemedvisioncare.com/member" title="Vision Insurance" target='_blank'>Vision Insurance</a></td></tr>
               </table>
-            </div>                 
-            <div className={styles.myTable}> 
-              <h1> Dynamic Data </h1>         
+            </div>                  */}
+            <div className={styles.myTable}>          
               <table>                 
               {this.state.applicationFeedData.map( (AppFeedItem, index)=> {
+              return(
               <tr><td key={AppFeedItem.Id}><a href={AppFeedItem.URL} title={AppFeedItem.Title} target='_blank'>{AppFeedItem.Title}</a></td></tr> 
+              )
               })}             
               </table>
             </div>
