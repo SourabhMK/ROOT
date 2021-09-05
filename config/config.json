@@ -57,6 +57,14 @@
           "manifest": "./src/webparts/applicationFeed/ApplicationFeedWebPart.manifest.json"
         }
       ]
+    },
+    "room-reservation-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/roomReservation/RoomReservationWebPart.js",
+          "manifest": "./src/webparts/roomReservation/RoomReservationWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -69,6 +77,7 @@
     "AssetReservationWebPartStrings": "lib/webparts/assetReservation/loc/{locale}.js",
     "AssignIssueEcbCommandSetStrings": "lib/extensions/assignIssueEcb/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
-    "ApplicationFeedWebPartStrings": "lib/webparts/applicationFeed/loc/{locale}.js"
+    "ApplicationFeedWebPartStrings": "lib/webparts/applicationFeed/loc/{locale}.js",
+    "RoomReservationWebPartStrings": "lib/webparts/roomReservation/loc/{locale}.js"
   }
 }
