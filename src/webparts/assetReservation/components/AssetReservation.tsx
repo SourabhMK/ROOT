@@ -6,7 +6,6 @@ import Rooms from '../components/Rooms/Rooms';
 
 export default class AssetReservation extends React.Component<IAssetReservationProps, {}> {
 
-  //roomsSizeDataChange(){alert("Hello");}
   public render(): React.ReactElement<IAssetReservationProps> {
     return (
       <div className={ styles.assetReservation }>

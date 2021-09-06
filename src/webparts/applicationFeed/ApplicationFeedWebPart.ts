@@ -7,24 +7,24 @@ import {
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
-import * as strings from 'AssetReservationWebPartStrings';
-import AssetReservation from './components/AssetReservation';
-import { IAssetReservationProps } from './components/IAssetReservationProps';
-import { SPHttpClient } from '@pnp/sp';
+import * as strings from 'ApplicationFeedWebPartStrings';
+import ApplicationFeed from './components/ApplicationFeed';
+import { IApplicationFeedProps } from './components/IApplicationFeedProps';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 
-
-export interface IAssetReservationWebPartProps {
-  description: string,
-  context:any,
-  siteurl: string,
-  spHttpClient: SPHttpClient,
+export interface IApplicationFeedWebPartProps {
+  description: string;
+  context:any;
+  siteurl: string;
+  spHttpClient: SPHttpClient;
 }
 
-export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
+debugger;
+export default class ApplicationFeedWebPart extends BaseClientSideWebPart<IApplicationFeedWebPartProps> {
 
   public render(): void {
-    const element: React.ReactElement<IAssetReservationProps> = React.createElement(
-      AssetReservation,
+    const element: React.ReactElement<IApplicationFeedProps> = React.createElement(
+      ApplicationFeed,
       {
         description: this.properties.description,
         context:this.properties.context,

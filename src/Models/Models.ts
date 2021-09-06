@@ -1,0 +1,13 @@
+export interface ISPLists {
+    value: ISPList[];
+  }
+
+  export interface ISPList {
+    Title: string;
+    Id: string;
+  }
+
+  export interface ISPRoomImageRef {
+    Id: string;
+    RoomImageId: string;
+  }

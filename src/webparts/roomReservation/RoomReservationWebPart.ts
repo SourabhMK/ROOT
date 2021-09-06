@@ -7,29 +7,23 @@ import {
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
-import * as strings from 'AssetReservationWebPartStrings';
-import AssetReservation from './components/AssetReservation';
-import { IAssetReservationProps } from './components/IAssetReservationProps';
-import { SPHttpClient } from '@pnp/sp';
+import * as strings from 'RoomReservationWebPartStrings';
+import RoomReservation from './components/RoomReservation';
+import { IRoomReservationProps } from './components/IRoomReservationProps';
 
-
-export interface IAssetReservationWebPartProps {
-  description: string,
-  context:any,
-  siteurl: string,
-  spHttpClient: SPHttpClient,
+export interface IRoomReservationWebPartProps {
+  description: string;
+  context:any; 
 }
 
-export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
+export default class RoomReservationWebPart extends BaseClientSideWebPart<IRoomReservationWebPartProps> {
 
   public render(): void {
-    const element: React.ReactElement<IAssetReservationProps> = React.createElement(
-      AssetReservation,
+    const element: React.ReactElement<IRoomReservationProps> = React.createElement(
+      RoomReservation,
       {
         description: this.properties.description,
-        context:this.properties.context,
-        siteurl: this.context.pageContext.web.absoluteUrl,
-        spHttpClient: this.context.spHttpClient,
+        context: this.context
       }
     );
 
