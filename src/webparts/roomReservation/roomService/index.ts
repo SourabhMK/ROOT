@@ -1,6 +1,6 @@
 import { Environment, EnvironmentType } from '@microsoft/sp-core-library';
 import { IDropdownOption } from '@fluentui/react';
-import SPService from '../../../Services/SPService';
+import SPService from '../../../services/SPService';
 import { ISPList, ISPLists, ISPRoomImageRef } from '../../../Models/Models';
 
 
