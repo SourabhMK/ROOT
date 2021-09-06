@@ -1,14 +1,11 @@
 import * as React from 'react';
 import styles from '../Birthday.module.scss';
 import { IBirthdayUserListProps, IBirthdayUserListState } from './IBirthdayUserListProps';
-import { escape, fromPairs } from '@microsoft/sp-lodash-subset';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { TextField } from '@fluentui/react/lib/TextField';
-//import { MSGraphClient } from '@microsoft/sp-http';
-//import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
-//import useMsGraphProvider, { IMSGraphInterface } from './msGraphProvider';
+import useMsGraphProvider, { IMSGraphInterface } from "../../../../services/msGraphProvider";
 import { Callout, DirectionalHint } from 'office-ui-fabric-react/lib/Callout';
 import { SendEmailCallout } from "./SendEmailCallout";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
@@ -23,6 +20,7 @@ const MyMailIcon = () => <Icon iconName="Mail" />;
 const MyTeamsIcon = () => <Icon iconName="TeamsLogo" />;
 
 debugger;
+
   export default class BirthdayUser extends React.Component<IBirthdayUserListProps, IBirthdayUserListState> {
 
   constructor(props: IBirthdayUserListProps, state: IBirthdayUserListState) {  
@@ -106,9 +104,9 @@ debugger;
                       styles: { main: { minWidth: 600 } }
                     }}
                     >                    
-                      <TextField required onChange={evt => this.updateInputValue(evt)} value={this.state.currentMessage} label="Message" multiline resizable={true} />
+                      <TextField required onChange={evt => this.updateInputValue(evt)} value={this.state.currentMessage} label="Send Message in Teams" multiline resizable={true} />
                       <DialogFooter>
-                        <PrimaryButton onClick={() => this._sendMessage()} text="Send" />
+                        <PrimaryButton onClick={() => this._sendMessage(this.state.email)} text="Send" />
                         <DefaultButton onClick={this._closeDialog} text="Cancel" />
                       </DialogFooter>
                     </Dialog>
@@ -129,11 +127,32 @@ debugger;
     });
   }
 
-  _sendMessage = async () => {
-    await this.setState({ 
-      hideDialog: true,
-      currentMessage: "" 
-    });
+  _sendMessage = async (ToEmailId) => {
+    const [ msGraphProvider, setMSGraphProvider] = React.useState<IMSGraphInterface>();
+    
+    React.useEffect(() => {
+      fetchMsGraphProvider();
+    }, []);
+
+    const fetchMsGraphProvider = async () => {
+      setMSGraphProvider(await useMsGraphProvider(this.context.msGraphClientFactory));
+    };   
+
+    let currentUserId = await msGraphProvider.getCurrentUserId();
+    let userIdToSendMessage = await msGraphProvider.getUserId(ToEmailId);
+    let chatOfUser = await msGraphProvider.createUsersChat(currentUserId, userIdToSendMessage);
+    await msGraphProvider.sendMessage(chatOfUser, this.state.currentMessage)
+    .then(
+      (result: any[]): void => {
+        console.log(result);
+        this.setState({ 
+          hideDialog: true,
+          currentMessage: "" 
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });    
   }
 
   private updateInputValue(evt) {
@@ -212,23 +231,4 @@ debugger;
       }  
     
   }  */
-  
- /*  sendMessageToTeams = async (ToUserId: string) => 
-  {
-      const [ msGraphProvider, setMSGraphProvider] = React.useState<IMSGraphInterface>();
-
-      const fetchMsGraphProvider = async () => {
-        setMSGraphProvider(await useMsGraphProvider(this.context.msGraphClientFactory));
-      };
-
-      React.useEffect(() => {
-        fetchMsGraphProvider();
-      }, []);
-
-      alert("In teams message "+ToUserId);
-      let currentUserId = await msGraphProvider.getCurrentUserId();
-      let userIdToSendMessage = ToUserId;
-      let chatOfUser = await msGraphProvider.createUsersChat(userIdToSendMessage, currentUserId);
-      let result = await msGraphProvider.sendMessage(chatOfUser, "Happy Birthday");      
-  } */
 }

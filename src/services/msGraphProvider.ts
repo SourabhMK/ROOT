@@ -2,7 +2,7 @@ import { MSGraphClientFactory } from "@microsoft/sp-http";
 
 export interface IMSGraphInterface {
     getCurrentUserId(): Promise<any>;
-    //getUserId(userEmail: string): Promise<any>;
+    getUserId(userEmail: string): Promise<any>;
     createUsersChat(requesterId: string, birthdayPersonId: string): Promise<any>;
     sendMessage(chatId: string, chatMessage: string): Promise<any>;
 }
@@ -10,6 +10,13 @@ export interface IMSGraphInterface {
 export default async function  msGraphProvider(msGraphClientFactory: MSGraphClientFactory): Promise<IMSGraphInterface> {
 
     const msGraphClient = await msGraphClientFactory.getClient();
+    
+    //GET https://graph.microsoft.com/beta/users/{id}
+    const getUserId = async (userEmail: string) => {
+    
+        let resultGraph = await msGraphClient.api(`/users/${userEmail}`).get();
+        return resultGraph.id;
+    };
 
     //Get the ID of user who is sending message
     const getCurrentUserId = async () => {
@@ -49,7 +56,8 @@ export default async function  msGraphProvider(msGraphClientFactory: MSGraphClie
         return resultGraph;
     };
 
-    return {        
+    return { 
+        getUserId,       
         sendMessage,
         createUsersChat,
         getCurrentUserId
