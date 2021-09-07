@@ -56,11 +56,8 @@ export default class AnniversaryUser extends React.Component<IAnniversaryUserLis
         } 
           return(                
               <div className = {styles.persona_card}> 
-                <Persona primaryText={p.name} secondaryText={finalhiredate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />
-                
-                {/* <div onClick={() => this.sendMessageToTeams(p.email)} className={styles.persona}>
-                  <i className = "ms-Icon ms-Icon--TeamsLogo" aria-hidden="true"></i>
-                </div> */}
+                <Persona primaryText={p.name} secondaryText={finalhiredate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />                
+               
                 <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
                   <MyMailIcon />
                 </div> 

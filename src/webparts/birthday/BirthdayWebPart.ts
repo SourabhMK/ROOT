@@ -10,7 +10,7 @@ import {
 } from '@microsoft/sp-property-pane';
 
 import styles from '../birthday/components/Birthday.module.scss';
-import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import { BaseClientSideWebPart, WebPartContext } from '@microsoft/sp-webpart-base';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
 import { update, get } from '@microsoft/sp-lodash-subset'; 
@@ -29,15 +29,11 @@ import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResu
 
 export interface IBirthdayWebPartProps {
   description: string;
+  webPartContext: WebPartContext;
   siteurl: string;
   spHttpClient: SPHttpClient;
   myHttpClient: HttpClient;
-  dropdown: string; 
-  simpleText: string;
-  imageUrl: string;
-  SiteCollection: string;
-  StartDate: string;
-  EndDate: string;
+  dropdown: string;
   filePickerResult: IFilePickerResult;
 }
 
@@ -49,17 +45,14 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       Birthday,
       {
         description: this.properties.description,
+        webPartContext: this.context,
         siteurl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
         myHttpClient: this.context.httpClient,
         loggedInUserEmail: this.context.pageContext.user.email,
-        dropdown: this.properties.dropdown,
-        simpleText: this.properties.simpleText,
-        imageUrl: this.properties.imageUrl,
-        SiteCollection: this.properties.SiteCollection        
+        dropdown: this.properties.dropdown,              
       } 
     );
-    //this.uploadCSV = this.uploadCSV.bind(this);
     ReactDom.render(element, this.domElement);
   }
 
