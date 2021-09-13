@@ -15,6 +15,7 @@ import AnniversaryUser  from './Anniversary/AnniversaryUser';
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { Icon } from '@fluentui/react/lib/Icon';
 
+
 initializeIcons();
 const MyBirthdayIcon = () => <Icon iconName="BirthdayCake" className = {styles.birthdayIcon} />;
 
@@ -108,7 +109,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         
         if(people.length > 0)
         {
-         // people = this.getPhotoURL(people);
           let currentMonthPeople = this._getBirthdayForSorting(people);
           let currentMonthPeopleFinal = this.SortBirthday(currentMonthPeople);
           this.setState({
@@ -123,7 +123,6 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
        
         if(people.length > 0)
         {
-          //people = this.getPhotoURL(people);
           let currentMonthPeople = this._getAnniversaryForSorting(people);
           let currentMonthPeopleFinal = this.SortAnniversary(currentMonthPeople);
           this.setState({
@@ -531,8 +530,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             <div><DefaultButton className={styles.birthTabBtn} style={{backgroundColor:this.state.bgColorAnniversary, color:this.state.colorAnniversary}} onClick={this.AnniversaryClicked}><h3>Anniversary</h3></DefaultButton></div>              
           </div>
           {  
-            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> : 
-            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> )
+            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail} webPartContext={this.props.webPartContext}/> : 
+            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail} webPartContext={this.props.webPartContext}/> )
           }           
         </div>        
       </div>

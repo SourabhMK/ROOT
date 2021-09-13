@@ -6,28 +6,56 @@
     "version": "1.0.2.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
-    "skipFeatureDeployment": false,
-    "features": [
+    "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [{
+      "resource": "Microsoft Graph",
+      "scope": "ChatMessage.Send"
+      },
       {
-        "title": "root-client-side-solution",
-        "description": "root-client-side-solution",
-        "id": "f7688575-3df5-4ef5-a18a-d81387a8f334",
-        "version": "1.0.0.0",
-        "assets": {
-          "elementManifests": [
-            "DepartmentalRequestElements.xml",
-            "BirthdayElements.xml",
-            "RoomsElement.xml"
-          ],
-          "elementFiles": [
-            "schema.xml",
-            "departmentSchema.xml",
-            "departmentalCategorySchema.xml",
-            "IssueArchiveSettingsSchema.xml",
-            "employeeRequestSchema.xml",
-            "EmailSenderschema.xml",
-            "RoomsSchema.xml"
-          ]
+          "resource": "Microsoft Graph",
+          "scope": "Chat.Create"
+      },
+      {
+          "resource": "Microsoft Graph",
+          "scope": "Chat.ReadWrite"
+      },
+      {
+          "resource": "Microsoft Graph",
+          "scope": "User.Read"
+      },
+      {
+          "resource": "Microsoft Graph",
+          "scope": "User.ReadWrite.All"
+      },
+      {
+          "resource": "Microsoft Graph",
+          "scope": "Directory.Read.All"
+      },
+      {
+          "resource": "Microsoft Graph",
+          "scope": "Directory.ReadWrite.All"
+      }
+    ],
+    "features": [{
+      "title": "root-client-side-solution",
+      "description": "root-client-side-solution",
+      "id": "f7688575-3df5-4ef5-a18a-d81387a8f334",     
+      "version": "1.0.0.0",
+      "assets": {
+        "elementManifests": [
+          "DepartmentalRequestElements.xml",
+          "BirthdayElements.xml",
+          "RoomsElement.xml"
+        ],
+        "elementFiles":[
+          "schema.xml",
+          "departmentSchema.xml",
+          "departmentalCategorySchema.xml",
+          "IssueArchiveSettingsSchema.xml",
+          "employeeRequestSchema.xml",
+          "EmailSenderschema.xml",
+          "RoomsSchema.xml"
+        ] 
         }
       },
       {
