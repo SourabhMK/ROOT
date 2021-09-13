@@ -41,7 +41,7 @@
     "styled-components": "^5.3.0"
   },
   "devDependencies": {
-    "@microsoft/microsoft-graph-types": "^2.1.0",
+    "@microsoft/microsoft-graph-types": "^2.5.0",
     "@microsoft/rush-stack-compiler-3.7": "0.2.3",
     "@microsoft/sp-build-web": "1.12.1",
     "@microsoft/sp-module-interfaces": "1.12.1",

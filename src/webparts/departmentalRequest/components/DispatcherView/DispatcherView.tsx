@@ -772,7 +772,7 @@ GetIssueArchiveSettings():void{
           {
             (this.state.myIssueUnlock === 1) &&
             <div>
-              <MyRequestedIssues issueDataList={issueData} groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/> 
+              <MyRequestedIssues msGraphClientFactory={this.props.msGraphClientFactory} issueDataList={issueData} archiveIssueDataList={issueData} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/> 
             </div>
 
           }

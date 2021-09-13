@@ -1,10 +1,11 @@
 import { SPHttpClient } from "@microsoft/sp-http";
 import { DisplayMode } from "@microsoft/sp-core-library";
+import { Attachment } from "sp-pnp-js/lib/graph/attachments";
 
 
 export interface IMyRequestedIssuesProps {
   description: string;
-  groupType:number;
+  emailType:number;
    /**
    * Absolute URL of the current site
    */
@@ -19,7 +20,8 @@ export interface IMyRequestedIssuesProps {
     loggedInUserEmail: string;
   issueDataList:IMyIssueList[];
   currentUserId:number;
-
+  archiveIssueDataList:IMyIssueList[];
+  msGraphClientFactory:any;
 }
 
 export interface IMyIssueList {
@@ -30,5 +32,5 @@ export interface IMyIssueList {
   assignedTo:string,
   comment:string,
   status:string,
-  attachments:string,
+  attachments:Attachment,
 }

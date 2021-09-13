@@ -1,8 +1,8 @@
 import { SPHttpClient } from "@microsoft/sp-http";
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
-import { IDispacherList } from "../DepartmentalRequest/IDepartmentList";
+import { IDispacherList, IDepartmentList } from "../DepartmentalRequest/IDepartmentList";
 
-export interface IAssignProps {
+export interface IManagerProps {
     description: string;
     emailType:number;
     deptBelongingNames:IPersonaProps[];
@@ -16,12 +16,13 @@ export interface IAssignProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
-    msGraphClientFactory:any
+    deptAllDetails:IDepartmentList[];
+    msGraphClientFactory:any;
 }
 
 export interface IAllAssignProps {
     description: string;
-    emailType:number;
+    groupType:number;
     deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**

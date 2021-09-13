@@ -15,7 +15,7 @@ export interface reAssignedUser{
     Title:string;
 }
 
-export interface  IDispacherList {
+export interface  IChartList {
     ticketNumber:string;
     dispatcherDeptName:string;
     supportDeptName:string;
@@ -27,19 +27,5 @@ export interface  IDispacherList {
     status:string;
     reAssignedTo:reAssignedUser;
     dataId:number;
-}
-
-export interface  IAssignedList {
-    ticketNumber:string;
-    dispatcherDeptName:string;
-    supportDeptName:string;
-    raisedBy:string;
-    issueDate:string;
-    description:string;
-    category:string;
-    department:string;
-    status:string;
-    reAssignedTo:reAssignedUser;
-    dataId:number;
-    comment:string;
+    comment:number;
 }

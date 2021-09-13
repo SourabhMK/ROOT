@@ -21,7 +21,7 @@ import { result } from 'lodash';
 import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
 
 
-debugger;
+// debugger;
 export interface IExampleExtendedPersonaProps {
     imageUrl?: string;
     imageInitials?: string;
@@ -490,7 +490,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   }
 
   {(this.state.homeButton === 1) &&
-              <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+              <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
   }
     </div>
   );

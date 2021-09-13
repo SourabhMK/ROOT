@@ -43,6 +43,16 @@
         }
       }
     ],
+    "webApiPermissionRequests": [  
+      {  
+        "resource": "Microsoft Graph",  
+        "scope": "User.ReadBasic.All"  
+      },  
+      {  
+        "resource": "Microsoft Graph",  
+        "scope": "Mail.Send"  
+      }  
+ ],
     "developer": {
       "name": "",
       "websiteUrl": "",

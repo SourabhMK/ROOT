@@ -15,12 +15,20 @@ import { IconButton } from '@fluentui/react/lib/Button';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 initializeIcons();
 import { Icon } from '@fluentui/react/lib/Icon';
-import { Dropdown, IDropdown, IDropdownOption, optionProperties, TextField } from 'office-ui-fabric-react';
+import { Dropdown, IDropdown, IDropdownOption, optionProperties, TextField, Tooltip } from 'office-ui-fabric-react';
 import { Item } from '@pnp/sp/items';
 import { result } from 'lodash';
 import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import AllAssignedToView from '../AllAssignedToView/AllAssignedToView';
+import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import {IAssignedList} from '../DepartmentalRequest/IDepartmentList'
+
+
+const calloutProps = { gapSpace: 0 };
+// The TooltipHost root uses display: inline by default.
+// If that's causing sizing issues or tooltip positioning issues, try overriding to inline-block.
+const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 
 debugger;
 export const people: (IPersonaProps)[] = [];
@@ -29,7 +37,7 @@ export var mru:(IPersonaProps)[]=[];
 
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
-
+var textInput;
 const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
   export default class AssignedToView extends React.Component<IAssignProps, IAssignState> {
@@ -56,12 +64,14 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
     deleteSelectedTicket:'',
     statusOptions:[],
     statusCompletedCheck:0,
-    assignedIssuesButton:0,
+    assignedIssuesButton:1,
     allIssuesButton:0,
     allDetails:[],
+    commentData:''
    }
-  
- }
+    textInput = React.createRef();
+    this.inputComment = this.inputComment.bind(this);
+  }
 
   componentDidMount(){
     // this.loadDepartmentOptions();
@@ -153,7 +163,6 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       return Promise.resolve(groupUser);
   }) 
   
-  //  return pickerGroupNames;
    }
 
 
@@ -219,7 +228,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               status:r.Status,
               dispatcherDeptName:r.AssignedTo,
               reAssignedTo:r.ReAssignTo,
-              dataId:r.ID
+              dataId:r.ID,
+              comment:r.Comment
             }
           }) 
         })
@@ -280,20 +290,6 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
           return;
         }
         let createdDateFormat = new Date('').toLocaleDateString();
-
-        // deptDetails = res.value.map((r,index)=>{
-        //   return{
-        //     supportDeptName:r.DepartmentGroup,
-        //     raisedBy:r.AuthorId,
-        //     issueDate:r.Created,
-        //     description:r.Description,
-        //     category:r.Category,
-        //     department:r.Department,
-        //     status:r.Status,
-        //     dispatcherDeptName:r.AssignedTo,
-        //     reAssignedTo:r.ReAssignTo
-        //   }
-        // })
         this.setState({
           // ticketCount:res.value.length,
           allDetails:res.value.map((r,index)=>{
@@ -371,26 +367,25 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       })  
   }
 
-   onSubmitDropDownHandle(newPeoplePicker:any,idRequest:number,assignedToUser,ticketNumberCheck){
+   onSubmitDropDownHandle(commentData:string,idRequest:number,assignedToUser,ticketNumberCheck){
   //  await this.setState({
   //     newPeoplePickerUser: newPeoplePicker[0].text
   //     //loadPeoplePicker:0
   //       },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
         if(this.state.deleteSelectedTicket === ticketNumberCheck){
           if(assignedToUser.text != ''){
-            this.addReAssignedToData(assignedToUser,idRequest);
+            this.addReAssignedToData(assignedToUser,idRequest,commentData);
           }
           if(assignedToUser.text === '' && (this.state.statusCompletedCheck === 2) ){
-            this.loadCompletedWithStatusUpdate(idRequest)
+            this.loadCompletedWithStatusUpdate(idRequest,commentData)
           }
 
       } 
   }
 
-  addReAssignedToData(newReAssignedToUser:any,idRequest:number){
+  addReAssignedToData(newReAssignedToUser:any,idRequest:number,commentData:string){
       console.log("newReAssignedToUser = " + newReAssignedToUser + idRequest);
       console.log("newReAssignedToUser = " + newReAssignedToUser);
-
       const headers: HeadersInit = new Headers();
       // suppress metadata to minimize the amount of data loaded from SharePoint
       headers.append("accept", "application/json;odata.metadata=none");
@@ -420,7 +415,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
           const spOpts: string = JSON.stringify({
             'Status': "In Process",
-            'ReAssignToId': newReAssignedToUser.id
+            'ReAssignToId': newReAssignedToUser.id,
+            'Comment':commentData
                 // 'Comment': 'Comment is working'
                 // OnOffBoardTask:1
           })
@@ -456,7 +452,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
                       text:''
                     },
                     statusCompletedCheck:0,
-                    statusOptions:[]
+                    statusOptions:[],
+                    commentData:''
                   })
                   // console.log(responseJSON);
                   // this.myIssue();
@@ -481,7 +478,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       });
   }
 
-  loadCompletedWithStatusUpdate(idRequest:number){
+  loadCompletedWithStatusUpdate(idRequest:number,commentData:string){
     console.log("newReAssignedToUser =  " + idRequest);
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -512,6 +509,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
         const spOpts: string = JSON.stringify({
           'Status': "Completed",
+          'Comment':commentData,
           // 'ReAssignToId': newReAssignedToUser.id
               // 'Comment': 'Comment is working'
               // OnOffBoardTask:1
@@ -548,7 +546,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
                     text:''
                   },
                   statusCompletedCheck:0,
-                  statusOptions:[]
+                  statusOptions:[],
+                  commentData:''
                 })
                 // console.log(responseJSON);
                 // this.myIssue();
@@ -636,6 +635,27 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
         }
   }
 
+  onCommentHandle(e:any,commentData:any){
+    // let val = e.target;
+    this.setState({
+      // commentData: await commentData._targetInst.pendingProps.value,
+      //  commentData: await commentData.nativeEvent.data,
+          commentData:commentData
+    },()=>console.log('commentData= ' + this.state.commentData))
+  }
+
+  inputComment(event){
+    // alert("current value = " + textInput.current.value);
+    // event.preventDefaulted();
+
+    this.setState({
+      commentData:event.target.value,
+    },()=>console.log('commentData = ' + this.state.commentData));
+    // event.target.value = ''
+    // event.preventDefaulted();
+    event.target.checked = true;
+
+  }
 
   onSubmitHandle(){
     this.setState({
@@ -673,6 +693,13 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
   }
 
+  onTextFieldClickHandle(ticketNumber){
+      // textInput.current.focus();
+    this.setState({
+      indexSelect:ticketNumber
+    })
+  }
+
   public render(): React.ReactElement<IAssignProps> {
   return (
     <div className={styles.assignedToView}>
@@ -683,10 +710,16 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
              <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
           </div>
           <div className="ms-Grid-col ms-lg4 ms-sm4">
-             <Icon iconName='Assign' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.assignedIssuesButton()} ></Icon>
+          <TooltipHost
+             content="Assigned Tickets"
+          ><Icon iconName='Assign' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.assignedIssuesButton()} ></Icon>
+          </TooltipHost>             
           </div>
           <div className="ms-Grid-col ms-lg4 ms-sm4">
-             <Icon iconName='ViewAll' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.allAssignedIssuesButton()} ></Icon>
+          <TooltipHost
+             content="All Assigned Tickets"
+          ><Icon iconName='ViewAll' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.allAssignedIssuesButton()} ></Icon>
+          </TooltipHost>
           </div>
         </div>
       { (this.state.assignedIssuesButton === 1) && (this.state.allIssuesButton === 0) &&
@@ -702,9 +735,9 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               <th>Description</th>
               <th>Category</th>
               <th>Comment</th>
-              <th>Status</th>
-              <th>ReAssign To</th>
               <th>Action</th>
+              {/* <th>ReAssign To</th> */}
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -721,35 +754,70 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
                     <td>{issuedDate}</td>
                     <td>{res.description}</td>
                     <td>{res.category}</td>
-                    <td>
-                    <Stack horizontal styles={stackStyles}>
+                    <td id={`${index}`}>
+                    {/* <Stack horizontal styles={stackStyles}>
                       <TextField multiline rows={3}
+                          
+                        // defaultValue={null}  
+                        itemRef={textInput} 
+                          
+                        // ref={this.textInput}
+                        // type='text' 
+                        // onClick={()=>this.onTextFieldClickHandle()} 
+                        // target={`${index}`}    
+                        onClick={(commentData)=>{
+                          
+                        }}         
+                        //  value={textInput.current.value}
+                        onChange={(e,commentData)=> this.onCommentHandle(e,commentData)}
+                      
                         
+                        // onChange={(commentTextEntered)=>{
+                        //   this.setState({
+                        //     commentData: commentTextEntered.currentTarget.value
+                        //   })
+                        // }}
                       />
-                    </Stack>
+                    </Stack> */}
+                    <Stack horizontal styles={stackStyles}>
+                     <TextField multiline rows={3}
+                      key={index}
+                      // ref={textInput}
+                      type="text"
+                      // accessKey={res.ticketNumber}
+                      onClick={()=>this.onTextFieldClickHandle(res.dataId)}
+                       defaultValue=""
+                       value={
+                        (this.state.indexSelect === res.dataId)?
+                        this.state.commentData:''}
+                       onChange={this.inputComment}
+                     ></TextField>    
+                     </Stack>
+                    {/* <button onClick={()=>this.onTextFieldClickHandle(res.dataId)}>focus click</button> */}
                     </td>
                     <td>
                       <Dropdown
-                        placeholder='Select option'
+                        placeholder='Select Status'
+                       label={'Status'}
                         options={this.state.statusOptions}
                          defaultSelectedKey={" "}
                         onClick={()=>this.loadStatusList()}
                         onChange={(e,selectedStatusOption)=>this.onStatusChangeHandle(selectedStatusOption,res.ticketNumber,res.supportDeptName,res.dataId)}
                       >
                       </Dropdown>
-                    </td>
-                    <td>
+
                       <Dropdown
                        id={res.ticketNumber + '_dropDown'} 
-                       placeholder='Select option'
+                       placeholder='Select User'
+                       label={'ReAssigned To'}
                        defaultSelectedKey={" "}
-                      onClick={(e,)=>this.getUserByDept(res.ticketNumber + '_dropDown',this,res.supportDeptName,res.dataId)} 
+                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',this,res.supportDeptName,res.dataId)} 
                       options={this.state.deptListDropDown}
                       onChange={(e,selectedName)=>this.onUserSelect(e,selectedName,res.ticketNumber)}>
                       </Dropdown>
                     </td>
                     <td>
-                    <Icon iconName="Save" style={{fontSize:'20px', cursor:'pointer'}} onClick={(e)=>this.onSubmitDropDownHandle(e,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}></Icon>
+                    <Icon iconName="Save" style={{fontSize:'20px', cursor:'pointer'}} onClick={(e)=>this.onSubmitDropDownHandle(this.state.commentData,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}></Icon>
                     </td>
                   </tr>
                 )
@@ -765,7 +833,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
         (this.state.allIssuesButton === 1) && (this.state.assignedIssuesButton === 0) &&
 
         <AllAssignedToView allDetailsProp={this.state.allDetails} 
-          groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
+        emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
          }
          {
       //         <div className="ms-Grid-row">
@@ -826,7 +894,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
   }
 
   {(this.state.homeButton === 1) &&
-              <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+              <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
   }
     </div>
   );

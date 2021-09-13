@@ -28,5 +28,7 @@ export interface IMyRequestedIssuesState {
     //  errorMessage: string;
 
     homeButton:number,
+    myIssuesUnlock:number;
+    archiveIssuesUnlock:number;
 
 }

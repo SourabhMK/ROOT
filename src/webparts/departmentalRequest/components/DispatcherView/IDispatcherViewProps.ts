@@ -3,7 +3,7 @@ import { DisplayMode } from "@microsoft/sp-core-library";
 
 export interface IDispatcherViewProps {
   description: string;
-  groupType:number;
+  emailType:number;
   //description: string;
    /**
    * Absolute URL of the current site
@@ -18,4 +18,5 @@ export interface IDispatcherViewProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
+    msGraphClientFactory:any;
 }
