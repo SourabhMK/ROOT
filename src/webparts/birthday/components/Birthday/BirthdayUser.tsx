@@ -8,7 +8,7 @@ import { TextField } from '@fluentui/react/lib/TextField';
 import { Callout, DirectionalHint } from 'office-ui-fabric-react/lib/Callout';
 import { SendEmailCallout } from "./SendEmailCallout";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
-import useMsGraphProvider, { IMSGraphInterface } from "../../../../services/msGraphProvider";
+import useMsGraphProvider, { IMSGraphInterface } from "../../../../Services/msGraphProvider";
 import {
   Persona,
   PersonaSize

@@ -572,11 +572,7 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
       },()=>console.log('this.state.requestDescription =' + this.state.requestDescription))
 }
 
-onFileAddHandle(fileAdd){
-  this.setState({
-    fileAddition: fileAdd
-  })
-}
+
 
 
 
@@ -626,7 +622,7 @@ onFileAddHandle(fileAdd){
      'ArchivedTimeSpan': departmentFAQ_ArchiveTimeSpan,
      'DepartmentManagerId': selectedDeptManager,
      'DepartmentGroup':selectedDeptGroup,
-     'Attachments': selectedFileAddOn
+     'Attachments': selectedFileAddOn[0]
   });
 
   this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items`, SPHttpClient.configurations.v1, 
@@ -769,8 +765,32 @@ onFileAddHandle(fileAdd){
     
   }  
   
+  private setButtonsEventHandlers(): void {   
+    let fileUpload = document.getElementById("fileUploadInput") 
+    if(fileUpload) {
+      fileUpload.addEventListener('change', () => { 
+        // this.uploadFiles(fileUpload); 
+      });
+    }
+    }
+
+    // private async uploadFiles(fileUpload) {
+    //   let file = fileUpload.files[0];
+    //   //let attachmentsArray = this.state.attachmentsToUpload;        
+    //   let item = sp.web.lists.getByTitle("MyList").items.getById(15);
+    //   item.attachmentFiles.add(file.name,file).then(v => {
+    //       console.log(v);
+    //   });
+    //   //let attachmentUpload = await _listItem.attachmentFiles.add(file.name,file)
+    // }
   
-  
+    onFileAddHandle(fileAdd){
+      let file = fileAdd[0];
+      console.log('file.name = ' + file.name);
+      this.setState({
+        fileAddition: fileAdd
+      })
+    }
 
   public render(): React.ReactElement<IDepartmentalRequestProps> {
     return (

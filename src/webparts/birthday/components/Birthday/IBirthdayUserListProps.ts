@@ -1,6 +1,8 @@
 import { IBirthday } from "../../../../Models/IBirthday";
 import { SPHttpClient } from "@microsoft/sp-http";
-import { IMSGraphInterface } from "../../../../services/msGraphProvider";
+// import { IMSGraphInterface } from "../../../../services/msGraphProvider";
+import { IMSGraphInterface } from "../../../../Services/msGraphProvider";
+
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 
 export interface IBirthdayUserListProps {
