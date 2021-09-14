@@ -96,7 +96,7 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
 
   private _getThirdPartyBirthdayAPI()
   {
-    this.props.myHttpClient.get('https://gnsemplist.azurewebsites.net/Employee', HttpClient.configurations.v1, {
+    this.props.webPartContext.httpClient.get('https://gnsemplist.azurewebsites.net/Employee', HttpClient.configurations.v1, {
       headers: headers
     })
     .then((response: HttpClientResponse) => {  
@@ -178,10 +178,9 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
 
   private LoadInternalDetails()
   {
-    //let currentMonth = new Date().getMonth() + 1;
-    this.props.spHttpClient
+    this.props.webPartContext.spHttpClient
         //.get(`${this.props.siteurl}/_vti_bin/listdata.svc/TestUserList?$filter=month(BirthDate) eq ${currentMonth} or month(HireDate) eq ${currentMonth}`, SPHttpClient.configurations.v1, {
-          .get(`${this.props.siteurl}/_api/web/lists/getbytitle('UserDetails')/items`, SPHttpClient.configurations.v1, {
+          .get(`${this.props.webPartContext.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('UserDetails')/items`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -230,43 +229,10 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
       });
   }
 
-  /* private LoadInternalAnniversaryDetails()
-  {
-    this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('TestUserList')/items`, SPHttpClient.configurations.v1, {
-          headers: headers
-        })
-        .then((result: SPHttpClientResponse) => {          
-          return result.json();
-        })
-        .then((jsonresult): void => {
-          let people:IAnniversary[] = jsonresult.value; 
-          if(people.length > 0)
-          {
-            people = this.getPhotoURL(people);
-            this.setState({
-              loading:false,
-              AUsers : people,
-            })
-          }
-       
-        }, (error: any): void => {      
-          this.setState({
-            loading: false,
-            errorMessage: error
-          });
-      })
-      .catch((error: any): void => {    
-        this.setState({
-          loading: false,
-          errorMessage: error
-        });
-      });
-  } */
-
   private getPhotoURL(people)
   {
-    let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));
+    let siteURL: string = this.props.webPartContext.pageContext.web.absoluteUrl;
+    let userphotourl: string = siteURL.substring(0,siteURL.search("/sites"));
     for(let i: number = 0;i<people.length; ++i)
     {     
       let imageURL: string = `${userphotourl}${"/_layouts/15/userphoto.aspx?size=S&accountname=" + people[i].email}`;
@@ -284,8 +250,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
         errorMessage:null,       
       }) 
 
-      this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate00'&refinementfilters='RefinableDate00:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
+      this.props.webPartContext.spHttpClient
+        .get(`${this.props.webPartContext.pageContext.web.absoluteUrl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate00'&refinementfilters='RefinableDate00:range(datetime(${this.state.StartDate}), datetime(${this.state.EndDate}))'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((res: SPHttpClientResponse): Promise<IBirthdayResults> => {          
@@ -309,8 +275,9 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             });
             return;
           }
-      
-          let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));   
+          
+          let siteURL: string = this.props.webPartContext.pageContext.web.absoluteUrl;
+          let userphotourl: string = siteURL.substring(0,siteURL.search("/sites"));   
         
           let people: IBirthday[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
@@ -416,8 +383,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     // suppress metadata to minimize the amount of data loaded from SharePoint
     headers.append("accept", "application/json;odata.metadata=none");
   
-      this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate01'`, SPHttpClient.configurations.v1, {
+      this.props.webPartContext.spHttpClient
+        .get(`${this.props.webPartContext.pageContext.web.absoluteUrl}/_api/search/query?querytext='*'&sourceid='b09a7990-05ea-4af9-81ef-edfab16c4e31'&rowlimit=500&selectproperties='FirstName,LastName,PreferredName,WorkEmail,PictureURL,Department,RefinableDate01'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((res: SPHttpClientResponse): Promise<IBirthdayResults> => {          
@@ -437,8 +404,9 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             });
             return;
           }
-    
-          let userphotourl: string = this.props.siteurl.substring(0,this.props.siteurl.search("/sites"));   
+          
+          let siteURL: string = this.props.webPartContext.pageContext.web.absoluteUrl;
+          let userphotourl: string = siteURL.substring(0,siteURL.search("/sites"));   
         
           let people: IAnniversary[] = res.PrimaryQueryResult.RelevantResults.Table.Rows.map(r => {    return {      
 
@@ -530,8 +498,8 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
             <div><DefaultButton className={styles.birthTabBtn} style={{backgroundColor:this.state.bgColorAnniversary, color:this.state.colorAnniversary}} onClick={this.AnniversaryClicked}><h3>Anniversary</h3></DefaultButton></div>              
           </div>
           {  
-            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail} webPartContext={this.props.webPartContext}/> : 
-            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail}/> :  <BirthdayUser people={this.state.BUsers} spHttpClient={this.props.spHttpClient} siteurl={this.props.siteurl} loggedInUserEmail={this.props.loggedInUserEmail} webPartContext={this.props.webPartContext}/> )
+            ((this.state.count === 1) ? <BirthdayUser people={this.state.BUsers} webPartContext={this.props.webPartContext}/> : 
+            (this.state.count === 2) ? <AnniversaryUser people={this.state.AUsers} webPartContext={this.props.webPartContext} /> :  <BirthdayUser people={this.state.BUsers} webPartContext={this.props.webPartContext}/> )
           }           
         </div>        
       </div>

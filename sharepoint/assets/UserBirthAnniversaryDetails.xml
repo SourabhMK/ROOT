@@ -85,20 +85,7 @@
             EnforceUniqueValues="FALSE"
             Indexed="FALSE" 
             MaxLength="255"                     
-            Required="TRUE" />
-
-        <Field ID="{678ed098-758c-4967-ba9c-9e749ae178ef}"
-            Name="team"
-            DisplayName="team"
-            Type="Text"
-            StaticName="team"
-            ColName="nvarchar5" 
-            RowOrdinal="0"  
-            EnforceUniqueValues="FALSE"
-            Indexed="FALSE" 
-            MaxLength="255"                     
-            Required="TRUE" />
-
+            Required="TRUE" />  
     </Fields>
 
     <Views>
@@ -116,7 +103,6 @@
           <FieldRef Name="birthDate"></FieldRef>
           <FieldRef Name="hireDate"></FieldRef>
           <FieldRef Name="department"></FieldRef>
-          <FieldRef Name="team"></FieldRef>
         </ViewFields>
         <Query>
           <OrderBy>

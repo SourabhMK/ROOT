@@ -5,7 +5,6 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneButton,
   PropertyPaneButtonType,
-  PropertyPaneDynamicField,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 
@@ -14,25 +13,15 @@ import { BaseClientSideWebPart, WebPartContext } from '@microsoft/sp-webpart-bas
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
 import { update, get } from '@microsoft/sp-lodash-subset'; 
-import { PropertyPaneDropdown } from '../../controls/PropertyPaneDropdown/components/PropertyPaneDropdown'
-
+import { PropertyPaneDropdown } from '../../controls/PropertyPaneDropdown/components/PropertyPaneDropdown';
 import * as strings from 'BirthdayWebPartStrings';
 import Birthday from './components/Birthday';
 import { IBirthdayProps } from './components/IBirthdayProps';
-
-import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
-import { setPortalAttribute } from 'office-ui-fabric-react';
-import { sp } from '@pnp/sp';
-import pnp, { File } from 'sp-pnp-js';
-import { HttpClient } from "@microsoft/sp-http"; 
-import { PropertyFieldFilePicker, IPropertyFieldFilePickerProps, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
+import { PropertyFieldFilePicker, IFilePickerResult } from "@pnp/spfx-property-controls/lib/PropertyFieldFilePicker";
 
 export interface IBirthdayWebPartProps {
   description: string;
-  webPartContext: WebPartContext;
-  siteurl: string;
-  spHttpClient: SPHttpClient;
-  myHttpClient: HttpClient;
+  webPartContext: WebPartContext;  
   dropdown: string;
   filePickerResult: IFilePickerResult;
 }
@@ -45,11 +34,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
       Birthday,
       {
         description: this.properties.description,
-        webPartContext: this.context,
-        siteurl: this.context.pageContext.web.absoluteUrl,
-        spHttpClient: this.context.spHttpClient,
-        myHttpClient: this.context.httpClient,
-        loggedInUserEmail: this.context.pageContext.user.email,
+        webPartContext: this.context,       
         dropdown: this.properties.dropdown,              
       } 
     );
@@ -166,8 +151,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
 
   private downloadCsv()
   {   
-    const linkSource = `data:application/csv;base64,${"TmFtZSxMYXN0TmFtZQ0K"}`;
-
+    const linkSource = `data:application/csv;base64,${"TmFtZSxGaXJzdE5hbWUsTGFzdE5hbWUsRW1haWwsQmlydGhEYXRlLEhpcmVEYXRlLERlcGFydG1lbnQ="}`;
     const downloadLink = document.createElement('a');
 
     // Append to html link element page
@@ -175,7 +159,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
 
     downloadLink.href = linkSource;
     downloadLink.target = '_self';
-    downloadLink.download = "UserDetails.csv";
+    downloadLink.download = "UserBirthAnniversaryDetails.csv";
 
     // Start download
     downloadLink.click();
@@ -251,8 +235,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
           'email': UserList[i].Email,
           'birthDate': birthDateFinal, 
           'hireDate': hireDateFinal,                           
-          'department': UserList[i].Department,
-          'team': UserList[i].Team
+          'department': UserList[i].Department          
           });
           this.addListItems(requestlistItem);
       }  
@@ -282,13 +265,12 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-
-    let textControl: any = [];  
+  
     let uploadControl: any = []; 
     let CSVControl: any = []; 
-    let test: any = [];
       
-    if (this.properties.dropdown === "Internal") {  
+    if (this.properties.dropdown === "Internal") 
+    {  
       CSVControl = PropertyPaneButton('Csv File', {
         text: "Download csv template",
         buttonType: PropertyPaneButtonType.Primary,
@@ -314,14 +296,6 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
         storeLastActiveTab: false
       });
 
-    }  
-    else if (this.properties.dropdown === "External")
-    {   
-      textControl = PropertyPaneTextField('simpleText', {  
-        label: "Text",  
-        placeholder: "Enter Text"  
-      });   
-              
     }  
 
     /* this.sitecollectionsDropDown = new PropertyPaneDropdown('SiteCollection', {
@@ -350,8 +324,7 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
                   selectedKey: this.properties.dropdown,
                 }),
                 CSVControl,
-                uploadControl,
-                textControl                
+                uploadControl                                
               ]
             }
           ]
@@ -360,4 +333,3 @@ export default class BirthdayWebPart extends BaseClientSideWebPart<IBirthdayWebP
     };    
   }
 }
-

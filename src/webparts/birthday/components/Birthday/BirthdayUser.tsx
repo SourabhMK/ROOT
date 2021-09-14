@@ -9,6 +9,8 @@ import { Callout, DirectionalHint } from 'office-ui-fabric-react/lib/Callout';
 import { SendEmailCallout } from "./SendEmailCallout";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import useMsGraphProvider, { IMSGraphInterface } from "../../../../services/msGraphProvider";
+import InputEmoji from 'react-input-emoji';
+import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
 import {
   Persona,
   PersonaSize
@@ -30,13 +32,13 @@ debugger;
       calloutElement: null,
       person: null,
       currentMessage: "",
-      errorMessage: "",
+      errorMessage: "",      
       msGraphProvider: {
         getCurrentUserId(): Promise<any>{return},
         getUserId(userEmail: string): Promise<any>{return},
         createUsersChat(requesterId: string, birthdayPersonId: string): Promise<any>{return},
         sendMessage(chatId: string, chatMessage: string): Promise<any>{return}
-    },
+      },
     };
     this._onCalloutDismiss = this._onCalloutDismiss.bind(this);
     this._onCalloutTeamsDismiss = this._onCalloutTeamsDismiss.bind(this);
@@ -48,20 +50,13 @@ debugger;
     this.fetchMsGraphProvider();
   } 
 
-  private updateInputValue(evt) {
-    this.setState({
-      currentMessage: evt.target.value,
-      errorMessage: ""
-    });
-  }
-
   fetchMsGraphProvider = async () => {
     this.setState({
       msGraphProvider: (await useMsGraphProvider(this.props.webPartContext.msGraphClientFactory))
     });
   }
   
-  _sendMessage = async(ToEmailId) =>
+  _sendMessage = async(ToEmailId: string) =>
   { 
     if(this.state.currentMessage === "" || this.state.currentMessage === null){
       this.setState({
@@ -110,6 +105,16 @@ debugger;
   private _onCalloutTeamsDismiss = (event) => {
     this.setState({
       showCallOutTeams: false,
+      errorMessage: "",
+      currentMessage: ""
+    });
+  } 
+
+  private handleChange(messageEmoji)
+  {
+    console.log("emoji " + messageEmoji);
+    this.setState({
+      currentMessage: messageEmoji
     });
   }
 
@@ -144,13 +149,14 @@ debugger;
               
                 <div className = {styles.persona_card}> 
                   <Persona primaryText={`${p.name}`} secondaryText={finalbirthdate} tertiaryText={p.email} imageUrl={p.photoUrl} imageAlt={p.name} size={PersonaSize.size72} />                  
-                  
-                  <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
-                    <MyMailIcon />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  </div>&nbsp; 
-                  <div id={`callout${i}`} onClick={this._onSendTeamsMsgClicked(i, p)} className={styles.persona}>
-                    <MyTeamsIcon />
-                  </div>                  
+                  <div>
+                    <div id={`callout${i}`} onClick={this._onSendEmailClicked(i, p)} className={styles.persona}>
+                    <TooltipHost content="Send Email"><MyMailIcon /></TooltipHost>
+                    </div>
+                    <div id={`callout${i}`} onClick={this._onSendTeamsMsgClicked(i, p)} className={styles.persona}>
+                    <TooltipHost content="Send message in Teams"><MyTeamsIcon /></TooltipHost>
+                    </div> 
+                  </div>                 
                   { this.state.showCallOut && this.state.calloutElement === i && (
                   <Callout
                     className={this.state.showCallOut ? styles.calloutShow: styles.callout}
@@ -162,14 +168,15 @@ debugger;
                     onDismiss={this._onCalloutDismiss}
                     directionalHint={DirectionalHint.rightCenter}
                     doNotLayer={false}
+                    
                   >
-                    <SendEmailCallout person={this.state.person} siteurl={this.props.siteurl} spHttpClient = {this.props.spHttpClient} loggedInUserEmail = {this.props.loggedInUserEmail}></SendEmailCallout>
+                    <SendEmailCallout person={this.state.person} webPartContext={this.props.webPartContext}></SendEmailCallout>
                   </Callout> 
                   )} 
                   
                   { this.state.showCallOutTeams && this.state.calloutElement === i && (
                   <Callout
-                    className={this.state.showCallOutTeams ? styles.calloutShow: styles.callout}
+                    className={(this.state.showCallOutTeams ? styles.calloutShow: styles.callout, styles.removeHidden)}
                     gapSpace={16}
                     target={`#callout${i}`}
                     isBeakVisible={true}
@@ -178,18 +185,23 @@ debugger;
                     onDismiss={this._onCalloutTeamsDismiss}
                     directionalHint={DirectionalHint.rightCenter}
                     doNotLayer={false}
+                    styles={{ calloutMain: { overflow: 'inherit' } }}
                   >
                     <div className={(styles.calloutCard,styles.emailMainContent)}>
                       <h3 className={styles.SendEmailh3}>
                           Send Message to {this.state.person.firstName} in Teams
-                      </h3>        
-                      <div className={styles.mt10}>
-                          <TextField required onChange={evt => this.updateInputValue(evt)} value={this.state.currentMessage} label="Personal Message" multiline resizable={true} />
-                      </div>
+                      </h3>
+                      <InputEmoji
+                        value={this.state.currentMessage}
+                        onChange={(messageEmoji) => this.handleChange(messageEmoji)}
+                        keepOpenend
+                        disableRecent
+                        placeholder="Type a message"                             
+                      ></InputEmoji>
                       <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
                       <div className={styles.SetSaveBtn}>
                           <PrimaryButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={() => this._sendMessage(this.state.person.email)} text="Send" />         
-                      </div>             
+                      </div>
                     </div>
                   </Callout> 
                   )}                  
