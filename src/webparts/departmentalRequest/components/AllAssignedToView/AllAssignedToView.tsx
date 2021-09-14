@@ -57,7 +57,7 @@ export interface IMyIssueList {
 var work;
 
 
-debugger;
+// debugger;
 export default class AllAssignedToView extends React.Component<IAllAssignProps,IAssignState> {
 
 

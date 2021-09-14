@@ -22,7 +22,7 @@
     "officeFabricIconFontName": "Page",
     "properties": {
       "description": "DepartmentalRequest",
-      "groupType":0
+      "emailType":0
     }
   }]
 }

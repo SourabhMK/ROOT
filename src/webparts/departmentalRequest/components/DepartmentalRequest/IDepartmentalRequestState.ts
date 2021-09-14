@@ -3,6 +3,7 @@
 //import {IUserAll} from "./IUserAll";
 
 import { Ref } from "react";
+import { Attachment } from "sp-pnp-js/lib/graph/attachments";
 
 export interface IDepartmentalRequestState {
     // Users : IUserAll[],
@@ -26,6 +27,10 @@ export interface IDepartmentalRequestState {
     totalRaisedIssuesCount:number
     dispatcherViewUnlock:number;
     assignedToViewUnlock:number;
+    managerViewUnlock:number;
+    archiveTimeSpan:number;
+    fileAddition:Attachment;
+    managerCheckForManagerView:number;
     /**
      * Contains the error message that occurred while loading the data.
      * If no error message occurred, null.
