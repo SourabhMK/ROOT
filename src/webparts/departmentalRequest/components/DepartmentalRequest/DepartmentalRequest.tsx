@@ -38,6 +38,7 @@ import DispatcherView from '../DispatcherView/DispatcherView';
 import AssignedToView from '../AssignedToView/AssignedToView';
 import ManagerView from '../ManagerView/ManagerView';
 import ChartView from '../ChartView/ChartView';
+import { TextStyles } from 'office-ui-fabric-react';
 // import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
 const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
@@ -57,7 +58,7 @@ var	departmentFAQ_ArchiveTimeSpan:number = 0;
 var departmentFAQ_deptList: IDepartmentList[] = Array();
 var loggedInUserEmail, loggedInUserId,issueData:IMyIssueList[],archiveData:IMyIssueList[];
 var myIssueCount:number = 0;
-var textbody,EmailSubject;
+var textbody,EmailSubject, Guid:string;
  
 debugger;
 export default class DepartmentalRequest extends React.Component<IDepartmentalRequestProps, IDepartmentalRequestState> {
@@ -97,6 +98,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   componentDidMount(){
     this.loadDepartmentOptions();
     loggedInUserEmail = this.props.loggedInUserEmail;
+    // this.idTestCode();
     //this. getUserId (loggedInUserEmail);    
   }
 
@@ -283,10 +285,10 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   
   
     if(departmentFAQ_ArchiveTimeSpan>0){
-      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=((Author eq ${this.props.currentUserId} ) and ((Status ne 'Completed') or ((Status eq 'Completed') and (Created ge datetime'${dateFilter}'))))&$orderby=ID desc`
+      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=((Author eq ${this.props.currentUserId} ) and ((Status ne 'Completed') or ((Status eq 'Completed') and (Created ge datetime'${dateFilter}'))))&$orderby=ID desc`
     }
     else{
-      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc`
+      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc`
     }
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -337,7 +339,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
             assignedTo:r.AssignedTo,
             comment:r.Comment,
             status:r.Status,
-            attachments:r.Attachments,
+            attachments:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
             test:r.ReAssignTo
           }
         });
@@ -392,7 +394,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   
   
     if(departmentFAQ_ArchiveTimeSpan>0){
-      var archiveQuaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${this.props.currentUserId} and Status eq 'Completed' and Created lt datetime'${dateFilter}'&$orderby=ID desc&$top=10`
+      var archiveQuaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=Author eq ${this.props.currentUserId} and Status eq 'Completed' and Created lt datetime'${dateFilter}'&$orderby=ID desc&$top=10`
       
     
     const headers: HeadersInit = new Headers();
@@ -621,8 +623,8 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
      'AssignedTo': selectedDispatcherName,
      'ArchivedTimeSpan': departmentFAQ_ArchiveTimeSpan,
      'DepartmentManagerId': selectedDeptManager,
-     'DepartmentGroup':selectedDeptGroup,
-     'Attachments': selectedFileAddOn[0]
+     'DepartmentGroup':selectedDeptGroup
+    //  'Attachments': selectedFileAddOn[0]
   });
 
   this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items`, SPHttpClient.configurations.v1, 
@@ -638,6 +640,7 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
         response.json().then((responseJSON: JSON) => {
           console.log(responseJSON);
           this.SendAnEmilUsingMSGraph(this.props.loggedInUserEmail,textbody,EmailSubject);
+          this.addAttachementInList(responseJSON);
           this.myIssue();
         });
       });
@@ -788,8 +791,109 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
       let file = fileAdd[0];
       console.log('file.name = ' + file.name);
       this.setState({
-        fileAddition: fileAdd
+        fileAddition: file
       })
+    }
+
+    idTestCode(){
+      const headers: HeadersInit = new Headers();
+      // suppress metadata to minimize the amount of data loaded from SharePoint
+      headers.append("accept", "application/json;odata.metadata=none");
+      this.props.spHttpClient
+        .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/Id`,
+        SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((res: SPHttpClientResponse): Promise<any> => {
+          return res.json();
+        })
+        .then((res: any): void => {
+          if (res.error) {
+             this.setState({
+               errorMessage: res.error.message,
+                });
+            return;
+          }
+          else{
+            console.log('res = ' + res);
+          }
+    }, (error: any): void => {
+      this.setState({
+        errorMessage: error
+      });
+    })
+    .catch((error: any): void => {
+      this.setState({
+        errorMessage: error
+      });
+      });
+
+    }
+
+    addAttachementInList(result){
+      const headers: HeadersInit = new Headers();
+      // suppress metadata to minimize the amount of data loaded from SharePoint
+      headers.append("accept", "application/json;odata.metadata=none");
+      this.props.spHttpClient
+        .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/Id`,
+        SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((res: SPHttpClientResponse): Promise<any> => {
+          return res.json();
+        })
+        .then((res: any): void => {
+          if (res.error) {
+             this.setState({
+               errorMessage: res.error.message,
+                });
+            return;
+          }
+          else{
+            Guid = res.value;
+            console.log('res = ' + res);
+            let ID = result.ID;
+            console.log('');
+            // let file = (document.querySelector("#FileAttachment") as HTMLInputElement).files[0];   
+            let file = this.state.fileAddition;     
+                if (file) { 
+                    let spOpts : ISPHttpClientOptions  = {
+                      headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                      },
+                      body: file       
+                    };
+                    // var url = `${this.props.webUrl}/_api/web/lists('${Guid}')/items('${ID}')/AttachmentFiles/add('${file.name}')`;
+                    var url = this.props.webUrl + `/_api/web/lists(guid'` + Guid + `')/items` + `('` + ID + `')` + `/AttachmentFiles/add(FileName='` + file.name +`')`;
+                    // var url = `${this.props.webUrl}/_api/${oData}/AttachmentFiles/add('${file.name}')`;
+                    this.props.spHttpClient.post(url, SPHttpClient.configurations.v1, spOpts).then((response: SPHttpClientResponse) => {
+                      console.log(`Status code: ${response.status}`);
+                      console.log(`Status text: ${response.statusText}`);
+                      if(Number(`${response.status}`) >300)
+                      {
+                        alert('Error Uploading file, Try again or contact IT');
+                        // this._closeDialog();
+                        return;
+                      }
+                      response.json().then((responseJSON: JSON) => {
+                        console.log(responseJSON);                 
+                      });
+                    });            
+                }
+          }
+    }, (error: any): void => {
+      this.setState({
+        errorMessage: error
+      });
+    })
+    .catch((error: any): void => {
+      this.setState({
+        errorMessage: error
+      });
+      });
+
+      
     }
 
   public render(): React.ReactElement<IDepartmentalRequestProps> {
@@ -804,18 +908,18 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'left'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
               </div>
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.assignedToViewClick}>Assigned Issues</CompoundButton>
+                <CompoundButton styles={{label:{textAlign:'center'}}} style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'center'}} onClick={this.assignedToViewClick}>Assigned Issues</CompoundButton>
               </div>
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.dispatcherViewClick}>Dispatcher View</CompoundButton>
+                <CompoundButton styles={{label:{textAlign:'center'}}} style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.dispatcherViewClick}>Dispatcher View</CompoundButton>
               </div>
             </div>
             <div className="ms-Grid-row" style={{marginTop:'12px'}}>
               <div className="ms-Grid-col ms-lg6 ms-md6 ms-sm6">
-              <CompoundButton className="raisebtn" style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.raiseRequestClick}>Raise a Request</CompoundButton>
+              <CompoundButton className="raisebtn" styles={{label:{textAlign:'center'}}} style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.raiseRequestClick}>Raise a Request</CompoundButton>
               </div>
               <div className="ms-Grid-col ms-lg6 ms-md6 ms-sm6">
-              <CompoundButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.managerViewClick}>Manager View</CompoundButton>
+              <CompoundButton styles={{label:{textAlign:'center'}}} style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.managerViewClick}>Manager View</CompoundButton>
               </div>
             </div>
             {/* <div className="ms-Grid-row">
@@ -833,16 +937,16 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
                   <Icon iconName="Home" style={{fontSize:'25px', cursor:'pointer'}} onClick={this.previousClick} ></Icon>
                 </div>
               </div>
-            <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
+            {/* <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
             <h2>Select the Department</h2>
-            </div>           
+            </div>            */}
                 <div className="ms-Grid-row" style={{marginBottom:'20px'}}>
                  <div className="ms-Grid-col ms-lg8 ms-md8 ms-sm8">
                   {/* <DefaultButton>Select Department</DefaultButton> */}
                   <Stack tokens={stackTokens}>
                          <Dropdown
                            placeholder="Select Department"
-                          //  label="Select Department"
+                           label="Select the Department"
                            options={departmentOptions}
                            onChange={(e,selectedDept) => this.onChangeDeptHandle(selectedDept)}
                            //styles={dropdownStyles}
@@ -853,15 +957,15 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
                  </div>
                 </div>
               
-              <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
+              {/* <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
             <h2>Select the Department category</h2>
-            </div>
+            </div> */}
               <div className="ms-Grid-row" style={{marginBottom:'20px'}}>
                 <div className="ms-Grid-col ms-lg8 ms-sm8">
                   <Stack tokens={stackTokens}>
                      <Dropdown
                            placeholder="Select Department Category"
-                          //  label="Select Category"
+                           label="Select the Department Category"
                            options={departmentCategoryOptions}
                            defaultSelectedKey={" "}
                            onChange={(e,selectedDeptCategory)=>this.onChangeDeptCategoryHandle(selectedDeptCategory)}
@@ -872,9 +976,9 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
                 </div>
               </div>
               <div className="ms-Grid-row">
-               <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
+               {/* <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
                 <h2>Type your issue</h2>
-               </div>
+               </div> */}
              </div>
              <div className="ms-Grid-row">
              <div className="ms-Grid-col ms-lg8 ms-sm8">
@@ -887,20 +991,21 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
               </div>
              </div>
              <div className="ms-Grid-row">
-             <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
+             {/* <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
                <h2>Add file if any</h2>
-              </div>
+              </div> */}
              </div>
              <div className="ms-Grid-row">
              <div className="ms-Grid-col ms-lg8 ms-sm8">
-                 <input type="file" style={{width:'100%',border:'1px solid #ddd',padding:'10px  10px' }}
+                <h4 style={{fontSize:'14px', fontWeight:'normal',marginBottom:'0'}} >Add file, if any</h4>
+                 <input type="file" id="FileAttachment" style={{width:'100%',border:'1px solid #ddd',paddingTop:'10px', paddingBottom:'10px' }}
                  onChange={(e)=> this.onFileAddHandle(e.target.files) }
                  />
               </div>
              </div>
              <div className="ms-Grid-row">
              <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', bottom:'100px',float:'right'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,this.state.fileAddition)}>Submit</DefaultButton>
+                <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', marginBottom:'20px'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,this.state.fileAddition)}>Submit</DefaultButton>
               </div>
              </div>
             </div>                

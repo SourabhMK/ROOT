@@ -32,5 +32,5 @@ export interface IMyIssueList {
   assignedTo:string,
   comment:string,
   status:string,
-  attachments:Attachment,
+  attachments:File,
 }

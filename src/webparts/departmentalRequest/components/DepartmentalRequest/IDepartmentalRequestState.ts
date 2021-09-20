@@ -29,7 +29,7 @@ export interface IDepartmentalRequestState {
     assignedToViewUnlock:number;
     managerViewUnlock:number;
     archiveTimeSpan:number;
-    fileAddition:Attachment;
+    fileAddition:File;
     managerCheckForManagerView:number;
     /**
      * Contains the error message that occurred while loading the data.

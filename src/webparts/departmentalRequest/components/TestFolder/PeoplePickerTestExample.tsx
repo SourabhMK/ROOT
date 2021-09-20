@@ -436,6 +436,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
               <th>Ticket Number</th>
               <th>Raised By</th>
               <th>Issue Date</th>
+              <th>Description</th>
               <th>Assign To</th>
               <th>Update</th>
             </tr>
@@ -449,6 +450,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
                     <td>{res.ticketNumber}</td>
                     <td>{res.raisedBy}</td>
                     <td>{issuedDate}</td>
+                    <td>{res.description}</td>
                     <td>
                       <Dropdown
                        id={res.ticketNumber + '_dropDown'} 
