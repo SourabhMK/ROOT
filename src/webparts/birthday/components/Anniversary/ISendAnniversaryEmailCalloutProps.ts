@@ -1,9 +1,7 @@
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IAnniversary } from "../../../../Models/IAnniversary";
-import { SPHttpClient } from "@microsoft/sp-http";
 
 export interface ISendAnniversaryEmailCalloutProps {
-  person: IAnniversary;
-  siteurl: string;
-  spHttpClient: SPHttpClient;
-  loggedInUserEmail: string;
+  person: IAnniversary;  
+  webPartContext: WebPartContext;
 }

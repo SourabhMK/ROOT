@@ -7,6 +7,10 @@
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
   }
 
+  .ms-Callout-main .calloutMain-232{
+    overflow: inherit!important;
+  }
+
   .row {
     @include ms-Grid-row;
     @include ms-fontColor-black;
@@ -67,15 +71,13 @@
       margin: 0;
       margin-bottom: .5rem; 
       padding-bottom: 1rem;
-    }
-    
+    } 
   }
 
   .persona_card{
     align-items: center;
     border: 1px solid #cacaca;
     box-shadow: 1px 1px 1px #efefef;
-    //border-bottom: 2px solid #005a9e;
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
@@ -86,14 +88,14 @@
     }
     .persona{
       align-items: center;
-      display: inline-flex;
+      display: block;
       height: 1.4rem;
       justify-content: center;
-      position: absolute;
+      position: relative;
       right: 1rem;
       width: 1.4rem;
       i{
-        color: rgb(239, 135, 0);//"[theme:themeSecondary, default: #2b88d8]";
+        color: rgb(239, 135, 0);
         cursor: pointer;
         font-size: 1.4rem;
       }       
@@ -152,7 +154,19 @@
   background: #54a0e233;
   border: 1px solid #ddd;
   width: 300px !important;
+
+  .ms-Callout-main{
+    overflow: inherit !important;
+  }
 }
+
+.removeHidden{
+  overflow: inherit !important;
+  .ms-Callout-main{
+    overflow: inherit !important;
+  }
+}
+
 .emailTextarea{
   width: 100% !important;
 }
@@ -186,4 +200,11 @@
   border: 1px solid rgb(239, 135, 0);
   padding: 18px 40px;
   outline: none;
+}
+
+.react-emoji-picker--container {
+  position: fixed !important;
+  top: 88px !important;
+  width: 100%;
+  z-index: 9999;
 }

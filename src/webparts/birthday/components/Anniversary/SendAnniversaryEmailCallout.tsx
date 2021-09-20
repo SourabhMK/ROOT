@@ -3,12 +3,12 @@ import { ISendAnniversaryEmailCalloutProps } from './ISendAnniversaryEmailCallou
 import styles from '../Birthday.module.scss';
 import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
-import { sp } from '@pnp/sp';
-import "@pnp/sp/webs";
-import "@pnp/sp/lists";
-import "@pnp/sp/items";
-import "@pnp/sp/files";
-import "@pnp/sp/folders";
+// import { sp } from '@pnp/sp';
+// import "@pnp/sp/webs";
+// import "@pnp/sp/lists";
+// import "@pnp/sp/items";
+// import "@pnp/sp/files";
+// import "@pnp/sp/folders";
 import Carousel from 'react-elastic-carousel';
 import { TextField } from '@fluentui/react/lib/TextField';
 
@@ -39,8 +39,8 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     const headers: HeadersInit = new Headers();
     headers.append("accept", "application/json;odata.metadata=none");
 
-        await this.props.spHttpClient
-        .get(`${this.props.siteurl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,FileLeafRef,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Anniversary'`, SPHttpClient.configurations.v1, {
+        await this.props.webPartContext.spHttpClient
+        .get(`${this.props.webPartContext.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('BirthdayAnniversaryImages')/items?$select=ID,Title,FileLeafRef,ImageWidth,ImageHeight,AuthorId&$filter=Category eq 'Anniversary'`, SPHttpClient.configurations.v1, {
           headers: headers
         })
         .then((result: SPHttpClientResponse) => {          
@@ -93,18 +93,15 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
                 isRTL={false}
                 focusOnSelect={true}>
                   {this.state.images.map((img, index) => {
-                    return <img src={`${this.props.siteurl}/BirthdayAnniversaryImages/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
+                    return <img src={`${this.props.webPartContext.pageContext.web.absoluteUrl}/BirthdayAnniversaryImages/${img}`} onClick={e=>this.handleClick(img)} className={this.state.selectedImage == img ? styles.selected:''} height="100px" width="100%" margin-top="15px"/>
                   })}                                                
             </Carousel>
             <div style={{color:'#d9534f'}}>{this.state.errorMessage}</div>
           </div>
         </div>
         
-        <div className={styles.SetSaveBtn}>                                                             
-          {/* <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'#d9534f',color:'#fff'}} onClick={this.CancelClicked}>Cancel</DefaultButton></div> */}   
-                                                    
-          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>
-                        
+        <div className={styles.SetSaveBtn}>                                                                                                        
+          <div><DefaultButton style={{border:'1px solid #ddd',backgroundColor:'rgb(239, 135, 0)',color:'#fff', width:'100%'}} onClick={()=>this.SaveDataClicked(this.state.message,this.state.selectedImage)}>Send</DefaultButton></div>                        
         </div>             
       </div>
     );    
@@ -112,7 +109,7 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
 
   SaveDataClicked = async(message, image) =>
   {
-    let userEmail = this.props.loggedInUserEmail;
+    let userEmail = this.props.webPartContext.pageContext.user.email;
     if(message == "" || message == null)
     {
       this.setState({
@@ -129,17 +126,18 @@ export class SendAnniversaryEmailCallout extends React.Component<ISendAnniversar
     }
     else
     {
+      let siteURL: string = this.props.webPartContext.pageContext.web.absoluteUrl;
       const requestlistItem: string = JSON.stringify({
       Title: "Work Anniversary Message",
       EmailSubject: "Happy Work Anniversary",
       EmailBody: message,
       EmailFrom: userEmail,
       EmailTo: this.props.person.email,
-      ActivityEmail: {'Description': image, 'Url': this.props.siteurl + "/BirthdayAnniversaryImages/" + image}   
+      ActivityEmail: {'Description': image, 'Url': siteURL + "/BirthdayAnniversaryImages/" + image}   
       });
 
       console.log(requestlistItem);
-      this.props.spHttpClient.post(`${this.props.siteurl}/_api/web/lists/getbytitle('EmailSender')/items`, SPHttpClient.configurations.v1,  
+      this.props.webPartContext.spHttpClient.post(`${siteURL}/_api/web/lists/getbytitle('EmailSender')/items`, SPHttpClient.configurations.v1,  
       {  
         headers: {  
         'Accept': 'application/json;odata=nometadata',  
