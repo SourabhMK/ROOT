@@ -32,33 +32,36 @@ export default class RoomService {
     }
 
     public GetRoomImagesBySize(sizeId) :Promise<string[]> {
-        let sp = new SPService(this._context);
-        let promises:any = [];
+        // let sp = new SPService(this._context);
+        // let promises:any = [];
         let imagePathes : string[] = [];
         return this.GetRoomImagesBySizeInturim(sizeId).then(data => {
             data.map(rec => {
-                let query = '/_api/web/lists/getbytitle(\'RoomPicture\')/items('+ rec.RoomImageId +')?$select=EncodedAbsThumbnailUrl';
-                let promise = sp._getListData1(query);
-                promises.push(promise);
+                imagePathes.push(this._context.pageContext.web.absoluteUrl + "/RoomPicture/" + rec.Title);
+                // let query = '/_api/web/lists/getbytitle(\'RoomPicture\')/items('+ rec.RoomImageId +')?$select=EncodedAbsThumbnailUrl';
+                // let promise = sp._getListData1(query);
+                // promises.push(promise);
             });
-            return Promise.all(promises).then(res=>{
-                res.map(t => {
-                    debugger;
-                    // try{
-                    //     let path = t.EncodedAbsThumbnailUrl;
-                    //     imagePathes.push(path);
-                    // }
-                    // catch((error)=>{
+            debugger;
+            return imagePathes;
+            // return Promise.all(promises).then(res=>{
+            //     res.map(t => {
+            //         debugger;
+            //         // try{
+            //         //     let path = t.EncodedAbsThumbnailUrl;
+            //         //     imagePathes.push(path);
+            //         // }
+            //         // catch((error)=>{
 
-                    // });
-                });
-                return imagePathes;
-            });
+            //         // });
+            //     });
+            //     return imagePathes;
+            // });
         });
     }
 
     private GetRoomImagesBySizeInturim(sizeId: number): Promise<ISPRoomImageRef[]> {
-        let query = '/_api/web/lists/getbytitle(\'RoomPicture\')/Items?$select=Id,RoomSizeId/Id&$expand=RoomSizeId/Id&$filter=RoomSizeId eq ' + sizeId;
+        let query = '/_api/web/lists/getbytitle(\'RoomPicture\')/Items?$select=Id,Title,RoomSizeId/Id&$expand=RoomSizeId/Id&$filter=RoomSizeId eq ' + sizeId;
         let sp = new SPService(this._context);
         return sp._getListData1(query).then(res=>{
             let data: ISPRoomImageRef[] =[];
@@ -66,6 +69,7 @@ export default class RoomService {
                 res.value.map(t => {
                     var item : ISPRoomImageRef = {
                         Id : t.Id,
+                        Title: t.Title,
                         RoomImageId : t.RoomSizeId.Id
                     };
                     data.push(item);

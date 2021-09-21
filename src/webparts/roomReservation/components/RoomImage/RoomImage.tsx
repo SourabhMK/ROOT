@@ -24,9 +24,9 @@ export default class RoomImage extends React.Component<IRoomImageProps, IRoomIma
          service.GetRoomImagesBySize(sizeId).then(data => {
              console.log("data : " + data);
             debugger;
-            // this.setState({
-            //     imagePaths : data
-            // });
+            this.setState({
+                imagePaths : data
+            });
          });
     }
 
@@ -36,16 +36,17 @@ export default class RoomImage extends React.Component<IRoomImageProps, IRoomIma
                 <div className="ms-Grid" dir="ltr">
                     <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-u-sm12 block">
-                        <Carousel
-                            pagination={false}
-                            itemsToShow={1}
-                            itemsToScroll={1}
-                            isRTL={false}
-                            focusOnSelect={true}>
-                            {this.state.imagePaths.map((img, index) => {
-                                return <img src={`${this.context.pageContext.web.absoluteUrl}/Images1/${img}`} height="100px" width="100%" margin-top="15px"/>
+                            {this.state.imagePaths.map(img => {
+                                return <img src={`${img}`} height="100%" width="100%" className={this.state.selectedImage == img ? styles.selected:''} margin-top="15px"/>;
                             })}
-                        </Carousel>
+                            {/* <Carousel
+                                pagination={false}
+                                itemsToShow={3}
+                                itemsToScroll={1}
+                                isRTL={false}
+                                focusOnSelect={true}> 
+                                    
+                            </Carousel> */}
                         </div>
                     </div>
                 </div>

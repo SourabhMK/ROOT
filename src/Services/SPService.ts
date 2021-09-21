@@ -1,5 +1,6 @@
 import { SPHttpClient, SPHttpClientResponse } from "@microsoft/sp-http";
 import {Web, Item,  Util,} from "sp-pnp-js";
+import { SiteUser } from "@pnp/sp/site-users";
 
 import { ISPLists } from "../Models/Models";
 

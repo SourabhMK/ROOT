@@ -1,5 +1,4 @@
-export interface IRoomImageProps {
-    description: string; 
+export interface IRoomImageProps { 
     context:any;
     locationId: number;
     areaId:number;

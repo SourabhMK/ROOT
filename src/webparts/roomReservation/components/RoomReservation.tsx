@@ -4,7 +4,7 @@ import { IRoomReservationProps } from './IRoomReservationProps';
 import { IRoomReservationStates } from './IRoomReservationState';
 import RoomFilters from '../components/RoomFilters/RoomFilters';
 import RoomImage from '../components/RoomImage/RoomImage';
-
+import Calendar from '../../../controls/Calendar/Calendar';
 export default class RoomReservation extends React.Component<IRoomReservationProps, IRoomReservationStates> {
   constructor(props:IRoomReservationProps, state:IRoomReservationStates) { 
     super(props);
@@ -28,24 +28,26 @@ export default class RoomReservation extends React.Component<IRoomReservationPro
     });
   }
 
+  private updatePropertyHandler(str: string) {
+    this.props.updateProperty(str);
+  }
+
   public render(): React.ReactElement<IRoomReservationProps> {
     return (
       <div className={ styles.roomReservation }>
         <div className="ms-Grid" dir="ltr">
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-u-sm6 block">
-              <RoomFilters 
-                description={this.props.description}
+              <RoomFilters
                 context={this.props.context}
                 EventKeySelection={this.EventKeySelectionHandler}
-                >
+                > 
               </RoomFilters>
             </div>
             <div className="ms-Grid-col ms-u-sm6 block">
-              {this.state.sizeId <= 0 && <div>Select the options to get data to load</div>}
+              {this.state.sizeId <= 0 && <div>Image will be loaded for the selected options</div>}
               {this.state.sizeId > 0 &&
-                <RoomImage 
-                  description={this.props.description}
+                <RoomImage
                   context={this.props.context}
                   locationId = {this.state.locationId}
                   areaId = {this.state.areaId}
@@ -53,6 +55,25 @@ export default class RoomReservation extends React.Component<IRoomReservationPro
                   sizeId = {this.state.sizeId}
                   ></RoomImage>
                 }
+            </div>
+          </div>
+        </div>
+        <div className="ms-Grid" dir="ltr">
+          <div className="ms-Grid-row">
+            <div className="ms-Grid-col ms-u-sm12 block">
+            {this.state.sizeId <= 0 && <div>Schedule will be loaded according to the selection</div>}
+              {this.state.sizeId > 0 &&
+                <Calendar 
+                   title= {this.props.title}
+                   siteUrl= {this.props.siteUrl}
+                   list = {this.props.list}
+                   displayMode = {this.props.displayMode}
+                   context ={ this.props.context}
+                   eventStartDate = {this.props.eventStartDate}
+                   eventEndDate = {this.props.eventEndDate}
+                   updateProperty = {this.updatePropertyHandler}
+                />
+              }
             </div>
           </div>
         </div>

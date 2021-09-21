@@ -9,5 +9,6 @@ export interface ISPLists {
 
   export interface ISPRoomImageRef {
     Id: string;
+    Title: string;
     RoomImageId: string;
   }
