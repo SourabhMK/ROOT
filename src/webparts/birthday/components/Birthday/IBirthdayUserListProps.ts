@@ -15,4 +15,7 @@ export interface IBirthdayUserListState {
     currentMessage: string;
     msGraphProvider: IMSGraphInterface;
     errorMessage: string;
+    images:string[];
+    selectedImage: string;
+    message: string;
 }

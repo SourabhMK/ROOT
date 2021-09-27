@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "56f6473e-9a49-4b55-941c-da0d2d669538",
-  "alias": "AssetReservationWebPart",
+  "id": "66696574-bfec-47c6-b866-4287761725c2",
+  "alias": "SocialFeedsWebPart",
   "componentType": "WebPart",
 
   // The "*" signifies that the version should be taken from the package.json
@@ -12,16 +12,16 @@
   // Components that allow authors to embed arbitrary script code should set this to true.
   // https://support.office.com/en-us/article/Turn-scripting-capabilities-on-or-off-1f2c515f-5d7e-448a-9fd7-835da935584f
   "requiresCustomScript": false,
-  "supportedHosts": ["SharePointWebPart"],
+  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp","TeamsTab"],
 
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
     "group": { "default": "Other" },
-    "title": { "default": "AssetReservation" },
-    "description": { "default": "Web part for Reservation of Room" },
-    "officeFabricIconFontName": "Page",
+    "title": { "default": "SocialFeeds" },
+    "description": { "default": "Display all the social feeds" },
+    "officeFabricIconFontName": "SocialListeningLogo",
     "properties": {
-      "description": "AssetReservation"
+      "description": "SocialFeeds"
     }
   }]
 }

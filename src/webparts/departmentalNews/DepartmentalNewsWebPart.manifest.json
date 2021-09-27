@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "56f6473e-9a49-4b55-941c-da0d2d669538",
-  "alias": "AssetReservationWebPart",
+  "id": "07981757-5b4a-4c8c-b816-a3ee7afb8208",
+  "alias": "DepartmentalNewsWebPart",
   "componentType": "WebPart",
 
   // The "*" signifies that the version should be taken from the package.json
@@ -17,11 +17,11 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
     "group": { "default": "Other" },
-    "title": { "default": "AssetReservation" },
-    "description": { "default": "Web part for Reservation of Room" },
+    "title": { "default": "Departmental News" },
+    "description": { "default": "Display departmental news in the organization" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "AssetReservation"
+      "description": "Departmental News"
     }
   }]
 }

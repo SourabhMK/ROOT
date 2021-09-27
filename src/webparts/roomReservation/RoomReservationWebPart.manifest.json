@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "c4041bba-35b9-4b40-8816-b5a6be3490b2",
+  "id": "e8a67fdf-6f6d-4369-bf85-d88c4c3c0fc6",
   "alias": "RoomReservationWebPart",
   "componentType": "WebPart",
 
