@@ -229,7 +229,9 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               dispatcherDeptName:r.AssignedTo,
               reAssignedTo:r.ReAssignTo,
               dataId:r.ID,
-              comment:r.Comment
+              comment:r.Comment,
+              attachmentFileName:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
+              getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:''
             }
           }) 
         })
@@ -736,7 +738,9 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               <th>Category</th>
               <th>Comment</th>
               <th>Action</th>
-              {/* <th>ReAssign To</th> */}
+              <th>
+                <Icon iconName='Attach' style={{fontSize:'25px', cursor:'pointer'}}></Icon>
+              </th>
               <th></th>
             </tr>
           </thead>
@@ -817,6 +821,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
                       </Dropdown>
                     </td>
                     <td>
+                      <a href={res.getAttachmentData}> {res.attachmentFileName}</a></td>
+                    <td>
                     <Icon iconName="Save" style={{fontSize:'20px', cursor:'pointer'}} onClick={(e)=>this.onSubmitDropDownHandle(this.state.commentData,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}></Icon>
                     </td>
                   </tr>
@@ -832,47 +838,9 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       {
         (this.state.allIssuesButton === 1) && (this.state.assignedIssuesButton === 0) &&
 
-        <AllAssignedToView allDetailsProp={this.state.allDetails} 
-        emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
+        <AllAssignedToView emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
          }
          {
-      //         <div className="ms-Grid-row">
-      //         <div className="ms-Grid-col ms-lg12 ms-sm12">
-      //         <div style={{overflowX:'auto'}}>
-      //         <table className={styles.tableSet} >
-      //             <thead>
-      //               <tr>
-      //                 <th>Ticket Number</th>
-      //                 <th>Raised By</th>
-      //                 <th>Issue Date</th>
-      //                 <th>Description</th>
-      //                 <th>Category</th>
-      //                 <th>Status</th>
-      //                 <th>ReAssign To</th>
-      //               </tr>
-      //             </thead>
-      //             <tbody>
-      //               {
-      //                this.state.allDetails.map((res,index)=>{
-      //                var issuedDate = new Date(res.issueDate).toLocaleDateString();
-      //                   return(
-      //                     <tr>
-      //                       <td>{res.ticketNumber}</td>
-      //                       <td>{res.raisedBy}</td>
-      //                       <td>{issuedDate}</td>
-      //                       <td>{res.description}</td>
-      //                       <td>{res.category}</td>
-      //                       <td>{res.status}</td>
-      //                       <td>{res.reAssignedTo}</td>
-      //                     </tr>
-      //                   )
-      //                 })
-      //               }
-      //             </tbody>
-      //             </table>
-      //            </div>
-      //           </div>
-      //         </div> 
       }
     </div>
   }

@@ -34,5 +34,5 @@ export interface IAllAssignProps {
     loggedInUserEmail: string;
     currentUserId:number;
 
-    allDetailsProp:IDispacherList[];
+    // allDetailsProp:IDispacherList[];
 }

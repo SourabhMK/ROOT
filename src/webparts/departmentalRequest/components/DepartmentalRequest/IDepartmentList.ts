@@ -42,4 +42,6 @@ export interface  IAssignedList {
     reAssignedTo:reAssignedUser;
     dataId:number;
     comment:string;
+    attachmentFileName:File;
+    getAttachmentData:string;
 }
