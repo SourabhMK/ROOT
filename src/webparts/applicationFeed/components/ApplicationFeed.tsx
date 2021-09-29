@@ -21,10 +21,6 @@ export default class ApplicationFeed extends React.Component<IApplicationFeedPro
         URL:"",
         Order:"",    
       }]
-      //selectedImage: "",
-      //message: "",
-      
-      //errorMessage : ""
     };          
   }
 

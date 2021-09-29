@@ -1,6 +1,6 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.applicationFeed {
+.addGoals {
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -24,7 +24,7 @@
 
   .title {
     @include ms-font-xl;
-    @include ms-fontColor-white;
+    @include ms-fontColor-black;
   }
 
   .subTitle {
@@ -46,7 +46,7 @@
     word-wrap: break-word;
   } 
 
-  .applicationFeedIcon{
+  .objectivesGoalsIcon{
     padding-right: 7px;
     font-size: xx-large;
   }
@@ -58,7 +58,7 @@
     //background-color: white;    
     text-align: left;
     font-size: 20px;
-    padding-right: 15px;
+   //padding-right: 15px;
   }
 
   .button {
@@ -95,4 +95,17 @@
       display: inline-block;
     }
   }
+}
+.SetDisplay{
+  display: flex;
+  margin-bottom: 1px;
+  margin-top:0px;
+  flex-wrap: wrap;
+}
+
+.GoalsTabBtn
+{
+  border: 1px solid rgb(239, 135, 0);
+  padding: 18px 40px;
+  outline: none;
 }

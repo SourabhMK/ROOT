@@ -57,6 +57,14 @@
           "manifest": "./src/webparts/applicationFeed/ApplicationFeedWebPart.manifest.json"
         }
       ]
+    },
+    "objectives-goals-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/objectivesGoals/ObjectivesGoalsWebPart.js",
+          "manifest": "./src/webparts/objectivesGoals/ObjectivesGoalsWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -69,6 +77,7 @@
     "AssetReservationWebPartStrings": "lib/webparts/assetReservation/loc/{locale}.js",
     "AssignIssueEcbCommandSetStrings": "lib/extensions/assignIssueEcb/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
-    "ApplicationFeedWebPartStrings": "lib/webparts/applicationFeed/loc/{locale}.js"
+    "ApplicationFeedWebPartStrings": "lib/webparts/applicationFeed/loc/{locale}.js",
+    "ObjectivesGoalsWebPartStrings": "lib/webparts/objectivesGoals/loc/{locale}.js"
   }
 }
