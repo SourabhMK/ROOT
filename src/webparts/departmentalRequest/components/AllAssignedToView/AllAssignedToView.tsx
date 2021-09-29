@@ -7,6 +7,7 @@ import { IBasePickerSuggestionsProps, IPeoplePickerProps, NormalPeoplePicker, Va
 import DepartmentalRequest from '../DepartmentalRequest/DepartmentalRequest'
 import { IAssignState } from '../AssignedToView/IAssignState';
 import { IAssignProps, IAllAssignProps } from '../AssignedToView/IAssignProps';
+import {IAllAssignState} from './IAllAssignState'
 import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from '@microsoft/sp-http';
 import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
 import { DefaultButton, PrimaryButton, CompoundButton } from '@fluentui/react/lib/Button';
@@ -57,13 +58,93 @@ export interface IMyIssueList {
 var work;
 
 
-debugger;
-export default class AllAssignedToView extends React.Component<IAllAssignProps,IAssignState> {
+// debugger;
+export default class AllAssignedToView extends React.Component<IAllAssignProps,IAllAssignState> {
 
 
   constructor(props) {
     super(props);
+    this.state={
+      loading:false,
+    errorMessage:'',
+    homeButton:0,
+    allDetails:[]
+    }
   }
+
+  componentDidMount(){
+    this.allAssignToListInfo();
+  }
+
+  private allAssignToListInfo():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,AttachmentFiles&$expand=Author,ReAssignTo,AttachmentFiles&$filter=ReAssignToId eq ${this.props.currentUserId}&$orderby=ID desc`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+        //   // There was an error loading information about people.
+        //   // Notify the user that loading data is finished and return the
+        //   // error message that occurred
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value == 0) {
+          // No results were found. Notify the user that loading data is finished
+          this.setState({
+            loading: false
+          });
+          return;
+        }
+        let createdDateFormat = new Date('').toLocaleDateString();
+        this.setState({
+          // ticketCount:res.value.length,
+          allDetails:res.value.map((r,index)=>{
+            return{
+              ticketNumber:`INC_${r.Department}_000${r.ID}`,
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.Author.Title,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo,
+              dataId:r.ID
+            }
+          }) 
+        })
+        console.log("allDetails[0].reAssignedTo.text = " + this.state.allDetails[0].reAssignedTo.Title);
+  
+    if(this.state.allDetails.length>0){
+    this.setState({
+      loading:false,
+    })
+    }
+  }, (error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+ }
 
   
 
@@ -94,7 +175,7 @@ export default class AllAssignedToView extends React.Component<IAllAssignProps,I
                   </thead>
                   <tbody>
                     {
-                     this.props.allDetailsProp.map((res,index)=>{
+                     this.state.allDetails.map((res,index)=>{
                      var issuedDate = new Date(res.issueDate).toLocaleDateString();
                         return(
                           <tr>

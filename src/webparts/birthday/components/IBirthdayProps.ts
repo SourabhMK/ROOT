@@ -1,14 +1,7 @@
-
-import { SPHttpClient, HttpClient } from "@microsoft/sp-http";
+import { WebPartContext } from "@microsoft/sp-webpart-base";
 
 export interface IBirthdayProps {
   description: string;
-  siteurl: string;
-  spHttpClient: SPHttpClient;
-  myHttpClient: HttpClient;
-  loggedInUserEmail:string;
+  webPartContext: WebPartContext;  
   dropdown: string;
-  simpleText: string;
-  imageUrl: string;
-  SiteCollection: string;
 }

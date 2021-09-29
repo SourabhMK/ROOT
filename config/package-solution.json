@@ -2,11 +2,49 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "root-client-side-solution",
-    "id": "a8a5a569-f1b1-465e-87aa-ee01cec64be4",
+    "id": "a1c41249-72da-43c6-b32a-4f052dfc8644",
     "version": "1.0.2.0",
     "includeClientSideAssets": true,
     "isDomainIsolated": false,
-    "skipFeatureDeployment": false,
+    "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "ChatMessage.Send"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Chat.Create"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Chat.ReadWrite"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.Read"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.ReadWrite.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Directory.Read.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Directory.ReadWrite.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "User.ReadBasic.All"
+      },
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Mail.Send"
+      }
+    ],
     "features": [
       {
         "title": "root-client-side-solution",
@@ -17,7 +55,8 @@
           "elementManifests": [
             "DepartmentalRequestElements.xml",
             "BirthdayElements.xml",
-            "RoomsElement.xml"
+            "RoomsElement.xml",
+            "DepartmentalNewsElements.xml"
           ],
           "elementFiles": [
             "schema.xml",
@@ -26,7 +65,9 @@
             "IssueArchiveSettingsSchema.xml",
             "employeeRequestSchema.xml",
             "EmailSenderschema.xml",
-            "RoomsSchema.xml"
+            "RoomsSchema.xml",
+            "DepartmentalNewsSchema.xml",
+            "DepartmentsSchema.xml"
           ]
         }
       },

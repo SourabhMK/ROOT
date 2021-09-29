@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "04a30d67-792a-4bac-9efa-4093c006ed34",
+  "id": "41ad9bcb-fbb6-40ad-ac8d-84981470b208",
   "alias": "DepartmentalRequestWebPart",
   "componentType": "WebPart",
 
@@ -22,7 +22,7 @@
     "officeFabricIconFontName": "Page",
     "properties": {
       "description": "DepartmentalRequest",
-      "groupType":0
+      "emailType":0
     }
   }]
 }

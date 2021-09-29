@@ -1,0 +1,77 @@
+<List xmlns:ows="Microsoft SharePoint" Title="Departments" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Departments" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>
+    <Fields>
+      <Field
+                Type="User"
+                DisplayName="Manager"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleOnly"
+                UserSelectionScope="0"
+                ID="{3ac546db-c53a-40c5-b084-123165ec624f}"
+                StaticName="Manager"
+                Name="Manager"
+                ColName="int3"
+                RowOrdinal="0"
+            />
+            <Field
+                Type="User"
+                DisplayName="Dispatcher Group"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleAndGroups"
+                UserSelectionScope="0"
+                ID="{32f34d43-2d5c-468a-9017-80875188caad}"
+                StaticName="GroupName"
+                Name="GroupName"
+                ColName="int1"
+                RowOrdinal="0"
+                Group=""
+            />
+            <Field
+                Type="User"
+                DisplayName="Department Group"
+                List="UserInfo"
+                Required="TRUE"
+                EnforceUniqueValues="FALSE"
+                ShowField="ImnName"
+                UserSelectionMode="PeopleAndGroups"
+                UserSelectionScope="0"
+                ID="{7c3f3bb3-7fc7-4e37-98bf-abd04bd99442}"
+                StaticName="DepartmentGroup"
+                Name="DepartmentGroup"
+                ColName="int2"
+                RowOrdinal="0"
+                Group=""
+            />
+    </Fields>
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="Manager"></FieldRef>
+          <FieldRef Name="GroupName"></FieldRef>
+          <FieldRef Name="DepartmentGroup"></FieldRef>
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

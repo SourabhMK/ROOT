@@ -1,0 +1,38 @@
+<List xmlns:ows="Microsoft SharePoint" Title="DepartmentalNews" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/DepartmentalNews" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <MetaData>    
+    <Fields>
+        <Field ID="{bf77268d-ff35-4599-a8a3-74fedf64da98}" Name="Title" DisplayName="News Title" Required="TRUE" Hidden="FALSE" ReadOnly="FALSE" PITarget="" PrimaryPITarget="" PIAttribute="" PrimaryPIAttribute="" Aggregation="" Node="" />
+        <Field ID="{d87a798d-431d-4a62-8e7d-5fb6dcfd2121}" Name="NewsTeaser" DisplayName="News Teaser" Required="TRUE" />
+        <Field ID="{e58bf3e0-3d15-48ab-9ab1-d9a86c4351cf}" Name="NewsDescription" DisplayName="News Description" Required="TRUE" />
+        <Field ID="{e586ff76-1749-40a4-9241-cf63632918f0}" Name="FromDate" DisplayName="From Date" Required="TRUE" Format="DateOnly" />
+        <Field ID="{09e775dd-54ea-4ed1-8bb7-a58b2dcd1d7d}" Name="ToDate" DisplayName="To Date" Required="TRUE" Format="DateOnly" />
+        <Field ID="{dea70ac1-779a-49e3-a82f-f2289c57a733}" Name="Department" DisplayName="Department" Required="FALSE" Hidden="FALSE" ReadOnly="FALSE" PITarget="" PrimaryPITarget="" PIAttribute="" PrimaryPIAttribute="" Aggregation="" Node="" />
+    </Fields>
+    <Views>
+      <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+        <XslLink Default="TRUE">main.xsl</XslLink>
+        <JSLink>clienttemplates.js</JSLink>
+        <RowLimit Paged="TRUE">30</RowLimit>
+        <Toolbar Type="Standard" />
+        <ViewFields>
+          <FieldRef Name="LinkTitle"></FieldRef>
+          <FieldRef Name="NewsTeaser"></FieldRef>
+          <FieldRef Name="NewsDescription"></FieldRef>
+          <FieldRef Name="FromDate"></FieldRef>
+          <FieldRef Name="ToDate"></FieldRef>
+          <FieldRef Name="Department"></FieldRef>
+        </ViewFields>
+        <Query>
+          <OrderBy>
+            <FieldRef Name="ID" />
+          </OrderBy>
+        </Query>
+      </View>
+    </Views>
+    <Forms>
+      <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+      <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+    </Forms>
+  </MetaData>
+</List>

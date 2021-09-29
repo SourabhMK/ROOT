@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">    
+    <ListInstance
+            CustomSchema="DepartmentalNewsSchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="DepartmentalNews"
+            Description="Display Departmental News"
+            TemplateType="100"
+            Url="Lists/DepartmentalNews">
+    </ListInstance>
+
+     <ListInstance
+            CustomSchema="DepartmentsSchema.xml"
+            FeatureId="00bfea71-de22-43b2-a848-c05709900100"
+            Title="Departments"
+            Description="Departments for News"
+            TemplateType="100"
+            Url="Lists/Departments">
+    </ListInstance>
+
+</Elements>

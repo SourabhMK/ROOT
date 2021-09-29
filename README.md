@@ -71,3 +71,13 @@ This extension illustrates the following concepts:
 - [Use Microsoft Graph in your solution](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/web-parts/get-started/using-microsoft-graph-apis)
 - [Publish SharePoint Framework applications to the Marketplace](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/publish-to-marketplace-overview)
 - [Microsoft 365 Patterns and Practices](https://aka.ms/m365pnp) - Guidance, tooling, samples and open-source controls for your Microsoft 365 development
+
+https://gns11.sharepoint.com/sites/SiriusTeams/_layouts/15/workbench.aspx
+
+https://champion1.sharepoint.com/sites/newteamsitepj/_layouts/15/workbench.aspx
+
+https://champion1.sharepoint.com/sites/SPMall/IPDevV2/_layouts/15/workbench.aspx
+
+
+
+https://codepen.io/andrewconnell/pen/NGNQbR

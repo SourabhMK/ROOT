@@ -21,7 +21,7 @@ import { result } from 'lodash';
 import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
 
 
-debugger;
+// debugger;
 export interface IExampleExtendedPersonaProps {
     imageUrl?: string;
     imageInitials?: string;
@@ -436,6 +436,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
               <th>Ticket Number</th>
               <th>Raised By</th>
               <th>Issue Date</th>
+              <th>Description</th>
               <th>Assign To</th>
               <th>Update</th>
             </tr>
@@ -449,6 +450,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
                     <td>{res.ticketNumber}</td>
                     <td>{res.raisedBy}</td>
                     <td>{issuedDate}</td>
+                    <td>{res.description}</td>
                     <td>
                       <Dropdown
                        id={res.ticketNumber + '_dropDown'} 
@@ -490,7 +492,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   }
 
   {(this.state.homeButton === 1) &&
-              <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+              <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
   }
     </div>
   );

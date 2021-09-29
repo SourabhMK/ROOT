@@ -20,7 +20,6 @@ export interface IAssetReservationWebPartProps {
   spHttpClient: SPHttpClient,
 }
 
-debugger;
 export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
 
   public render(): void {

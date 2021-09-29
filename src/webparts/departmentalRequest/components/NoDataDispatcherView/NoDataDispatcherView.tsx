@@ -81,7 +81,7 @@ export default class NoDataDispatcherView extends React.Component<{}> {
             <h2>No ticket to be dispatched</h2>
 
       {/* {(this.state.homeButton === 1) &&
-          <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+          <DepartmentalRequest chartType={this.props.chartType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
       } */}
             </div>
           </div>

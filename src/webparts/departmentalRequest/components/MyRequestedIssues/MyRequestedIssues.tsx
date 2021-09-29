@@ -40,6 +40,7 @@ import {
   IDetailsRowBaseProps,
   IDetailsRowCheckStyles,
 } from '@fluentui/react/lib/DetailsList';
+import { Attachment, Attachments } from 'sp-pnp-js/lib/graph/attachments';
 
 export interface IMyIssueList {
   created:string,
@@ -49,23 +50,27 @@ export interface IMyIssueList {
   assignedTo:string,
   comment:string,
   status:string,
-  attachments:string
+  attachments:File
 }
 
 var work;
 
 
-debugger;
+// debugger;
 export default class MyRequestedIssues extends React.Component<IMyRequestedIssuesProps,IMyRequestedIssuesState> {
 
   private _items: IMyIssueList[] = [];
+  private _itemsArchive: IMyIssueList[] = [];
   private _columns: IColumn[];
 
   constructor(props) {
     super(props);
     this._items = this.props.issueDataList;
+    this._itemsArchive = this.props.archiveIssueDataList;
     this.state={
       homeButton:0,
+      myIssuesUnlock:1,
+      archiveIssuesUnlock:0
     }
     // this._items = [];
    // for (let i = 0; i < 5; i++) {
@@ -97,9 +102,20 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
       homeButton:1,
     });
     console.log("homeButton= " + this.state.homeButton);
-    // return (<div>
-    //   <h1>I am working fine</h1>
-    // </div>);
+  }
+
+  myIssuesButtonClickHandle(){
+    this.setState({
+      myIssuesUnlock:1,
+      archiveIssuesUnlock:0
+    })
+  }
+
+  myArchiveIssuesButtonClickHandle(){
+    this.setState({
+      myIssuesUnlock:0,
+      archiveIssuesUnlock:1
+    })
   }
  
   public render(): React.ReactElement<IMyRequestedIssuesProps> {
@@ -108,11 +124,22 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
         {(this.state.homeButton === 0) &&
         <div className="ms-Grid">
           <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg12">
+            <div className="ms-Grid-col ms-lg4">
             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
             </div>
+            <div className="ms-Grid-col ms-lg4">
+            <Icon iconName='IssueTracking' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.myIssuesButtonClickHandle()} ></Icon>
+            </div>
+            <div className="ms-Grid-col ms-lg4">
+            <Icon iconName='Archive' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.myArchiveIssuesButtonClickHandle()} ></Icon>
+            </div>
           </div>
-          <div className="ms-Grid-row">
+        </div>
+        } 
+        {(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 1)
+         && (this.state.archiveIssuesUnlock === 0) && (this._items != null) &&
+        <div className="ms-Grid">
+        <div className="ms-Grid-row">
          <DetailsList
         items={this._items}
         columns={this._columns}
@@ -126,9 +153,35 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
          />
         </div>
         </div>
+        }
+      
+
+      {(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 0)
+         && (this.state.archiveIssuesUnlock === 1) && (this._itemsArchive != null) &&
+        <div className="ms-Grid">
+        <div className="ms-Grid-row">
+       <DetailsList
+       items={this._itemsArchive}
+       columns={this._columns}
+       setKey="set"
+       layoutMode={DetailsListLayoutMode.justified}
+       selectionPreservedOnEmptyClick={true}
+       ariaLabelForSelectionColumn="Toggle selection"
+        ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+        checkButtonAriaLabel="select row"
+        onRenderDetailsFooter={this._onRenderDetailsFooter}
+        />
+       </div>
+      </div>
       }
+
+{(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 0)
+         && (this.state.archiveIssuesUnlock === 1) && (this._itemsArchive == null) &&
+      <h2>The archive list is empty</h2>
+      }
+
       {(this.state.homeButton === 1) &&
-          <DepartmentalRequest groupType={this.props.groupType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+          <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
       }
      </div>
     );

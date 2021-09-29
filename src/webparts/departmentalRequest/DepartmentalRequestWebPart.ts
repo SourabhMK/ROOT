@@ -14,7 +14,8 @@ import { IDepartmentalRequestProps } from './components/DepartmentalRequest/IDep
 
 export interface IDepartmentalRequestWebPartProps {
   description: string;
-  groupType:number;
+  emailType:number;
+  msGraphClientFactory : any;
 }
 
 export default class DepartmentalRequestWebPart extends BaseClientSideWebPart<IDepartmentalRequestWebPartProps> {
@@ -26,10 +27,11 @@ export default class DepartmentalRequestWebPart extends BaseClientSideWebPart<ID
         description: this.properties.description,
         webUrl: this.context.pageContext.web.absoluteUrl,
         spHttpClient: this.context.spHttpClient,
-        groupType:this.properties.groupType,
+        emailType:this.properties.emailType,
         loggedInUserName:this.context.pageContext.user.displayName,
         loggedInUserEmail:this.context.pageContext.user.email,
         currentUserId:this.context.pageContext.legacyPageContext["userId"],
+        msGraphClientFactory : this.context.msGraphClientFactory
       }
     );
 
@@ -58,15 +60,15 @@ export default class DepartmentalRequestWebPart extends BaseClientSideWebPart<ID
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 }),
-                PropertyPaneDropdown('groupType',{
-                  label:"Select your group type",options:[
+                PropertyPaneDropdown('emailType',{
+                  label:"Select the email facility",options:[
                     {
                       key:0,
-                      text: "Microsoft Group",
+                      text: "Normal EMail",
                     },
                     {
                       key:1,
-                      text:"SharePoint Group"
+                      text:"Power Automate"
                     }
                   ],
                   selectedKey:0

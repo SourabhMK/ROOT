@@ -65,6 +65,30 @@
           "manifest": "./src/webparts/objectivesGoals/ObjectivesGoalsWebPart.manifest.json"
         }
       ]
+    },
+    "room-reservation-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/roomReservation/RoomReservationWebPart.js",
+          "manifest": "./src/webparts/roomReservation/RoomReservationWebPart.manifest.json"
+        }
+      ]
+    },
+    "social-feeds-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/socialFeeds/SocialFeedsWebPart.js",
+          "manifest": "./src/webparts/socialFeeds/SocialFeedsWebPart.manifest.json"
+        }
+      ]
+    },
+    "departmental-news-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/departmentalNews/DepartmentalNewsWebPart.js",
+          "manifest": "./src/webparts/departmentalNews/DepartmentalNewsWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -78,6 +102,9 @@
     "AssignIssueEcbCommandSetStrings": "lib/extensions/assignIssueEcb/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
     "ApplicationFeedWebPartStrings": "lib/webparts/applicationFeed/loc/{locale}.js",
-    "ObjectivesGoalsWebPartStrings": "lib/webparts/objectivesGoals/loc/{locale}.js"
+    "ObjectivesGoalsWebPartStrings": "lib/webparts/objectivesGoals/loc/{locale}.js",
+    "RoomReservationWebPartStrings": "lib/webparts/roomReservation/loc/{locale}.js",
+    "SocialFeedsWebPartStrings": "lib/webparts/socialFeeds/loc/{locale}.js",
+    "DepartmentalNewsWebPartStrings": "lib/webparts/departmentalNews/loc/{locale}.js"
   }
 }

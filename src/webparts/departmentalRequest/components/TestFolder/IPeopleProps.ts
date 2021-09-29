@@ -3,7 +3,7 @@ import { IPersonaProps } from '@fluentui/react/lib/Persona';
 
 export interface IPeopleProps {
     description: string;
-    groupType:number;
+    emailType:number;
     deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
@@ -15,4 +15,5 @@ export interface IPeopleProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
+    msGraphClientFactory:any
 }

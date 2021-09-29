@@ -4,7 +4,7 @@ import { IDispacherList } from "../DepartmentalRequest/IDepartmentList";
 
 export interface IAssignProps {
     description: string;
-    groupType:number;
+    emailType:number;
     deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
@@ -16,11 +16,12 @@ export interface IAssignProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
+    msGraphClientFactory:any
 }
 
 export interface IAllAssignProps {
     description: string;
-    groupType:number;
+    emailType:number;
     deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
@@ -33,5 +34,5 @@ export interface IAllAssignProps {
     loggedInUserEmail: string;
     currentUserId:number;
 
-    allDetailsProp:IDispacherList[];
+    // allDetailsProp:IDispacherList[];
 }
