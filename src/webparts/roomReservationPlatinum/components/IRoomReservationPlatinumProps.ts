@@ -1,9 +1,8 @@
 import { DisplayMode } from '@microsoft/sp-core-library';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { IDateTimeFieldValue } from '@pnp/spfx-property-controls/lib/PropertyFieldDateTimePicker';
-import { IAssetInfo } from '../../../models/IAssetInfo';
 
-export interface IAssetReservationProps {
+export interface IRoomReservationPlatinumProps {
   title: string;
   siteUrl: string;
   list: string;

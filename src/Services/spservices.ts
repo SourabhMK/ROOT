@@ -1,30 +1,33 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { sp, Web, PermissionKind, IFieldInfo } from '@pnp/sp/presets/all';
 // import { siteUsers } from '@pnp/sp/site-users/web'
-//import { graph } from "@pnp/graph";
+import { graph } from "@pnp/graph";
 import * as $ from 'jquery';
-import { IEventData } from '../Models/IEventData';
+import { IEventData } from '../models/IEventData';
 import * as moment from 'moment';
 // import { SiteUser } from "@pnp/sp/src/siteusers";
-import { IUserPermissions } from '../Models/IUserPermissions';
+import { IUserPermissions } from '../models/IUserPermissions';
 import parseRecurrentEvent from './parseRecurrentEvent';
+import { result } from "lodash";
+import { Logger, LogLevel} from "@pnp/logging";
 
 // Class Services
 export default class spservices {
-  constructor(private context: WebPartContext) {
+  constructor(private context: WebPartContext) {    
     // Setup Context to PnPjs and MSGraph
     sp.setup({
       spfxContext: this.context
     });
 
-    //graph.setup({
-    //  spfxContext: this.context
-    //});
+    graph.setup({
+     spfxContext: this.context
+    });
     // Init
     this.onInit();
   }
   // OnInit Function
   private async onInit() {
+    Logger.write("spServices init()", LogLevel.Info);
   }
 
   /**
@@ -68,6 +71,7 @@ export default class spservices {
    * @memberof spservices
    */
   public async addEvent(newEvent: IEventData, siteUrl: string, listId: string) {
+    Logger.write("spServices => Add new event", LogLevel.Info);
     let results = null;
     try {
       const web = Web(siteUrl);
@@ -89,8 +93,10 @@ export default class spservices {
         MasterSeriesItemID: newEvent.MasterSeriesItemID,
         RecurrenceID: newEvent.RecurrenceID ? newEvent.RecurrenceID : undefined,
       });
+      Logger.write("New event has been added.", LogLevel.Info);
     }
     catch (error) {
+      Logger.writeJSON(error, LogLevel.Error);
       return Promise.reject(error);
     }
     return results;
@@ -107,6 +113,8 @@ export default class spservices {
    * @memberof spservices
    */
   public async getEvent(siteUrl: string, listId: string, eventId: number): Promise<IEventData> {
+    debugger;
+    Logger.write("Getting events", LogLevel.Info);
     let returnEvent: IEventData = undefined;
     try {
       const web = Web(siteUrl);
@@ -145,8 +153,11 @@ export default class spservices {
         RecurrenceID: event.RecurrenceID,
         MasterSeriesItemID: event.MasterSeriesItemID,
       };
+      debugger;
+      Logger.log({message:"Success", level: LogLevel.Info, data:returnEvent});
     } 
     catch (error) {
+      Logger.writeJSON(error, LogLevel.Error);
       return Promise.reject(error);
     }
     return returnEvent;
@@ -381,6 +392,19 @@ export default class spservices {
     return results;
   }
 
+  // public async ensureRequiredList(siteUrl: string, listName: string) {
+  //   debugger;
+  //   let results :any = false;
+  //   try {
+  //     const web = Web(siteUrl);
+  //     // this will create a list with template 106 (Calendar), content types enabled and hide it on the quick launch (using additionalSettings)
+  //     results = await web.lists.ensure(listName, "Calendar list to hold reservation information", 106, true, { OnQuickLaunch: false });
+  //   } catch (error) {
+  //     return Promise.reject(error);
+  //   }
+  //   return result;
+  // }
+
   /**
    *
    * @private
@@ -420,7 +444,6 @@ export default class spservices {
         .select("Title", "InternalName", "Choices")
         .get();
         if(results) {
-          debugger;
           var choiceOptions = results["Choices"];
           if (choiceOptions && choiceOptions.length > 0) {
             for (const option of choiceOptions) {

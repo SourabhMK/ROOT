@@ -1,4 +1,4 @@
-# root
+# reservation
 
 ## Summary
 
@@ -76,8 +76,12 @@ https://gns11.sharepoint.com/sites/SiriusTeams/_layouts/15/workbench.aspx
 
 https://champion1.sharepoint.com/sites/newteamsitepj/_layouts/15/workbench.aspx
 
+https://champion1.sharepoint.com/sites/AppCatalog/AppCatalog/Forms/AllItems.aspx
+
 https://champion1.sharepoint.com/sites/SPMall/IPDevV2/_layouts/15/workbench.aspx
 
 
 
 https://codepen.io/andrewconnell/pen/NGNQbR
+
+https://pnp.github.io/pnpjs/sp/lists/

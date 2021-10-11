@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './EventRecurrenceInfo.module.scss';
-import * as strings from 'RoomReservationWebPartStrings';
+import * as strings from 'RoomReservationPlatinumWebPartStrings';
 import { IEventRecurrenceInfoProps } from './IEventRecurrenceInfoProps';
 import { IEventRecurrenceInfoState } from './IEventRecurrenceInfoState';
 import { escape } from '@microsoft/sp-lodash-subset';

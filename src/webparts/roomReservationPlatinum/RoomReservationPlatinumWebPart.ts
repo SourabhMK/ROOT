@@ -11,16 +11,14 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'RoomReservationPlatinumWebPartStrings';
-import AssetReservation from './components/AssetReservation';
-import { IAssetReservationProps } from './components/IAssetReservationProps';
+import RoomReservationPlatinum from './components/RoomReservationPlatinum';
+import { IRoomReservationPlatinumProps } from './components/IRoomReservationPlatinumProps';
+
 import { PropertyFieldDateTimePicker, DateConvention, TimeConvention, IDateTimeFieldValue } from '@pnp/spfx-property-controls/lib/PropertyFieldDateTimePicker';
 import spservices from '../../services/spservices';
 import * as moment from 'moment';
 
-import { Logger, ConsoleListener, ILogEntry, LogLevel} from "@pnp/logging";
-import AppListener from '../../services/appListner';
-
-export interface IAssetReservationWebPartProps {
+export interface IRoomReservationPlatinumWebPartProps {
   title: string;
   siteUrl: string;
   list: string;
@@ -30,16 +28,19 @@ export interface IAssetReservationWebPartProps {
   context:any; 
 }
 
-export default class AssetReservationWebPart extends BaseClientSideWebPart<IAssetReservationWebPartProps> {
+export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPart<IRoomReservationPlatinumWebPartProps> {
   private lists: IPropertyPaneDropdownOption[] = [];
   private listsDropdownDisabled: boolean = true;
   private spService: spservices = null;
   private errorMessage: string;
-  private appListner: AppListener = new AppListener();
+
+  public constructor() {
+    super();
+  }
 
   public render(): void {
-    const element: React.ReactElement<IAssetReservationProps> = React.createElement(
-      AssetReservation,
+    const element: React.ReactElement<IRoomReservationPlatinumProps> = React.createElement(
+      RoomReservationPlatinum,
       {
         title: this.properties.title,
         siteUrl: this.properties.siteUrl,
@@ -57,17 +58,7 @@ export default class AssetReservationWebPart extends BaseClientSideWebPart<IAsse
     ReactDom.render(element, this.domElement);
   }
 
-  protected onDispose(): void {
-    ReactDom.unmountComponentAtNode(this.domElement);
-  }
-
-  protected get dataVersion(): Version {
-    return Version.parse('1.0');
-  }
-
   public  async onInit(): Promise<void> {
-    this.appListner.setAppLogger();
-
     this.spService = new spservices(this.context);
     this.properties.siteUrl = this.properties.siteUrl ? this.properties.siteUrl : this.context.pageContext.site.absoluteUrl;
     if (!this.properties.eventStartDate){
@@ -83,20 +74,16 @@ export default class AssetReservationWebPart extends BaseClientSideWebPart<IAsse
       this.properties.list = this.lists[0].key.toString();
      }
     }
-    
-    Logger.write("Init() method triggered.", LogLevel.Info);
-    // let logEntry: ILogEntry = {message: "This is for testing", level: LogLevel.Info, data: ""};
-    
-    // this.appListner.log(logEntry);
-
     return Promise.resolve();
   }
 
-  // public setAppLogger() {
-  //   Logger.activeLogLevel = LogLevel.Info;
-  //   Logger.subscribe(new ConsoleListener());
-  //   Logger.subscribe(this.appListner);
-  // }
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
+
+  protected get dataVersion(): Version {
+    return Version.parse('1.0');
+  }
 
   protected async onPropertyPaneConfigurationStart() {
     try {

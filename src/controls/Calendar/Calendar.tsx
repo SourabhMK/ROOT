@@ -4,9 +4,8 @@ import { ICalendarProps } from './ICalendarProps';
 import { ICalendarState } from './ICalendarState';
 import { escape } from '@microsoft/sp-lodash-subset';
 import * as moment from 'moment';
-import * as strings from 'RoomReservationWebPartStrings';
+import * as strings from 'RoomReservationPlatinumWebPartStrings';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-require('./calendar.css');
 import { CommunicationColors, FluentCustomizations, FluentTheme } from '@uifabric/fluent-theme';
 import Year from './Year';
 
@@ -46,12 +45,12 @@ import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { DisplayMode } from '@microsoft/sp-core-library';
-import spservices from '../../Services/spservices';
+import spservices from '../../services/spservices';
 import { stringIsNullOrEmpty } from '@pnp/common';
 import { Event } from '../Event/event';
 import { IPanelModelEnum } from '../Event/IPanelModeEnum';
-import { IEventData } from '../../Models/IEventData';
-import { IUserPermissions } from '../../Models/IUserPermissions';
+import { IEventData } from '../../models/IEventData';
+import { IUserPermissions } from '../../models/IUserPermissions';
 
 
 //const localizer = BigCalendar.momentLocalizer(moment);
@@ -117,6 +116,7 @@ export default class Calendar extends React.Component<ICalendarProps, ICalendarS
    * @memberof Calendar
    */
   private async loadEvents() {
+    debugger;
     try {
       // Teste Properties
       if (!this.props.list || !this.props.siteUrl || !this.props.eventStartDate.value || !this.props.eventEndDate.value) return;
@@ -126,6 +126,7 @@ export default class Calendar extends React.Component<ICalendarProps, ICalendarS
       const eventsData: IEventData[] = await this.spService.getEvents(escape(this.props.siteUrl), escape(this.props.list), this.props.eventStartDate.value, this.props.eventEndDate.value);
 
       this.setState({ eventData: eventsData, hasError: false, errorMessage: "" });
+      debugger;
     } catch (error) {
       this.setState({ hasError: true, errorMessage: error.message, isloading: false });
     }
@@ -383,6 +384,7 @@ export default class Calendar extends React.Component<ICalendarProps, ICalendarS
           {
             this.state.showDialog &&
             <Event
+              events={this.state.eventData}
               event={this.state.selectedEvent}
               panelMode={this.state.panelMode}
               onDissmissPanel={this.onDismissPanel}

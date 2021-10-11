@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './Event.module.scss';
-import * as strings from 'RoomReservationWebPartStrings';
+import * as strings from 'RoomReservationPlatinumWebPartStrings';
 import { IEventProps } from './IEventProps';
 import { IEventState } from './IEventState';
 import * as moment from 'moment';
@@ -13,8 +13,8 @@ import {
   TextField,
   Label
 } from 'office-ui-fabric-react';
-import { IEventData } from '../../Models/IEventData';
-import { IUserPermissions } from '../../Models/IUserPermissions';
+import { IEventData } from '../../models/IEventData';
+import { IUserPermissions } from '../../models/IUserPermissions';
 import {
   DatePicker,
   IDatePickerStrings,
@@ -40,13 +40,14 @@ import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import spservices from '../../Services/spservices';
+import spservices from '../../services/spservices';
 import { Map, ICoordinates, MapType } from "@pnp/spfx-controls-react/lib/Map";
 import { EventRecurrenceInfo } from '../EventRecurrenceInfo/EventRecurrenceInfo';
 import { getGUID } from '@pnp/common';
 import { toLocaleShortDateString } from '../../utils/dateUtils';
 //const format = require('string-format');
 import { format } from 'react-string-format';
+import { Logger, LogLevel} from "@pnp/logging";
 
 const DayPickerStrings: IDatePickerStrings = {
   months: [strings.January, strings.February, strings.March, strings.April, strings.May, strings.June, strings.July, strings.August, strings.September, strings.October, strings.November, strings.December],
@@ -133,7 +134,13 @@ export class Event extends React.Component<IEventProps, IEventState> {
     this.onEditRecurrence = this.onEditRecurrence.bind(this);
     this.returnRecurrenceInfo = this.returnRecurrenceInfo.bind(this);
     this.spService = new spservices(this.props.context);
+    this.onInit();
   }
+
+  private async onInit() {
+    Logger.write("Event init()", LogLevel.Info);
+  }
+
   /**
    *  Hide Panel
    *
@@ -149,6 +156,8 @@ export class Event extends React.Component<IEventProps, IEventState> {
    * @memberof Event
    */
   private async onSave() {
+    debugger;
+    Logger.write("Event => Performing Save", LogLevel.Info);
     let eventData: IEventData = this.state.eventData;
     let panelMode = this.props.panelMode;
     let startDate: string = null;
@@ -221,24 +230,59 @@ export class Event extends React.Component<IEventProps, IEventState> {
         eventData.attendes.push(Number(userInfo.Id));
       }
 
-      this.setState({ isSaving: true });
-
-      switch (panelMode) {
-        case IPanelModelEnum.edit:
-          await this.spService.updateEvent(eventData, this.props.siteUrl, this.props.listId);
-          break;
-        case IPanelModelEnum.add:
-          await this.spService.addEvent(eventData, this.props.siteUrl, this.props.listId);
-          break;
-        default:
-          break;
+      // Perform to check in case it overlap
+      let res = this.isEventOverlap(eventData, this.props.events);
+      if(!res) {
+        this.setState({ isSaving: true });
+        switch (panelMode) {
+          case IPanelModelEnum.edit:
+            this.spService.updateEvent(eventData, this.props.siteUrl, this.props.listId);
+            break;
+          case IPanelModelEnum.add:
+            this.spService.addEvent(eventData, this.props.siteUrl, this.props.listId);
+            break;
+          default:
+            break;
+        }  
+        this.setState({ isSaving: false });
+        this.props.onDissmissPanel(true);
+      } else {
+        alert(strings.ResourceOverlapMessage);
       }
-
-      this.setState({ isSaving: false });
-      this.props.onDissmissPanel(true);
     } catch (error) {
       this.setState({ hasError: true, errorMessage: error.message, isSaving: false });
     }
+  }
+
+  private isEventOverlap(eventData: IEventData, events: IEventData[]) {
+    let res = false;
+    for(let index = 0; index < events.length; index++ ){
+      if(eventData.Category === events[index].Category ) {
+        // https://momentjs.com/docs/#/query/is-between/
+        let eventStartDate = moment(eventData.EventDate);
+        let eventEndDate = moment(eventData.EndDate);
+        let startDate = moment(events[index].EventDate);
+        let endDate = moment(events[index].EndDate);
+        if(eventStartDate.isBetween(startDate, endDate, 'minutes', '[]')) {
+          Logger.write("Event slot is inbetween", LogLevel.Info);
+          res = true;
+          break;
+        } else if(eventEndDate.isBetween(startDate, endDate, 'minutes', '[]')) {
+          Logger.write("Event slot is inbetween", LogLevel.Info);
+          res = true;
+          break;
+        } else if (startDate.isBetween(eventStartDate, eventEndDate,'minutes', '[]')) {
+          Logger.write("Event slot is inbetween", LogLevel.Info);
+          res = true;
+          break;
+        } else if (endDate.isBetween(eventStartDate, eventEndDate,'minutes', '[]')) {
+          Logger.write("Event slot is inbetween", LogLevel.Info);
+          res = true;
+          break;
+        }
+      }
+    }
+    return res;
   }
 
   /**
@@ -252,8 +296,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   *
-   *
    * @private
    * @param {number} [eventId]
    * @memberof Event
@@ -341,15 +383,11 @@ export class Event extends React.Component<IEventProps, IEventState> {
 
 
   /**
-   *
-   *
    * @memberof Event
    */
   public async componentDidMount() {
     await this.renderEventData();
   }
-
-
 
   /**
    * @private
@@ -383,13 +421,11 @@ export class Event extends React.Component<IEventProps, IEventState> {
    * @memberof Event
    */
   private getPeoplePickerItems(items: any[]) {
-
     this.attendees = [];
     this.attendees = items;
   }
 
   /**
-   *
    * @private
    * @param {*} editorState
    * @memberof Event
@@ -401,7 +437,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   *
    * @private
    * @param {string} value
    * @returns {string}
@@ -422,24 +457,20 @@ export class Event extends React.Component<IEventProps, IEventState> {
    * @memberof Event
    */
   private onEndChangeMin(ev: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void {
-
     this.setState({ endSelectedMin: item });
   }
 
   /**
-   *
    * @private
    * @param {React.FormEvent<HTMLDivElement>} ev
    * @param {IDropdownOption} item
    * @memberof Event
    */
   private onCategoryChanged(ev: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void {
-
     this.setState({ eventData: { ...this.state.eventData, Category: item.text } });
   }
 
   /**
-   *
    * @private
    * @param {React.MouseEvent<HTMLDivElement>} event
    * @memberof Event
@@ -526,7 +557,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   *
    * @private
    * @param {Date} newDate
    * @memberof Event
@@ -547,7 +577,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
 
 
   /**
-   *
    * @private
    * @param {ICoordinates} coordinates
    * @memberof Event
@@ -560,8 +589,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   *
-   *
    * @private
    * @param {React.MouseEvent<HTMLButtonElement>} ev
    * @memberof Event
@@ -574,8 +601,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   * 
-   * 
    * @private
    * @param {string} rule 
    * @memberof Event
@@ -595,8 +620,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   * 
-   * 
    * @private
    * @param { string } rule
    * @memberof Event 
@@ -626,8 +649,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   * 
-   * 
    * @private
    * @param { string } rule 
    * @memberof Event
@@ -644,7 +665,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
   }
 
   /**
-   * 
    * @private
    * @param { string } rule 
    * @memberof Event
@@ -850,8 +870,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
 
 
   /**
-   *
-   *
    * @param {Date} startDate
    * @param {string} recurrenceData
    * @memberof Event
@@ -864,8 +882,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
 
 
   /**
-   *
-   *
    * @returns {React.ReactElement<IEventProps>}
    * @memberof Event
    */

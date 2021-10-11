@@ -1,7 +1,8 @@
-import { IEventData } from '../../Models/IEventData';
+import { IEventData } from '../../models/IEventData';
 import { IPanelModelEnum} from './IPanelModeEnum';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 export interface IEventProps {
+  events: IEventData[]; 
   event: IEventData;
   panelMode: IPanelModelEnum;
   onDissmissPanel: (refresh:boolean) => void;

@@ -1,3 +1,4 @@
+// https://docs.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0
 export interface IEventData {
     Id?: number;
     ID?: number;

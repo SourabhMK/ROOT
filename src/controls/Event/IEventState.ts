@@ -1,5 +1,5 @@
-import { IEventData } from '../../Models/IEventData';
-import { IUserPermissions } from '../../Models/IUserPermissions';
+import { IEventData } from '../../models/IEventData';
+import { IUserPermissions } from '../../models/IUserPermissions';
 import { DayOfWeek } from 'office-ui-fabric-react/lib/DatePicker';
 import { IDropdownOption } from 'office-ui-fabric-react/';
 export interface IEventState {

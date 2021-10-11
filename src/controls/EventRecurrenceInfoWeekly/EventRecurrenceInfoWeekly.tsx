@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './EventRecurrenceInfoWeekly.module.scss';
-import * as strings from 'RoomReservationWebPartStrings';
+import * as strings from 'RoomReservationPlatinumWebPartStrings';
 import { IEventRecurrenceInfoWeeklyProps } from './IEventRecurrenceInfoWeeklyProps';
 import { IEventRecurrenceInfoWeeklyState } from './IEventRecurrenceInfoWeeklyState';
 import { escape } from '@microsoft/sp-lodash-subset';
@@ -16,7 +16,7 @@ import {
 import { DatePicker, DayOfWeek, IDatePickerStrings } from 'office-ui-fabric-react/lib/DatePicker';
 import { toLocaleShortDateString } from '../../utils/dateUtils';
 
-import spservices from '../../Services/spservices';
+import spservices from '../../services/spservices';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: [strings.January, strings.February, strings.March, strings.April, strings.May, strings.June, strings.July, strings.August, strings.September, strings.October, strings.November, strings.December],
