@@ -506,5 +506,3 @@ export default class Birthday extends React.Component<IBirthdayProps, IBirthdayS
     )    
   }
 }
-
-

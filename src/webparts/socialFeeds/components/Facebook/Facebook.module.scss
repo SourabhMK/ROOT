@@ -1,0 +1,27 @@
+@import '~office-ui-fabric-react/dist/sass/References.scss';
+
+.facebook{
+    .facebookContainer {
+        display: flex;
+        justify-content: center;
+
+        > iframe {
+        margin: 0 auto;
+        max-width: 500px;
+        }
+    }
+
+    .description {
+        @include ms-Grid-row;
+        @include ms-fontColor-white;
+        margin: 0 -8px;
+        box-sizing: border-box;
+        zoom: 1;
+        color: rgb(239, 135, 0);    
+        padding: 11px 12px;
+        font-size: 12px;
+        margin: 0!important;
+        border-bottom: 1px solid #cacaca;
+        word-wrap: break-word;
+      }
+}

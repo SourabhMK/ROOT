@@ -15,4 +15,7 @@ export interface IAnniversaryUserListState {
     currentMessage: string;
     msGraphProvider: IMSGraphInterface;
     errorMessage: string;
+    selectedImage: string;
+    message: string;
+    images: string[];
 }

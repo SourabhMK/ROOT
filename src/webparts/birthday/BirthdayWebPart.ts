@@ -4,10 +4,8 @@ import { Version, Environment, EnvironmentType } from '@microsoft/sp-core-librar
 import {
   IPropertyPaneConfiguration,
   PropertyPaneButton,
-  PropertyPaneButtonType,
-  PropertyPaneTextField
+  PropertyPaneButtonType
 } from '@microsoft/sp-property-pane';
-
 import styles from '../birthday/components/Birthday.module.scss';
 import { BaseClientSideWebPart, WebPartContext } from '@microsoft/sp-webpart-base';
 import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';

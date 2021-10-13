@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "0e2136b6-67d1-4494-bc2e-2edd928857c5",
+  "id": "56f6473e-9a49-4b55-941c-da0d2d669538",
   "alias": "AssetReservationWebPart",
   "componentType": "WebPart",
 
