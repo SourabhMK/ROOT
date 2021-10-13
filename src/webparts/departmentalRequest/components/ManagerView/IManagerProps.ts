@@ -5,7 +5,6 @@ import { IDispacherList, IDepartmentList } from "../DepartmentalRequest/IDepartm
 export interface IManagerProps {
     description: string;
     emailType:number;
-    deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
      * Instance of the SPHttpClient. Used to retrieve information about
@@ -16,8 +15,9 @@ export interface IManagerProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
-    deptAllDetails:IDepartmentList[];
     msGraphClientFactory:any;
+    passedDept:string;
+    passedStatus:string;
 }
 
 export interface IAllAssignProps {

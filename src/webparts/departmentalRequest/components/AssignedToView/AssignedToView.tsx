@@ -30,7 +30,7 @@ const calloutProps = { gapSpace: 0 };
 // If that's causing sizing issues or tooltip positioning issues, try overriding to inline-block.
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 
-debugger;
+// debugger;
 export const people: (IPersonaProps)[] = [];
 
 export var mru:(IPersonaProps)[]=[];
@@ -67,7 +67,9 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
     assignedIssuesButton:1,
     allIssuesButton:0,
     allDetails:[],
-    commentData:''
+    commentData:'',
+    noDataUnlock:0,
+    noAllDataUnlock:0
    }
     textInput = React.createRef();
     this.inputComment = this.inputComment.bind(this);
@@ -79,13 +81,13 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
     this.allAssignToListInfo();
       // this.testPart();
   }
-//TODO: REMOVE THIS METHOD AFTER TSTING
-  private loadDepartmentOptions():void{
+
+  private loadAssignToListInfo():void{
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
     headers.append("accept", "application/json;odata.metadata=none");
     this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${grpName}')/Users?`,
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,AttachmentFiles&$expand=Author,ReAssignTo,AttachmentFiles&$filter=Status eq '${this.props.passedStatus}' and ReAssignToId eq ${this.props.currentUserId} and Department eq '${this.props.passedDept}'&$orderby=ID desc`,
       SPHttpClient.configurations.v1, {
         headers: headers
       })
@@ -94,126 +96,20 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       })
       .then((res: any): void => {
         if (res.error) {
-        //   // There was an error loading information about people.
-        //   // Notify the user that loading data is finished and return the
-        //   // error message that occurred
            this.setState({
              loading: false,
              errorMessage: res.error.message,
               });
           return;
         }
-        if (res.value == 0) {
-          // No results were found. Notify the user that loading data is finished
+        if (res.value.length === 0) {
           this.setState({
-            loading: false
-          });
-          return;
-        }
-
-        pickerGroupNames = res.value.map((r,index)=>{
-          return{
-            text:r.Title,
-            id:r.Id
-          }
-        })
-  
-    if(pickerGroupNames.length>0){
-    this.setState({
-      loading:false,
-    })   
-    this.testPart();
-    }
-  }, (error: any): void => {
-    // An error has occurred while loading the data. Notify the user
-    // that loading data is finished and return the error message.
-    this.setState({
-      loading: false,
-      errorMessage: error
-    });
-  })
-  .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
-    this.setState({
-      loading: false,
-      errorMessage: error
-    });
-  });
-   }
-
-   private loadDepartmentOptionsByGroupName(groupName):Promise<IDropdownOption[]>{
-    const headers: HeadersInit = new Headers();
-    headers.append("accept", "application/json;odata.metadata=none");
-    return this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${groupName}')/Users?`,
-      SPHttpClient.configurations.v1, {
-        headers: headers
-      })
-      .then((res: SPHttpClientResponse): Promise<any> => {
-        return res.json();
-      })
-      .then((res: any) => {
-        var groupUser:IDropdownOption[]=res.value.map((r,index)=>{
-          return{
-            text:r.Title,
-            id:r.Id
-          }
-        })
-      return Promise.resolve(groupUser);
-  }) 
-  
-   }
-
-
-
-
-
-   private loadAssignToListInfo():void{
-    const headers: HeadersInit = new Headers();
-    // suppress metadata to minimize the amount of data loaded from SharePoint
-    headers.append("accept", "application/json;odata.metadata=none");
-    this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,AttachmentFiles&$expand=Author,ReAssignTo,AttachmentFiles&$filter=Status eq 'In Process' and ReAssignToId eq ${this.props.currentUserId}&$orderby=ID desc`,
-      SPHttpClient.configurations.v1, {
-        headers: headers
-      })
-      .then((res: SPHttpClientResponse): Promise<any> => {
-        return res.json();
-      })
-      .then((res: any): void => {
-        if (res.error) {
-        //   // There was an error loading information about people.
-        //   // Notify the user that loading data is finished and return the
-        //   // error message that occurred
-           this.setState({
-             loading: false,
-             errorMessage: res.error.message,
-              });
-          return;
-        }
-        if (res.value == 0) {
-          // No results were found. Notify the user that loading data is finished
-          this.setState({
-            loading: false
+            loading: false,
+            noDataUnlock:1
           });
           return;
         }
         let createdDateFormat = new Date('').toLocaleDateString();
-
-        // deptDetails = res.value.map((r,index)=>{
-        //   return{
-        //     supportDeptName:r.DepartmentGroup,
-        //     raisedBy:r.AuthorId,
-        //     issueDate:r.Created,
-        //     description:r.Description,
-        //     category:r.Category,
-        //     department:r.Department,
-        //     status:r.Status,
-        //     dispatcherDeptName:r.AssignedTo,
-        //     reAssignedTo:r.ReAssignTo
-        //   }
-        // })
         this.setState({
           ticketCount:res.value.length,
           deptDetails:res.value.map((r,index)=>{
@@ -230,18 +126,27 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               reAssignedTo:r.ReAssignTo,
               dataId:r.ID,
               comment:r.Comment,
-              attachmentFileName:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
-              getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:''
+              // attachmentFileName:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
+              // getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:'',
+              // dispatcherAttachmentFileName:(r.AttachmentFiles.length === 2)?r.AttachmentFiles[1].FileName:'',
+              // dispatcherGetAttachmentData:(r.AttachmentFiles.length === 2)?r.AttachmentFiles[1].ServerRelativeUrl:'',
+              attachmentFileName:r.AttachmentFiles.map((r,i)=>{
+                return{
+                FileName:r.FileName,
+                ServerRelativeUrl:r.ServerRelativeUrl
+                }
+              }),
+              getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:'',
+
             }
           }) 
         })
-        console.log("deptDetails[0].reAssignedTo.text = " + this.state.deptDetails[0].reAssignedTo.Title);
   
     if(this.state.deptDetails.length>0){
     this.setState({
       loading:false,
-    })   
-    this.testPart();
+      noDataUnlock:0
+    })
     }
   }, (error: any): void => {
     // An error has occurred while loading the data. Notify the user
@@ -275,19 +180,16 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       })
       .then((res: any): void => {
         if (res.error) {
-        //   // There was an error loading information about people.
-        //   // Notify the user that loading data is finished and return the
-        //   // error message that occurred
            this.setState({
              loading: false,
              errorMessage: res.error.message,
               });
           return;
         }
-        if (res.value == 0) {
-          // No results were found. Notify the user that loading data is finished
+        if (res.value.length === 0) {
           this.setState({
-            loading: false
+            loading: false,
+            noAllDataUnlock:1
           });
           return;
         }
@@ -310,25 +212,21 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
             }
           }) 
         })
-        console.log("allDetails[0].reAssignedTo.text = " + this.state.allDetails[0].reAssignedTo.Title);
+
   
     if(this.state.allDetails.length>0){
     this.setState({
       loading:false,
+      noAllDataUnlock:0
     })   
-    this.testPart();
     }
   }, (error: any): void => {
-    // An error has occurred while loading the data. Notify the user
-    // that loading data is finished and return the error message.
     this.setState({
       loading: false,
       errorMessage: error
     });
   })
   .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
     this.setState({
       loading: false,
       errorMessage: error
@@ -336,31 +234,33 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
   });
  }
 
-   private loadNewGrpName(val,indexId){
-     grpName = val;
-     console.log("grpName = " +  val);
-     console.log("index = " +  indexId);
-     this.setState({
-      //  loadPeoplePicker: 1,
-       idSelect:indexId
 
-      //  homeButton:1
-     })
-     this.loadDepartmentOptions();
-    console.log("object = " + this.state.deptDetails[indexId].reAssignedTo);
+   private loadDepartmentOptionsByGroupName(groupName):Promise<IDropdownOption[]>{
+    const headers: HeadersInit = new Headers();
+    headers.append("accept", "application/json;odata.metadata=none");
+    return this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${groupName}')/Users?`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any) => {
+        var groupUser:IDropdownOption[]=res.value.map((r,index)=>{
+          return{
+            text:r.Title,
+            id:r.Id
+          }
+        })
+      return Promise.resolve(groupUser);
+  }) 
+  
    }
 
- private testPart():void{
-    // people1 = pickerGroupNames;
-      //  people1 = people1;
-     mru = pickerGroupNames.slice(0, 5);
-    
-      this.setState({
-        peopleList:pickerGroupNames,
-        mostRecentlyUsed:mru,
-      },()=>console.log("peopleList= " + this.state.peopleList))
-      console.log("object= " + this.state.mostRecentlyUsed);
-  };
+
+
+
 
   onBackButtonClick(){
       this.setState({
@@ -408,7 +308,6 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
             return;
           }
           if (res.value == 0) {
-            // No results were found. Notify the user that loading data is finished
             this.setState({
               loading: false
             });
@@ -463,16 +362,12 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
 
     }, (error: any): void => {
-      // An error has occurred while loading the data. Notify the user
-      // that loading data is finished and return the error message.
       this.setState({
         loading: false,
         errorMessage: error
       });
     })
     .catch((error: any): void => {
-      // An exception has occurred while loading the data. Notify the user
-      // that loading data is finished and return the exception.
       this.setState({
         loading: false,
         errorMessage: error
@@ -557,16 +452,12 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
 
 
   }, (error: any): void => {
-    // An error has occurred while loading the data. Notify the user
-    // that loading data is finished and return the error message.
     this.setState({
       loading: false,
       errorMessage: error
     });
   })
   .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
     this.setState({
       loading: false,
       errorMessage: error
@@ -646,7 +537,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
     },()=>console.log('commentData= ' + this.state.commentData))
   }
 
-  inputComment(event){
+    inputComment(event){
     // alert("current value = " + textInput.current.value);
     // event.preventDefaulted();
 
@@ -705,7 +596,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
   public render(): React.ReactElement<IAssignProps> {
   return (
     <div className={styles.assignedToView}>
-      {(this.state.homeButton === 0) && (this.state.ticketCount > 0) &&
+      {(this.state.homeButton === 0) &&
       <div className="ms-Grid">
         <div className="ms-Grid-row">
           <div className="ms-Grid-col ms-lg4 ms-sm4">
@@ -713,18 +604,18 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
           </div>
           <div className="ms-Grid-col ms-lg4 ms-sm4">
           <TooltipHost
-             content="Assigned Tickets"
+             content="Tickets"
           ><Icon iconName='Assign' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.assignedIssuesButton()} ></Icon>
           </TooltipHost>             
           </div>
           <div className="ms-Grid-col ms-lg4 ms-sm4">
           <TooltipHost
-             content="All Assigned Tickets"
+             content="All"
           ><Icon iconName='ViewAll' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.allAssignedIssuesButton()} ></Icon>
           </TooltipHost>
           </div>
         </div>
-      { (this.state.assignedIssuesButton === 1) && (this.state.allIssuesButton === 0) &&
+      { (this.state.assignedIssuesButton === 1) && (this.state.allIssuesButton === 0) && (this.state.noDataUnlock === 0) &&
       <div className="ms-Grid-row">
       <div className="ms-Grid-col ms-lg12 ms-sm12">
       <div style={{overflowX:'auto'}}>
@@ -738,9 +629,8 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
               <th>Category</th>
               <th>Comment</th>
               <th>Action</th>
-              <th>
-                <Icon iconName='Attach' style={{fontSize:'25px', cursor:'pointer'}}></Icon>
-              </th>
+              <th>Attachment from Requester</th>
+              <th>Attachment from Dispatcher</th>
               <th></th>
             </tr>
           </thead>
@@ -820,8 +710,35 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
                       onChange={(e,selectedName)=>this.onUserSelect(e,selectedName,res.ticketNumber)}>
                       </Dropdown>
                     </td>
+
                     <td>
-                      <a href={res.getAttachmentData}> {res.attachmentFileName}</a></td>
+                      {
+                        res.attachmentFileName.map((r,i)=>{
+                          if(r.FileName.substring(0,3) === "REQ"){
+                          // if (list[i].substring(0,4) == "bird")
+                          return(
+                            <a href={r.ServerRelativeUrl}> {r.FileName}</a>
+                          )
+                          }
+                        })
+                      
+                      }
+                    </td>
+        
+                    <td>
+                    {
+                        res.attachmentFileName.map((r,i)=>{
+                          if(r.FileName.substring(0,4) === "DISP"){
+                          // if (list[i].substring(0,4) == "bird")
+                          return(
+                            <a href={r.ServerRelativeUrl}> {r.FileName}</a>
+                          )
+                          }
+                        })
+                      
+                      }
+                      {/* <a href={res.dispatcherGetAttachmentData}> {res.dispatcherAttachmentFileName}</a> */}
+                    </td>
                     <td>
                     <Icon iconName="Save" style={{fontSize:'20px', cursor:'pointer'}} onClick={(e)=>this.onSubmitDropDownHandle(this.state.commentData,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}></Icon>
                     </td>
@@ -835,17 +752,33 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
         </div>
       </div> 
       }
-      {
-        (this.state.allIssuesButton === 1) && (this.state.assignedIssuesButton === 0) &&
 
-        <AllAssignedToView emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
-         }
-         {
+      {(this.state.assignedIssuesButton === 1) && (this.state.allIssuesButton === 0) && (this.state.noDataUnlock === 1) &&
+        <div className="ms-Grid">
+         <div className="ms-Grid-row">
+           <h4>No Data to be Displayed</h4>
+         </div>
+        </div>
       }
+
+      {
+        (this.state.allIssuesButton === 1) && (this.state.assignedIssuesButton === 0) && (this.state.noAllDataUnlock === 0) &&
+        <AllAssignedToView emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId} deptBelongingNames={[]}/>
+         
+      }
+
+      {(this.state.assignedIssuesButton === 0) && (this.state.allIssuesButton === 1) && (this.state.noAllDataUnlock === 1) &&
+        <div className="ms-Grid">
+         <div className="ms-Grid-row">
+           <h4>No Data to be Displayed</h4>
+         </div>
+        </div>
+      }
+         
     </div>
   }
-  {
-    (this.state.ticketCount === 0) && (this.state.homeButton === 0) &&
+  {/* {
+    (this.state.homeButton === 0) &&
     <div className="ms-Grid">
        <div className="ms-Grid-row">
           <div className="ms-Grid-col ms-lg12">
@@ -859,7 +792,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       </div>
     </div>  
   </div>
-  }
+  } */}
 
   {(this.state.homeButton === 1) &&
               <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>

@@ -19,6 +19,7 @@ import { Dropdown, IDropdown, IDropdownOption } from 'office-ui-fabric-react';
 import { Item } from '@pnp/sp/items';
 import { result } from 'lodash';
 import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
+import DispatcherSelect from '../DispatcherSelect/DispatcherSelect';
 
 
 // debugger;
@@ -46,7 +47,7 @@ export var mru:(IPersonaProps)[]=[];
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
 
-  export default class PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState> {
+  export default class PeoplePickerTestExample extends React.Component<IPeopleProps, IPeopleState, {} > {
 
  
  constructor(props){
@@ -169,7 +170,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     // suppress metadata to minimize the amount of data loaded from SharePoint
     headers.append("accept", "application/json;odata.metadata=none");
     this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title&$expand=Author &$filter=Status eq 'Pending' &$orderby=ID desc`,
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title&$expand=Author &$filter=Department eq '${this.props.passGroupName}' and Status eq 'Pending' &$orderby=ID desc`,
       SPHttpClient.configurations.v1, {
         headers: headers
       })
@@ -192,20 +193,6 @@ var pickerGroupNames:(IPersonaProps)[]=[];
           return;
         }
         let createdDateFormat = new Date('').toLocaleDateString();
-
-        // deptDetails = res.value.map((r,index)=>{
-        //   return{
-        //     supportDeptName:r.DepartmentGroup,
-        //     raisedBy:r.AuthorId,
-        //     issueDate:r.Created,
-        //     description:r.Description,
-        //     category:r.Category,
-        //     department:r.Department,
-        //     status:r.Status,
-        //     dispatcherDeptName:r.AssignedTo,
-        //     reAssignedTo:r.ReAssignTo
-        //   }
-        // })
         this.setState({
           ticketCount:res.value.length,
           deptDetails:res.value.map((r,index)=>{
@@ -419,11 +406,12 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   public render(): React.ReactElement<IPeopleProps> {
   return (
     <div className={styles.peoplePickerTestExample}>
+  
       {(this.state.homeButton === 0) && (this.state.ticketCount > 0) &&
       <div className="ms-Grid">
         <div className="ms-Grid-row">
           <div className="ms-Grid-col ms-lg12">
-             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
           </div>
         </div>
       {/* {(this.state.deptDetails.length > 0) && */}
@@ -480,7 +468,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
     <div className="ms-Grid">
        <div className="ms-Grid-row">
           <div className="ms-Grid-col ms-lg12">
-             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
           </div>
         </div>
     <div className="ms-Grid-row">
@@ -492,7 +480,7 @@ var pickerGroupNames:(IPersonaProps)[]=[];
   }
 
   {(this.state.homeButton === 1) &&
-              <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+              <DispatcherSelect  msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description} />
   }
     </div>
   );

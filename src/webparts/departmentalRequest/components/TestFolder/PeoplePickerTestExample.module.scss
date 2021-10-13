@@ -75,6 +75,59 @@
      width:50%;
    }
 
+   .smallBox {
+    border-radius: 2px;
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+    // box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  }
+
+  .setMainBox {
+    border: 1px solid #ddd;
+    background: #fff;
+  }
+
+  .SetMainTitle {
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+
+.bg-red, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+    background-color: #dd4b39 !important;
+}
+
+.badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #777;
+    border-radius: 10px;
+}
+
+.pull-right {
+    float: right!important;
+}
+
   .block {
     padding-top: 10px;
     padding-bottom: 10px;

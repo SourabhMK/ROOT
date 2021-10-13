@@ -22,9 +22,14 @@ import { result } from 'lodash';
 import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import AllAssignedToView from '../AllAssignedToView/AllAssignedToView';
-import {IManagerList} from './IManagerList'
+import {IManagerList} from './IManagerList';
+import ManagerViewSelect from '../ManagerViewSelect/ManagerViewSelect';
+import {
+  Spinner,
+  SpinnerSize
+} from 'office-ui-fabric-react/lib/Spinner';
 
-debugger;
+// debugger;
 
 var grpName:string = 'IT Support';
 var pickerGroupNames:(IPersonaProps)[]=[];
@@ -60,53 +65,22 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
     allIssuesButton:0,
     allDetails:[],
     commentData:'',
-    requiredManagerId:0
+    requiredManagerId:2
    }
   
  }
 
   componentDidMount(){
-
-    // this.checkManagerId()
-    // .then((flag)=>{
-    //   if(flag === 1){
-    //     this.loadAllEmployeeRequestListInfo();
-    //     console.log(' = ' + this.state.requiredManagerId);
-    //     // this.setState({
-    //     //   requiredManagerId:1
-    //     // })
-
-    //   }
-    //   else{
-    //       this.setState({
-    //         requiredManagerId:0
-    //       })
-    //   }
-    // })
     this.loadAllEmployeeRequestListInfo();
  
   }
-
-  private checkManagerId():Promise<number>{
-    for(let i=0;i<this.props.deptAllDetails.length;++i){
-      if(this.props.currentUserId === this.props.deptAllDetails[i].deptManager){
-        this.setState({
-          requiredManagerId:1
-        });
-        flag = 1;
-        break;
-      }
-    }
-    return Promise.resolve(flag);
-  }
- 
 
    private loadAllEmployeeRequestListInfo():void{
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
     headers.append("accept", "application/json;odata.metadata=none");
     this.props.spHttpClient
-      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,DepartmentManager/Title,AttachmentFiles&$expand=Author,ReAssignTo,DepartmentManager,AttachmentFiles&$filter=DepartmentManagerId eq ${this.props.currentUserId}`,
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,DepartmentManager/Title,AttachmentFiles&$expand=Author,ReAssignTo,DepartmentManager,AttachmentFiles&$filter=Department eq '${this.props.passedDept}' and Status eq '${this.props.passedStatus}' &$orderby=ID desc`,
       SPHttpClient.configurations.v1, {
         headers: headers
       })
@@ -207,7 +181,7 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       <div className="ms-Grid">
         <div className="ms-Grid-row">
           <div className="ms-Grid-col ms-lg4 ms-sm4">
-             <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
           </div>
         </div>
       <div className="ms-Grid-row">
@@ -268,9 +242,18 @@ const stackStyles: Partial<IStackStyles> = { root: { width: 169 } };
       <h3>There are no tickets in your Department</h3>
     </div>
   }
+  {
+    (this.state.homeButton === 0) && (this.state.requiredManagerId == 2) &&
+    <div>
+      {
+            this.state.loading &&
+            <Spinner size={SpinnerSize.large} label='Loading'/>
+      }
+    </div>
+  }
 
   {(this.state.homeButton === 1) &&
-              <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+              <ManagerViewSelect msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description}/>
   }
     </div>
   );

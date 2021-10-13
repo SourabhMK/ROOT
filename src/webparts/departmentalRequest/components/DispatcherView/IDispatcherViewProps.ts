@@ -1,13 +1,9 @@
 import { SPHttpClient } from "@microsoft/sp-http";
-import { DisplayMode } from "@microsoft/sp-core-library";
+import { IPersonaProps } from '@fluentui/react/lib/Persona';
 
 export interface IDispatcherViewProps {
-  description: string;
-  emailType:number;
-  //description: string;
-   /**
-   * Absolute URL of the current site
-   */
+    description: string;
+    emailType:number;
     webUrl: string;
     /**
      * Instance of the SPHttpClient. Used to retrieve information about
@@ -19,4 +15,5 @@ export interface IDispatcherViewProps {
     loggedInUserEmail: string;
     currentUserId:number;
     msGraphClientFactory:any;
+    passGroupName:string;
 }

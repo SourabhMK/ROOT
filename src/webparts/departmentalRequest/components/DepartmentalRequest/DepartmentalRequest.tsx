@@ -39,7 +39,15 @@ import AssignedToView from '../AssignedToView/AssignedToView';
 import ManagerView from '../ManagerView/ManagerView';
 import ChartView from '../ChartView/ChartView';
 import { TextStyles } from 'office-ui-fabric-react';
-// import { PeoplePickerTestExample } from '../TestFolder/PeoplePickerTestExample';
+import DispatcherSelect from '../DispatcherSelect/DispatcherSelect';
+import MyRequestedSelect from '../MyRequestedSelect/MyRequestedSelect';
+import AssignedToViewSelect from '../AssignedToViewSelect/AssignedToViewSelect';
+import ManagerViewSelect from '../ManagerViewSelect/ManagerViewSelect';
+// import { ToastProvider, useToasts } from 'react-toast-notifications' ;
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import App from '../Toast/ReactToast'
+
 const stackTokens = { childrenGap: 50  };
 const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
 const columnProps: Partial<IStackProps> = {
@@ -60,7 +68,7 @@ var loggedInUserEmail, loggedInUserId,issueData:IMyIssueList[],archiveData:IMyIs
 var myIssueCount:number = 0;
 var textbody,EmailSubject, Guid:string;
  
-debugger;
+// debugger;
 export default class DepartmentalRequest extends React.Component<IDepartmentalRequestProps, IDepartmentalRequestState> {
 
   constructor(props:any){
@@ -88,7 +96,8 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       managerViewUnlock:0,
       archiveTimeSpan:0,
       fileAddition:null,
-      managerCheckForManagerView:0
+      managerCheckForManagerView:0,
+      notificationTest:0
     }
     this.handleChange = this.handleChange.bind(this);
     this.onChangeDeptHandle = this.onChangeDeptHandle.bind(this);
@@ -126,9 +135,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       })
       .then((res: any): void => {
         if (res.error) {
-        //   // There was an error loading information about people.
-        //   // Notify the user that loading data is finished and return the
-        //   // error message that occurred
            this.setState({
              loading: false,
              errorMessage: res.error.message,
@@ -136,7 +142,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
           return;
         }
         if (res.value == 0) {
-          // No results were found. Notify the user that loading data is finished
           this.setState({
             loading: false
           });
@@ -161,7 +166,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   });
     // debugger;
     if(departmentOptions.length>0){
-      // alert("I have arrived to people.length = " + people.length);
     this.setState({
       loading:false,
     });
@@ -169,16 +173,12 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
     this.GetIssueArchiveSettings();
     }
   }, (error: any): void => {
-    // An error has occurred while loading the data. Notify the user
-    // that loading data is finished and return the error message.
     this.setState({
       loading: false,
       errorMessage: error
     });
   })
   .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
     this.setState({
       loading: false,
       errorMessage: error
@@ -285,10 +285,10 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   
   
     if(departmentFAQ_ArchiveTimeSpan>0){
-      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=((Author eq ${this.props.currentUserId} ) and ((Status ne 'Completed') or ((Status eq 'Completed') and (Created ge datetime'${dateFilter}'))))&$orderby=ID desc`
+      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles,DispatcherAttachment&$expand=AttachmentFiles&$filter=((Author eq ${this.props.currentUserId} ) and ((Status ne 'Completed') or ((Status eq 'Completed') and (Created ge datetime'${dateFilter}'))))&$orderby=ID desc`
     }
     else{
-      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc`
+      var quaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles,DispatcherAttachment&$expand=AttachmentFiles&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc`
     }
     const headers: HeadersInit = new Headers();
     // suppress metadata to minimize the amount of data loaded from SharePoint
@@ -305,9 +305,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
       })
       .then((res: any): void => {
         if (res.error) {
-        //   // There was an error loading information about people.
-        //   // Notify the user that loading data is finished and return the
-        //   // error message that occurred
            this.setState({
              loading: false,
              errorMessage: res.error.message,
@@ -315,7 +312,6 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
           return;
         }
         if (res.value == 0) {
-          // No results were found. Notify the user that loading data is finished
           this.setState({
             loading: false
           });
@@ -339,7 +335,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
             assignedTo:r.AssignedTo,
             comment:r.Comment,
             status:r.Status,
-            attachments:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
+            attachments:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:'',
             test:r.ReAssignTo
           }
         });
@@ -351,16 +347,12 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
     })
     }
   }, (error: any): void => {
-    // An error has occurred while loading the data. Notify the user
-    // that loading data is finished and return the error message.
     this.setState({
       loading: false,
       errorMessage: error
     });
   })
   .catch((error: any): void => {
-    // An exception has occurred while loading the data. Notify the user
-    // that loading data is finished and return the exception.
     this.setState({
       loading: false,
       errorMessage: error
@@ -394,7 +386,7 @@ export default class DepartmentalRequest extends React.Component<IDepartmentalRe
   
   
     if(departmentFAQ_ArchiveTimeSpan>0){
-      var archiveQuaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles&$expand=AttachmentFiles&$filter=Author eq ${this.props.currentUserId} and Status eq 'Completed' and Created lt datetime'${dateFilter}'&$orderby=ID desc&$top=10`
+      var archiveQuaryText = `/_api/web/lists/GetByTitle('EmployeeRequest')/items?$select=*,AttachmentFiles,DispatcherAttachment&$expand=AttachmentFiles,DispatcherAttachment&$filter=Author eq ${this.props.currentUserId} and Status eq 'Completed' and Created lt datetime'${dateFilter}'&$orderby=ID desc&$top=10`
       
     
     const headers: HeadersInit = new Headers();
@@ -581,7 +573,7 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
   
  addEmployeeRequest(issueDescription, selectedDept, selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,fileAddition){
    this.setState({
-    count: 0,
+    // count: 0,
     totalRaisedIssuesCount:this.state.totalRaisedIssuesCount + 1,
     initialRaisedCount:0
    });
@@ -640,8 +632,16 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
         response.json().then((responseJSON: JSON) => {
           console.log(responseJSON);
           this.SendAnEmilUsingMSGraph(this.props.loggedInUserEmail,textbody,EmailSubject);
-          this.addAttachementInList(responseJSON);
+          // this.addAttachementInList(responseJSON);
+          this.addMultipleAttachmentLoop(responseJSON);
           this.myIssue();
+          this.notify();
+          this.setState({
+            count:0
+          })
+          // toast.success("New Request has been raised!", {
+          //   toastId: 'success1',
+          //   })
         });
       });
    }
@@ -788,10 +788,15 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
     // }
   
     onFileAddHandle(fileAdd){
-      let file = fileAdd[0];
+      // console.log('fileAdd.target.files = ' + fileAdd.target.files);
+      let allFiles = [];
+      for(let i=0;i<fileAdd.length;++i){
+          allFiles.push(fileAdd[i]);
+      }
+      let file = allFiles[0];
       console.log('file.name = ' + file.name);
       this.setState({
-        fileAddition: file
+        fileAddition: allFiles
       })
     }
 
@@ -830,7 +835,17 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
 
     }
 
-    addAttachementInList(result){
+    addMultipleAttachmentLoop(result){
+      if(this.state.fileAddition != null){
+      let promiseUploadAllRequesterAttachments = [];
+      let file = this.state.fileAddition;
+        for(let i=0;i<file.length;++i){
+          promiseUploadAllRequesterAttachments.push(this.addAttachementInList(result,file[i]));
+        }
+      }
+    }
+
+    addAttachementInList(result,eachFile){
       const headers: HeadersInit = new Headers();
       // suppress metadata to minimize the amount of data loaded from SharePoint
       headers.append("accept", "application/json;odata.metadata=none");
@@ -855,17 +870,18 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
             let ID = result.ID;
             console.log('');
             // let file = (document.querySelector("#FileAttachment") as HTMLInputElement).files[0];   
-            let file = this.state.fileAddition;     
-                if (file) { 
+            // let file = this.state.fileAddition;     
+                if (eachFile) { 
+                    let fileName = `REQ_${eachFile.name}`;
                     let spOpts : ISPHttpClientOptions  = {
                       headers: {
                         "Accept": "application/json",
                         "Content-Type": "application/json"
                       },
-                      body: file       
+                      body: eachFile       
                     };
                     // var url = `${this.props.webUrl}/_api/web/lists('${Guid}')/items('${ID}')/AttachmentFiles/add('${file.name}')`;
-                    var url = this.props.webUrl + `/_api/web/lists(guid'` + Guid + `')/items` + `('` + ID + `')` + `/AttachmentFiles/add(FileName='` + file.name +`')`;
+                    var url = this.props.webUrl + `/_api/web/lists(guid'` + Guid + `')/items` + `('` + ID + `')` + `/AttachmentFiles/add(FileName='` + fileName +`')`;
                     // var url = `${this.props.webUrl}/_api/${oData}/AttachmentFiles/add('${file.name}')`;
                     this.props.spHttpClient.post(url, SPHttpClient.configurations.v1, spOpts).then((response: SPHttpClientResponse) => {
                       console.log(`Status code: ${response.status}`);
@@ -879,8 +895,10 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
                       response.json().then((responseJSON: JSON) => {
                         console.log(responseJSON);                 
                       });
-                    });            
-                }
+                    });    
+                    
+                  // }//for loop ending
+                }//if statement ends here
           }
     }, (error: any): void => {
       this.setState({
@@ -891,21 +909,28 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
       this.setState({
         errorMessage: error
       });
-      });
+      });      
+    }
 
-      
+    notify(){
+      // const notif = () => toast("Wow so easy!");
+      // notif();
+      this.setState({
+        notificationTest:1
+      })
     }
 
   public render(): React.ReactElement<IDepartmentalRequestProps> {
     return (
       <div className={ styles.departmentalRequest }>
-        {/* Main page display */}
+
         {(this.state.count === 0) && (this.state.myIssueUnlock === 0)&& (this.state.dispatcherViewUnlock === 0) && (this.state.assignedToViewUnlock === 0) && (this.state.managerViewUnlock === 0) &&
           <div className="ms-Grid" dir="ltr">
             <h1>Welcome to Departmental Request Facility!!</h1>
             <div className="ms-Grid-row">
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
                 <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'left'}} onClick={this.myIssueClick} >Requested Issues = {this.state.initialRaisedCount} </CompoundButton>
+                <ToastContainer/>
               </div>
               <div className="ms-Grid-col ms-lg4 ms-md4 ms-sm12">
                 <CompoundButton styles={{label:{textAlign:'center'}}} style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px', textAlign:'center'}} onClick={this.assignedToViewClick}>Assigned Issues</CompoundButton>
@@ -922,11 +947,19 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
               <CompoundButton styles={{label:{textAlign:'center'}}} style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px', marginBottom:'20px'}} onClick={this.managerViewClick}>Manager View</CompoundButton>
               </div>
             </div>
-            {/* <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg12 ms-md12 ms-sm12">
-                <ChartView departmentFAQ_deptList={departmentFAQ_deptList} deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} chartType={this.props.chartType} description={this.props.description} />
-              </div>
-            </div> */}
+            <div>
+              {(this.state.notificationTest === 1) &&
+                // <App />
+                <div>
+                 {
+                    toast.success("New Request has been raised!", {
+                    toastId: "success",
+                    })
+                 }
+                  {/* <ToastContainer/> */}
+                </div>
+              }
+            </div>
           </div>
         }
          {/* Display raise request data filling operation */}
@@ -998,119 +1031,36 @@ async onChangeRequestDescriptionHandle(requestDescription:any){
              <div className="ms-Grid-row">
              <div className="ms-Grid-col ms-lg8 ms-sm8">
                 <h4 style={{fontSize:'14px', fontWeight:'normal',marginBottom:'0'}} >Add file, if any</h4>
-                 <input type="file" id="FileAttachment" style={{width:'100%',border:'1px solid #ddd',paddingTop:'10px', paddingBottom:'10px' }}
+                 <input type="file" multiple style={{width:'100%',border:'1px solid #ddd',paddingTop:'10px', paddingBottom:'10px' }}
                  onChange={(e)=> this.onFileAddHandle(e.target.files) }
+                //  onChange={this.onFileAddHandle}
                  />
               </div>
              </div>
              <div className="ms-Grid-row">
              <div className="ms-Grid-col ms-lg2 ms-sm2">
                 <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', marginBottom:'20px'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,this.state.fileAddition)}>Submit</DefaultButton>
+                <ToastContainer/>
               </div>
              </div>
             </div>                
               }
 
-          {(this.state.count === 2) &&
-            <div className="ms-Grid" dir="ltr">
-            <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
-            <h1>Please select the Department category</h1>
-            </div>
-              <div className="ms-Grid-row" style={{marginBottom:'20px'}}>
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm8">
-                  {/* <DefaultButton>Select Department</DefaultButton> */}
-                  <Stack tokens={stackTokens}>
-                     <Dropdown
-                           placeholder="Select Department Category"
-                          //  label="Select Category"
-                           options={departmentCategoryOptions}
-                           defaultSelectedKey={" "}
-                           onChange={(e,selectedDeptCategory)=>this.onChangeDeptCategoryHandle(selectedDeptCategory)}
-                           //styles={dropdownStyles}
-                           styles={{ dropdown: { width: '100%' } }}
-                         />
-                     </Stack>
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer', float:'right'}} onClick={this.nextClick}></Icon>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 3) &&
-            <div className="ms-Grid" dir="ltr">
-            <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
-            <h1>Please type your issue</h1>
-            </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm8">
-                <TextField label="Type your issue" multiline rows={3}
-                      //  onChange={e => this.setState({
-                      //    requestDescription:e.currentTarget.value
-                      //  })} 
-                           onChange={(requestDescription)=>this.onChangeRequestDescriptionHandle(requestDescription)}
-                        />
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <Icon iconName='ChevronRight' style={{fontSize:'20px',cursor:'pointer', float:'right'}} onClick={this.nextClick}></Icon>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 4) &&
-            <div className="ms-Grid" dir="ltr">
-            <div style={{borderBottom:'1px solid #f1f1f1', marginBottom:'20px'}}>
-            <h1>Please add file if any</h1>
-            </div>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm8">
-                 <input type="file" style={{width:'100%',border:'1px solid #ddd',padding:'10px  10px' }}/>
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm2">
-                <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', bottom:'100px',float:'right'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,this.state.fileAddition)}>Submit</DefaultButton>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 5) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please add file if any</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6 ms-sm12">
-                <Icon iconName="ChevronLeft" style={{fontSize:'20px',cursor:'pointer'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg6 ms-sm12">
-                  <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', bottom:'100px'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan,this.state.fileAddition)}>Submit</DefaultButton>
-                </div>
-              </div>
-            </div>       
-          }
-          {/* My Issue page display operation */}
-
           {
             (this.state.myIssueUnlock === 1) &&
-              <MyRequestedIssues msGraphClientFactory={this.props.msGraphClientFactory} issueDataList={issueData} archiveIssueDataList={archiveData} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/>
+              <MyRequestedSelect msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/>
           }
           {
             (this.state.dispatcherViewUnlock === 1) &&
-            <PeoplePickerTestExample msGraphClientFactory={this.props.msGraphClientFactory} deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description} />
+            <DispatcherSelect  msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description} />
           }
           {
             (this.state.assignedToViewUnlock === 1) &&
-            <AssignedToView msGraphClientFactory={this.props.msGraphClientFactory} deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description}/>
+            <AssignedToViewSelect msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description}/>
           }
           {
             (this.state.managerViewUnlock === 1) && (this.state.managerCheckForManagerView === 1) &&
-            <ManagerView msGraphClientFactory={this.props.msGraphClientFactory} deptAllDetails={departmentFAQ_deptList} deptBelongingNames={[]} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description}/>
+            <ManagerViewSelect msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description}/>
           }
       </div>
     );

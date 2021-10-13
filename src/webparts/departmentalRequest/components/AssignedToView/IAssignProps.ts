@@ -16,7 +16,9 @@ export interface IAssignProps {
     loggedInUserName: string;
     loggedInUserEmail: string;
     currentUserId:number;
-    msGraphClientFactory:any
+    msGraphClientFactory:any;
+    passedDept:string;
+    passedStatus:string;
 }
 
 export interface IAllAssignProps {

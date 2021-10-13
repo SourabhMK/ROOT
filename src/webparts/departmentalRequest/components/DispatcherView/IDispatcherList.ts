@@ -1,13 +1,8 @@
 export interface IDepartmentList {
-    deptName:string;
-    deptGroup:string;
-    deptManager:number;
+    deptName:string,
+    deptGroup:string,
+    deptManager:number,
     dispatcherName:string
-}
-
-export interface passUser{
-    id:number;
-    text:string;
 }
 
 export interface reAssignedUser{
@@ -20,21 +15,7 @@ export interface fileElements{
     ServerRelativeUrl:string;
 }
 
-export interface IDispacherList {
-    ticketNumber:string;
-    dispatcherDeptName:string;
-    supportDeptName:string;
-    raisedBy:string;
-    issueDate:string;
-    description:string;
-    category:string;
-    department:string;
-    status:string;
-    reAssignedTo:reAssignedUser;
-    dataId:number;
-}
-
-export interface  IAssignedList {
+export interface IDispatcherList {
     ticketNumber:string;
     dispatcherDeptName:string;
     supportDeptName:string;
@@ -49,6 +30,5 @@ export interface  IAssignedList {
     comment:string;
     attachmentFileName:fileElements[];
     getAttachmentData:string;
-    dispatcherAttachmentFileName:File;
-    dispatcherGetAttachmentData:string;
+    requesterAttachmentCheck:number;
 }

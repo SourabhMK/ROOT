@@ -9,7 +9,7 @@ import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import {  IStackTokens } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from '@microsoft/sp-http';
-import {IDepartmentList} from './IDepartmentList'
+import {IMyRequestList} from './IMyRequestedIssues';
 //import Select from 'react-select';
 import DepartmentalRequest from '../DepartmentalRequest/DepartmentalRequest'
 import 'office-ui-fabric-react/dist/css/fabric.css';
@@ -41,6 +41,7 @@ import {
   IDetailsRowCheckStyles,
 } from '@fluentui/react/lib/DetailsList';
 import { Attachment, Attachments } from 'sp-pnp-js/lib/graph/attachments';
+import MyRequestedSelect from '../MyRequestedSelect/MyRequestedSelect';
 
 export interface IMyIssueList {
   created:string,
@@ -53,10 +54,10 @@ export interface IMyIssueList {
   attachments:File
 }
 
-var work;
+// var deptDetails:IMyRequestList[];
 
 
-// debugger;
+debugger;
 export default class MyRequestedIssues extends React.Component<IMyRequestedIssuesProps,IMyRequestedIssuesState> {
 
   private _items: IMyIssueList[] = [];
@@ -65,37 +66,93 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
 
   constructor(props) {
     super(props);
-    this._items = this.props.issueDataList;
-    this._itemsArchive = this.props.archiveIssueDataList;
+    // this._items = this.props.issueDataList;
+    // this._itemsArchive = this.props.archiveIssueDataList;
     this.state={
+      loading:false,
+      errorMessage:'',
+      ticketCount:0,
+      deptDetails:[],
       homeButton:0,
       myIssuesUnlock:1,
-      archiveIssuesUnlock:0
+      archiveIssuesUnlock:0,
+      noDataUnlock:0
     }
-    // this._items = [];
-   // for (let i = 0; i < 5; i++) {
-      // this._items.push({
-      //   key: i,
-      //   name: 'Item ' + i,
-      //   value: i,
-      // });
-    //}
-    
 
-    this._columns = [
-      { key: 'column1', name: 'Issue Date', fieldName: 'created', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column2', name: 'Description', fieldName: 'description', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column3', name: 'Category', fieldName: 'category', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column4', name: 'Department', fieldName: 'department', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column5', name: 'AssignedTo', fieldName: 'assignedTo', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column6', name: 'Comment', fieldName: 'comment', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column7', name: 'Status', fieldName: 'status', minWidth: 100, maxWidth: 200, isResizable: true },
-      { key: 'column8', name: 'Attachments', fieldName: 'attachments', minWidth: 100, maxWidth: 200, isResizable: true },   
-      { key: 'column9', name: 'ReAssigned To', fieldName: 'test', minWidth: 100, maxWidth: 200, isResizable: true },    
-    ];
+    this.loadDeptListInfo();
   }
 
-  
+  private loadDeptListInfo():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,ReAssignTo/Title,AttachmentFiles&$expand=Author,ReAssignTo,AttachmentFiles&$filter=Department eq '${this.props.passedDept}' and Status eq '${this.props.passedStatus}' &$orderby=ID desc`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value.length == 0) {
+
+          this.setState({
+            loading: false,
+            noDataUnlock:1
+          });
+          return;
+        }
+        if(res.value.length>0){
+        let createdDateFormat = new Date('').toLocaleDateString();
+        this.setState({
+          ticketCount:res.value.length,
+          deptDetails:res.value.map((r,index)=>{
+            return{
+              ticketNumber:`INC_${r.Department}_000${r.ID}`,
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.Author.Title,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo?r.ReAssignTo:'',
+              dataId:r.ID,
+              comment:r.Comment?r.Comment:'',
+              attachmentFileName:r.AttachmentFiles.length?r.AttachmentFiles[0].FileName:'',
+              getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:''
+            }
+          }) 
+        })
+        console.log("deptDetail = " + this.state.deptDetails[0].supportDeptName);
+      }
+    if(this.state.deptDetails.length>0){
+    this.setState({
+      loading:false,
+    });
+    }
+  }, (error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+   }
 
   homeButtonClick(){
     this.setState({
@@ -124,64 +181,75 @@ export default class MyRequestedIssues extends React.Component<IMyRequestedIssue
         {(this.state.homeButton === 0) &&
         <div className="ms-Grid">
           <div className="ms-Grid-row">
-            <div className="ms-Grid-col ms-lg4">
-            <Icon iconName='Home' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
-            </div>
-            <div className="ms-Grid-col ms-lg4">
-            <Icon iconName='IssueTracking' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.myIssuesButtonClickHandle()} ></Icon>
-            </div>
-            <div className="ms-Grid-col ms-lg4">
-            <Icon iconName='Archive' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.myArchiveIssuesButtonClickHandle()} ></Icon>
+            <div className="ms-Grid-col ms-lg12">
+            <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
             </div>
           </div>
         </div>
         } 
-        {(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 1)
-         && (this.state.archiveIssuesUnlock === 0) && (this._items != null) &&
-        <div className="ms-Grid">
-        <div className="ms-Grid-row">
-         <DetailsList
-        items={this._items}
-        columns={this._columns}
-        setKey="set"
-        layoutMode={DetailsListLayoutMode.justified}
-        selectionPreservedOnEmptyClick={true}
-        ariaLabelForSelectionColumn="Toggle selection"
-        ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-        checkButtonAriaLabel="select row"
-        onRenderDetailsFooter={this._onRenderDetailsFooter}
-         />
-        </div>
-        </div>
+        {(this.state.homeButton === 0) && (this.state.noDataUnlock === 0) &&
+         <div className="ms-Grid-row">
+         <div className="ms-Grid-col ms-lg12 ms-sm12">
+         <div style={{overflowX:'auto'}}>
+         <table className={styles.tableSet} >
+             <thead>
+               <tr>
+                 <th>Raised By</th>
+                  <th>Ticket Number</th>
+                 <th>Issue Date</th>
+                 <th>Description</th>
+                 <th>Category</th>
+                 <th>Department</th>
+                 <th>Comment</th>
+                 <th>Status</th>
+                 <th>Dispatcher Group</th>
+                 <th>ReAssign To</th>
+                 <th>
+                   <Icon iconName='Attach' style={{fontSize:'25px'}}/>
+                 </th>
+               </tr>
+             </thead>
+             <tbody>
+               {
+                this.state.deptDetails.map((res,index)=>{
+                var issuedDate = new Date(res.issueDate).toLocaleDateString();
+                   return(
+                     <tr>
+                       <td>{res.raisedBy}</td>
+                       <td>{res.ticketNumber}</td>
+                       <td>{issuedDate}</td>
+                       <td>{res.description}</td>
+                       <td>{res.category}</td>
+                       <td>{res.department}</td>
+                       <td>{res.comment}</td>
+                       <td>{res.status}</td>
+                       <td>{res.dispatcherDeptName}</td>
+                       <td>{res.reAssignedTo.Title}</td>
+                       <td>
+                          <a href={res.getAttachmentData}> {res.attachmentFileName}</a>
+                        </td>
+                     </tr>
+                   )
+                 })
+               }
+             </tbody>
+             </table>
+            </div>
+           </div>
+         </div> 
         }
-      
 
-      {(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 0)
-         && (this.state.archiveIssuesUnlock === 1) && (this._itemsArchive != null) &&
+      {(this.state.homeButton === 0) && (this.state.noDataUnlock === 1) &&
         <div className="ms-Grid">
         <div className="ms-Grid-row">
-       <DetailsList
-       items={this._itemsArchive}
-       columns={this._columns}
-       setKey="set"
-       layoutMode={DetailsListLayoutMode.justified}
-       selectionPreservedOnEmptyClick={true}
-       ariaLabelForSelectionColumn="Toggle selection"
-        ariaLabelForSelectAllCheckbox="Toggle selection for all items"
-        checkButtonAriaLabel="select row"
-        onRenderDetailsFooter={this._onRenderDetailsFooter}
-        />
+          <h4>No Data to be displayed</h4>
        </div>
       </div>
       }
 
-{(this.state.homeButton === 0) && (this.state.myIssuesUnlock === 0)
-         && (this.state.archiveIssuesUnlock === 1) && (this._itemsArchive == null) &&
-      <h2>The archive list is empty</h2>
-      }
 
       {(this.state.homeButton === 1) &&
-          <DepartmentalRequest msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
+          <MyRequestedSelect msGraphClientFactory={this.props.msGraphClientFactory} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl}  currentUserId={this.props.currentUserId}/>
       }
      </div>
     );

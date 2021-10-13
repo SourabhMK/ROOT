@@ -18,10 +18,12 @@ export interface IMyRequestedIssuesProps {
 
     loggedInUserName: string;
     loggedInUserEmail: string;
-  issueDataList:IMyIssueList[];
-  currentUserId:number;
-  archiveIssueDataList:IMyIssueList[];
-  msGraphClientFactory:any;
+    // issueDataList:IMyIssueList[];
+    currentUserId:number;
+    // archiveIssueDataList:IMyIssueList[];
+    msGraphClientFactory:any;
+    passedDept:string;
+    passedStatus:string;
 }
 
 export interface IMyIssueList {

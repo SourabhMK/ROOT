@@ -1,6 +1,6 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.dispatcherView {
+.managerViewSelect {
   .container {
     max-width: 700px;
     margin: 0px auto;
@@ -49,35 +49,7 @@
     color: red;
   }
 
-  .tableSet {
-    border-collapse: collapse;
-    width: 100%;
-   }
-   
-   .tableSet td, .tableSet th {
-    border: 1px solid #ddd;
-    padding: 8px;
-   }
-   .tableSet tr:nth-child(odd){background-color: #e7b510;}
-   .tableSet tr:nth-child(even){background-color: #e7b510;}
-   
-   .tableSet tr:hover {background-color: #af9500;}
-   
-   .tableSet th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: #725dbe;
-    color: white;
-   }
-
-
-
-   .normalPickerInput{
-     width:50%;
-   }
-
-   .smallBox {
+  .smallBox {
     border-radius: 2px;
     position: relative;
     display: block;
@@ -118,6 +90,18 @@
     background-color: #dd4b39 !important;
 }
 
+.bg-orange, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+    background-color: #f39c12 !important;
+}
+
+.bg-green, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+    background-color: #00a65a !important;
+}
+
+.bg-blue, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body {
+    background-color: #00c0ef !important;
+}
+
 .badge {
     display: inline-block;
     min-width: 10px;
@@ -136,6 +120,7 @@
 .pull-right {
     float: right!important;
 }
+ 
 
   .block {
     padding-top: 10px;

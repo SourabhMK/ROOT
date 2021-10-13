@@ -3,6 +3,7 @@
 //import {IUserAll} from "./IUserAll";
 
 import { Ref } from "react";
+import {IMyRequestList} from './IMyRequestedIssues'
 
 export interface IMyRequestedIssuesState {
     // Users : IUserAll[],
@@ -25,10 +26,12 @@ export interface IMyRequestedIssuesState {
      * Contains the error message that occurred while loading the data.
      * If no error message occurred, null.
      */
-    //  errorMessage: string;
-
+    errorMessage: string;
+    loading:boolean;
+    ticketCount:number;
+    deptDetails:IMyRequestList[];
     homeButton:number,
     myIssuesUnlock:number;
     archiveIssuesUnlock:number;
-
+    noDataUnlock:number;
 }

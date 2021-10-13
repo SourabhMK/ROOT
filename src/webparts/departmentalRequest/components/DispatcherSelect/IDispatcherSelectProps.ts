@@ -1,10 +1,9 @@
 import { SPHttpClient } from "@microsoft/sp-http";
 import { IPersonaProps } from '@fluentui/react/lib/Persona';
-
-export interface IPeopleProps {
+export interface IDispatcherSelectProps {
     description: string;
     emailType:number;
-    deptBelongingNames:IPersonaProps[];
+    // deptBelongingNames:IPersonaProps[];
     webUrl: string;
     /**
      * Instance of the SPHttpClient. Used to retrieve information about
@@ -16,5 +15,4 @@ export interface IPeopleProps {
     loggedInUserEmail: string;
     currentUserId:number;
     msGraphClientFactory:any;
-    passGroupName:string;
 }

@@ -64,11 +64,16 @@ export default class ArchiveDataView extends React.Component<IMyRequestedIssuesP
 
   constructor(props) {
     super(props);
-    this._items = this.props.archiveIssueDataList;
+    // this._items = this.props.archiveIssueDataList;
     this.state={
       homeButton:0,
       myIssuesUnlock:1,
-      archiveIssuesUnlock:0
+      archiveIssuesUnlock:0,
+      deptDetails:[],
+      errorMessage:'',
+      loading:false,
+      ticketCount:0,
+      noDataUnlock:0
     }
     // this._items = [];
    // for (let i = 0; i < 5; i++) {

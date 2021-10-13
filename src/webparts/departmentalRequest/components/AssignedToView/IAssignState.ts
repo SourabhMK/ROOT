@@ -29,4 +29,6 @@ export interface IAssignState {
     allIssuesButton:number;
     allDetails:IDispacherList[];
     commentData:string;
+    noDataUnlock:number;
+    noAllDataUnlock:number;
 }

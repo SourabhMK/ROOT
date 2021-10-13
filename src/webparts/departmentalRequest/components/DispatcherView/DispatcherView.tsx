@@ -1,783 +1,603 @@
 import * as React from 'react';
 import styles from './DispatcherView.module.scss';
+import { Checkbox } from '@fluentui/react/lib/Checkbox';
+import { IPersonaProps } from '@fluentui/react/lib/Persona';
+import { IBasePickerSuggestionsProps, IPeoplePickerProps, NormalPeoplePicker, ValidationState } from '@fluentui/react/lib/Pickers';
+//import { people, mru } from '@fluentui/example-data';
+import DepartmentalRequest from '../DepartmentalRequest/DepartmentalRequest'
+import { IDispatcherViewState } from './IDispatcherViewState';
 import { IDispatcherViewProps } from './IDispatcherViewProps';
-import { escape } from '@microsoft/sp-lodash-subset';
-import { DefaultButton, PrimaryButton, CompoundButton } from '@fluentui/react/lib/Button';
-import {IDispatcherViewState} from './IDispatcherViewState';
-import { TextField } from '@fluentui/react/lib/TextField';
-import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
-import {  IStackTokens } from '@fluentui/react';
-import { Dropdown, DropdownMenuItemType, IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { SPHttpClient, ISPHttpClientOptions, SPHttpClientResponse } from '@microsoft/sp-http';
-import {IDepartmentList} from './IDepartmentList'
-//import Select from 'react-select';
+import {IDepartmentList, IDispacherList} from '../DepartmentalRequest/IDepartmentList'
+import { DefaultButton, PrimaryButton, CompoundButton } from '@fluentui/react/lib/Button';
 import 'office-ui-fabric-react/dist/css/fabric.css';
-//import { ChevronIcon } from '@fluentui/react-icons-mdl2';
 import { IconButton } from '@fluentui/react/lib/Button';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 initializeIcons();
 import { Icon } from '@fluentui/react/lib/Icon';
-import pnp from 'sp-pnp-js';
-import {IMyIssueList} from '../MyRequestedIssues/IMyRequestedIssuesProps'
+import { Dropdown, IDropdown, IDropdownOption, ktpTargetFromId } from 'office-ui-fabric-react';
+import { Item } from '@pnp/sp/items';
+import { result } from 'lodash';
+import NoDataDispatcherView from '../NoDataDispatcherView/NoDataDispatcherView';
+import DispatcherSelect from '../DispatcherSelect/DispatcherSelect';
+import {fileElements} from './IDispatcherList'
+
+// debugger;
+export interface IExampleExtendedPersonaProps {
+    imageUrl?: string;
+    imageInitials?: string;
+    text?: string;
+    secondaryText?: string;
+    tertiaryText?: string;
+    optionalText?: string;
+    presence?: number;
+    isValid: boolean;
+    canExpand?: boolean;
+  }
+
+  export interface IExtendedPersonaProps {
+    text:string;
+  }
 
 
-import {
-  PropertyPaneTextField,
-  PropertyPaneCheckbox,
-  PropertyPaneLabel,
-  PropertyPaneLink,
-  PropertyPaneSlider,
-  PropertyPaneToggle,
-  PropertyPaneDropdown
-} from '@microsoft/sp-property-pane';
-import MyRequestedIssues from '../MyRequestedIssues/MyRequestedIssues';
+export const people: (IPersonaProps)[] = [];
 
-const stackTokens = { childrenGap: 50  };
-const stackStyles: Partial<IStackStyles> = { root: { width: 650 } };
-const columnProps: Partial<IStackProps> = {
-  tokens: { childrenGap: 10 },
-  styles: { root: { width: 125, textAlign: "Center"  } },
-};
+export var mru:(IPersonaProps)[]=[];
 
-//Dropdown options
-const dropdownStyles: Partial<IDropdownStyles> = {
-  dropdown: { width: 200 },
-};
+var grpName:string = 'IT Support';
+var pickerGroupNames:(IPersonaProps)[]=[];
 
-var departmentOptions: IDropdownOption[] = [];
-var departmentCategoryOptions: IDropdownOption[] = [];
-var	departmentFAQ_ArchiveTimeSpan:number = 0;
-var departmentFAQ_deptList: IDepartmentList[] = Array();
-var loggedInUserEmail, loggedInUserId,issueData:IMyIssueList[];
-var myIssueCount:number = 0;
-var SPGroupList = new Array();
-var AssignedToFilter="";
-var htmlcontent;
+  export default class PeoplePickerTestExample extends React.Component<IDispatcherViewProps, IDispatcherViewState, {} > {
 
  
-debugger;
-export default class DispatcherView extends React.Component<IDispatcherViewProps, IDispatcherViewState> {
+ constructor(props){
+   super(props)
+   this.state = {
+    mostRecentlyUsed:[],
+    peopleList:[],
+    ticketCount:0,
+    newPeoplePickerUser:'',
+    loading:false,
+    errorMessage:'',
+    deptDetails:[],
+    indexSelect:0,
+    homeButton:0,
+    idSelect:0,
+    deptListDropDown:[],
+    passAssignedToUser:{
+      id:0,
+      text:''
+    },
+    deleteSelectedTicket:'',
+    dispatcherFileAddition:null,
+    requesterFileCheck:0
 
-  constructor(props:any){
-    super(props);
-    this.state = {
-      count : 0,
-      dataFilledCheck:0,
-      myIssueUnlock:0,
-      nextCount:0,
-      bgColorRaiseRequest:"#ef8700",
-      bgColorFollowers:"white",
-      bgColorFollowing:"white",
-      colorRaiseRequest:"white",
-      colorFollowers:"black",
-      colorFollowing:"black",
-      loading:false,
-      errorMessage:null,
-      selectedDept:"",
-      selectedDeptCategory:"",
-      requestDescription:"",
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.onChangeDeptHandle = this.onChangeDeptHandle.bind(this);
-    
+   }
   }
 
   componentDidMount(){
-    this.getDepartmentsDetails();
-    this.GetIssueArchiveSettings();
-    loggedInUserEmail = this.props.loggedInUserEmail;
-    // this. getUserId (loggedInUserEmail);
-    this.myIssue();
-    
+    // this.loadDepartmentOptions();
+    this.loadDeptListInfo();
+      // this.testPart();
   }
-
-  public getUserId(loggedInUserEmail: string): Promise<number> {
-    return pnp.sp.site.rootWeb.ensureUser(loggedInUserEmail).then(result => {
-      loggedInUserId = result.data.Id
-      return result.data.Id;
-    });  
-    }
-
-  handleChange(e:any) {
-    console.log("Fruit Selected!!");
-    this.setState({ selectedDept: e.target.defaultValue },()=>alert(
-      "Selected Option = " + this.state.selectedDept
-    ));
-  }
-
- private getDepartmentsDetails():void{
-  const headers: HeadersInit = new Headers();
-  // suppress metadata to minimize the amount of data loaded from SharePoint
-  headers.append("accept", "application/json;odata.metadata=none");
-  this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/getbytitle('Department')/items?$select=*,GroupName/Title,DepartmentGroup/Title,Manager/Title&$expand=GroupName,DepartmentGroup,Manager&$orderby=Title asc`,
-    SPHttpClient.configurations.v1, {
-      headers: headers
-    })
-    .then((res: SPHttpClientResponse): Promise<any> => {
-      return res.json();
-    })
-    .then((res: any): void => {
-      if (res.error) {
-      //   // There was an error loading information about people.
-      //   // Notify the user that loading data is finished and return the
-         this.setState({
-           loading: false,
-           errorMessage: res.error.message,
-            });
-        return;
-      }
-      if (res.value == 0) {
-        // No results were found. Notify the user that loading data is finished
-        this.setState({
-          loading: false
-        });
-        return;
-      }
-      this.getLoggedInUserIdSPGroups(res.value);
-
-    
-      departmentFAQ_deptList = res.value.map((r,index)=>{
-        return {
-          deptName:r.Title,
-          deptGroup:r.DepartmentGroup.Title,
-          deptManager:r.ManagerId,
-          dispatcherName:r.GroupName.Title
-        };
-      });
-
-
- departmentOptions =  res.value.map((r,index) => {
-  return {
-    key:index,
-    text:r.Title,
-  };
-});
-  // debugger;
-  if(departmentOptions.length>0){
-    // alert("I have arrived to people.length = " + people.length);
-  this.setState({
-    loading:false,
-    //Users : people,
-  })
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-});
- }
-
- getLoggedInUserIdSPGroups(departmentDetailsArray){
-  const headers: HeadersInit = new Headers();
-  // suppress metadata to minimize the amount of data loaded from SharePoint
-  headers.append("accept", "application/json;odata.metadata=none");
-  this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/currentuser/?$expand=groups`,
-    SPHttpClient.configurations.v1, {
-      headers: headers
-    })
-    .then((res: SPHttpClientResponse): Promise<any> => {
-      return res.json();
-    })
-    .then((res: any): void => {
-      if (res.error) {
-      //   // There was an error loading information about people.
-      //   // Notify the user that loading data is finished and return the
-         this.setState({
-           loading: false,
-           errorMessage: res.error.message,
-            });
-        return;
-      }
-      if (res.value == 0) {
-        // No results were found. Notify the user that loading data is finished
-        this.setState({
-          loading: false
-        });
-        return;
-      }
-      this.getLoggedInUserIdSPGroupsSuccess(res,departmentDetailsArray);
-    
-      departmentFAQ_deptList = res.value.map((r,index)=>{
-        return {
-          deptName:r.Title,
-          deptGroup:r.DepartmentGroup.Title,
-          deptManager:r.ManagerId,
-          dispatcherName:r.GroupName.Title
-        };
-      });
-
-
- departmentOptions =  res.value.map((r,index) => {
-  return {
-    key:index,
-    text:r.Title,
-  };
-});
-  // debugger;
-  if(departmentOptions.length>0){
-    // alert("I have arrived to people.length = " + people.length);
-  this.setState({
-    loading:false,
-    //Users : people,
-  })
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-});  
- }
-
- getLoggedInUserIdSPGroupsSuccess(res,departmentDetailsArray){
-	var obj = res.Groups, currentLoggedInUserDispatcherGroups = 0;
-  var test1:number=0;
-
-  for (var loggedInTemp = 0; loggedInTemp < obj.length; loggedInTemp++) {
-    obj[loggedInTemp].Added = false;
-    for (var dispatcherTemp = 0; dispatcherTemp < departmentDetailsArray.length; dispatcherTemp++) {
-        if (obj[loggedInTemp].Title == departmentDetailsArray[dispatcherTemp].GroupName.Title && obj[loggedInTemp].Added == false) {  
-            obj[loggedInTemp].Added = true;
-            SPGroupList[currentLoggedInUserDispatcherGroups] = new Object();
-            SPGroupList[currentLoggedInUserDispatcherGroups].groupname = obj[loggedInTemp].Title;
-            currentLoggedInUserDispatcherGroups++;
-        }
-    }
-}
-
-if(SPGroupList.length==0)
-{
-  console.log("User not in any dispatch group");
-}
-
-else
-{
-  var count = 0;
-      for(var i=0;i<SPGroupList.length;i++)
-      {
-      if(count==0)
-      {
-        AssignedToFilter = "(AssignedTo eq '"+SPGroupList[i].groupname+"' ";
-        count++;
-      }
-      else
-      {
-        AssignedToFilter = AssignedToFilter + " or "+ "AssignedTo eq '"+SPGroupList[i].groupname+"'";
-      }
-      }
-
-}
-
-this.loadAssignedTask(obj);
-
-
- }
-
- loadAssignedTask(obj){
-  var todaydt = new Date();
-  var day = todaydt.getDate();
-  var month = todaydt.getMonth();
-  var year = todaydt.getFullYear();
-
-  var curDate = new Date(year, month, day);
-  var dtFilter = curDate.setDate(curDate.getDate() - departmentFAQ_ArchiveTimeSpan);
-  //var dtFilter = new Date(curDate);
-  //console.log(dtFilter);
-  var fday = curDate.getDate();
-  var fmonth = curDate.getMonth() + 1;
-  var fyear = curDate.getFullYear();
-  var dateFilter = fyear + "-" + fmonth + "-" + fday + "T00:00:00.000Z";
-
- }
- 
-   onChangeDeptHandle = async (selectedDept)=> {
-    //const check : string = "";  
-    await this.setState({
-       selectedDept :  selectedDept.text,
-       dataFilledCheck: 1,
-      selectedDeptCategory: this.state.selectedDeptCategory,
-    });
-
-    this.deptCategorySelect();
- }
-
- private deptCategorySelect():void{
-  const headers: HeadersInit = new Headers();
-  // suppress metadata to minimize the amount of data loaded from SharePoint
-  headers.append("accept", "application/json;odata.metadata=none");
-  this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('Departmental_Category')/items?$select=*,Department/Title&$expand=Department`,
-    SPHttpClient.configurations.v1, {
-      headers: headers
-    })
-    .then((res: SPHttpClientResponse): Promise<any> => {
-      //console.log("res value = " + res.json());
-      // alert("res.Json() of UserList = " + res.json());
-      return res.json();
-    })
-    .then((res: any): void => {
-      if (res.error) {
-      //   // There was an error loading information about people.
-      //   // Notify the user that loading data is finished and return the
-      //   // error message that occurred
-         this.setState({
-           loading: false,
-           errorMessage: res.error.message,
-            });
-        return;
-      }
-      if (res.value == 0) {
-        // No results were found. Notify the user that loading data is finished
-        this.setState({
-          loading: false
-        });
-        return;
-      }
-    const getOptionsBySelectedDept = [];
-    for(var i=0;i<res.value.length;++i){
-      if(res.value[i].Department.Title === this.state.selectedDept){
-        getOptionsBySelectedDept.push(res.value[i])
-      }
-    }
-
-departmentCategoryOptions =  getOptionsBySelectedDept.map((r,index) => {
-  return {
-    key:index,
-    text:r.Title,
-  };
-});
-
-  if(departmentCategoryOptions.length>0){
-  this.setState({
-    loading:false,
-  })
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-});
-}
-
- async onChangeDeptCategoryHandle (selectedDeptCategory:any) {
-  //const check : string = "";  
-   this.setState({
-    selectedDeptCategory :await selectedDeptCategory.text,
-    dataFilledCheck:1
-  });
-}
-
-async onChangeRequestDescriptionHandle(requestDescription:any){
-  this.setState({
-       requestDescription:await requestDescription.currentTarget.value,
-       dataFilledCheck:1
-
+//TODO: REMOVE THIS METHOD AFTER TSTING
+  private loadDepartmentOptions():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${grpName}')/Users?`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
       })
-}
-
-
-GetIssueArchiveSettings():void{
-	departmentFAQ_ArchiveTimeSpan = 0;
-  const headers: HeadersInit = new Headers();
-  // suppress metadata to minimize the amount of data loaded from SharePoint
-  headers.append("accept", "application/json;odata.metadata=none");
-  this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('IssueArchiveSettings')/items`,
-    SPHttpClient.configurations.v1, {
-      headers: headers
-    })
-    .then((res: SPHttpClientResponse): Promise<any> => {
-      return res.json();
-    })
-    .then((res: any): void => {
-      if (res.error) {
-      //   // There was an error loading information about people.
-      //   // Notify the user that loading data is finished and return the
-      //   // error message that occurred
-         this.setState({
-           loading: false,
-           errorMessage: res.error.message,
-            });
-        return;
-      }
-      if (res.value == 0) {
-        // No results were found. Notify the user that loading data is finished
-        this.setState({
-          loading: false
-        });
-        return;
-      }
-      if(res.value !=null && res.value.length>0){
-        departmentFAQ_ArchiveTimeSpan = res.value[0].NumberOfDays;
-      }
-      else{
-        departmentFAQ_ArchiveTimeSpan = 0;
-
-      }
-
-  if(departmentFAQ_ArchiveTimeSpan>0){
-  this.setState({
-    loading:false,
-  })
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-});
-
-}
-  
- addEmployeeRequest(issueDescription, selectedDept, selectedDeptCategory,departmentFAQ_ArchiveTimeSpan){
-   var selectedDeptGroup, selectedDeptManager, selectedDispatcherName;
-   var selectedTitle:string = selectedDeptCategory + ' Request';
-  var currentUserName = this.props.loggedInUserName;
-  var currentUserEmail = this.props.loggedInUserEmail;
-
-  for(let i=0;i<departmentFAQ_deptList.length;++i){
-    if(departmentFAQ_deptList[i].deptName === selectedDept){
-      selectedDeptGroup = departmentFAQ_deptList[i].deptGroup;
-      selectedDispatcherName = departmentFAQ_deptList[i].dispatcherName;
-      selectedDeptManager = departmentFAQ_deptList[i].deptManager;
-    }
-  }
-
-  if(issueDescription !== "" && selectedDept !== "" && selectedDeptCategory !== ""){
-  const headers: HeadersInit = new Headers();
-  headers.append("accept", "application/json;odata.metadata=none");
-  headers.append("Content-Type", "application/json;odata.metadata=none");
-
-    const spOpts: string = JSON.stringify({
-     'Title': selectedTitle,
-     'Description': issueDescription,
-     'Category': selectedDeptCategory,
-     'Department':selectedDept,
-     'Status':'Pending',
-     'AssignedTo': selectedDispatcherName,
-     'ArchivedTimeSpan': departmentFAQ_ArchiveTimeSpan,
-     'DepartmentManagerId': selectedDeptManager
-  });
-
-  this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items`, SPHttpClient.configurations.v1, 
-  {
-    body:spOpts
-  })
-      .then((response: SPHttpClientResponse) => {
-        // Access properties of the response object. 
-        console.log(`Status code: ${response.status}`);
-        console.log(`Status text: ${response.statusText}`);
-
-        //response.json() returns a promise so you get access to the json in the resolve callback.
-        response.json().then((responseJSON: JSON) => {
-          console.log(responseJSON);
-          this.myIssue();
-        });
-      });
-   }
-   
- }
- 
- myIssue(){
-  const headers: HeadersInit = new Headers();
-  // suppress metadata to minimize the amount of data loaded from SharePoint
-  headers.append("accept", "application/json;odata.metadata=none");
-  this.props.spHttpClient
-    .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items?&$filter=Author eq ${this.props.currentUserId} &$orderby=ID desc&$top=10`,
-    SPHttpClient.configurations.v1, {
-      headers: headers
-    })
-    .then((res: SPHttpClientResponse): Promise<any> => {
-      //console.log("res value = " + res.json());
-      // alert("res.Json() of UserList = " + res.json());
-      return res.json();
-    })
-    .then((res: any): void => {
-      if (res.error) {
-      //   // There was an error loading information about people.
-      //   // Notify the user that loading data is finished and return the
-      //   // error message that occurred
-         this.setState({
-           loading: false,
-           errorMessage: res.error.message,
-            });
-        return;
-      }
-      if (res.value == 0) {
-        // No results were found. Notify the user that loading data is finished
-        this.setState({
-          loading: false
-        });
-        return;
-      }
-
-       issueData = res.value.map(r =>{
-         let createdDateFormat = new Date(r.Created).toLocaleDateString();
-         myIssueCount= myIssueCount + 1;
-         console.log("createdDateFormat= " + createdDateFormat);
-        return {
-          created:createdDateFormat,
-          description:r.Description,
-          category:r.Category,
-          department:r.Department,
-          assignedTo:r.AssignedTo,
-          comment:r.Comment,
-          status:r.Status,
-          attachments:r.Attachments
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+        //   // There was an error loading information about people.
+        //   // Notify the user that loading data is finished and return the
+        //   // error message that occurred
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
         }
-      });
-      console.log("myIssueCount= " + myIssueCount);
+        if (res.value == 0) {
+          // No results were found. Notify the user that loading data is finished
+          this.setState({
+            loading: false
+          });
+          return;
+        }
 
-  if(issueData.length>0){
-  this.setState({
-    loading:false,
+        pickerGroupNames = res.value.map((r,index)=>{
+          return{
+            text:r.Title,
+            id:r.Id
+          }
+        })
+  
+    if(pickerGroupNames.length>0){
+    this.setState({
+      loading:false,
+    })
+    }
+  }, (error: any): void => {
+    // An error has occurred while loading the data. Notify the user
+    // that loading data is finished and return the error message.
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
   })
-  }
-}, (error: any): void => {
-  // An error has occurred while loading the data. Notify the user
-  // that loading data is finished and return the error message.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-})
-.catch((error: any): void => {
-  // An exception has occurred while loading the data. Notify the user
-  // that loading data is finished and return the exception.
-  this.setState({
-    loading: false,
-    errorMessage: error
-  });
-  });
-}
-
-  raiseRequestClick=()=>{
+  .catch((error: any): void => {
+    // An exception has occurred while loading the data. Notify the user
+    // that loading data is finished and return the exception.
     this.setState({
-      count: 1,
-    bgColorRaiseRequest:"#ef8700",
-    bgColorFollowers:"white",
-    bgColorFollowing:"white",
-    colorRaiseRequest:"white",
-    colorFollowers:"black",
-    colorFollowing:"black",
-    })
-  }
-
-  previousClick=()=>{
-    this.setState({
-      count:this.state.count - 1,
-      dataFilledCheck:0
-    })
-  }
-
-  nextClick=()=>{
-    if(this.state.dataFilledCheck === 1){
-    this.setState({
-      count:this.state.count + 1,
-      dataFilledCheck:0
+      loading: false,
+      errorMessage: error
     });
-  }
-  }
+  });
+   }
 
-  nextClickWithNotCompulsary=()=>{
-    this.setState({
-      count:this.state.count + 1,
-    })
-  }
-
-  myIssueClick= ()=>{
-       this.setState({
-      myIssueUnlock:  1,
-    });
-  }
+   private loadDepartmentOptionsByGroupName(groupName):Promise<IDropdownOption[]>{
+    const headers: HeadersInit = new Headers();
+    headers.append("accept", "application/json;odata.metadata=none");
+    return this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/sitegroups/GetByName('${groupName}')/Users?`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any) => {
+        var groupUser:IDropdownOption[]=res.value.map((r,index)=>{
+          return{
+            text:r.Title,
+            id:r.Id
+          }
+        })
+      return Promise.resolve(groupUser);
+  }) 
   
-  public render(): React.ReactElement<IDispatcherViewProps> {
-    return (
-      <div className={ styles.dispatcherView }>
-        {/* Main page display */}
-        {/* {(this.state.count === 0) && (this.state.myIssueUnlock === 0) &&
-          <div className="ms-Grid" dir="ltr">
-            <h1>Welcome to Departmental Request Facility!!</h1>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-lg4  ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}} onClick={this.myIssueClick} >My Requested Issues = {myIssueCount} </CompoundButton>
-              </div>
-              <div className="ms-Grid-col ms-lg4 ms-sm12 ">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}}>Assigned Issues</CompoundButton>
-              </div>
-              <div className="ms-Grid-col ms-lg4 ms-sm12">
-                <CompoundButton style={{width:'100%',marginBottom:'15px',maxWidth:'100%', borderRadius:'10px'}}>Manager View</CompoundButton>
-              </div>
-            </div>
-            <div className="ms-Grid-row">
-              <div className="ms-Grid-col ms-sm12">
-              <CompoundButton className="raisebtn" style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', width:'100%',maxWidth:'100%', borderRadius:'10px'}} onClick={this.raiseRequestClick}>Raise a Request</CompoundButton>
-              </div>
-            </div>
-          </div>
-        } */}
-        <h1>Dispatcher view</h1>
-         {/* Display raise request data filling operation */}
-          {(this.state.count === 1) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please select the Department</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                  <Icon iconName="ChevronLeft" style={{fontSize:'80px'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
-                  {/* <DefaultButton>Select Department</DefaultButton> */}
-                  <Stack tokens={stackTokens}>
-                         <Dropdown
-                           placeholder="Select Department"
-                          //  label="Select Department"
-                           options={departmentOptions}
-                           onChange={(e,selectedDept) => this.onChangeDeptHandle(selectedDept)}
-                           //styles={dropdownStyles}
-                           styles={{ dropdown: { width: 350 } }}
-                           className={styles.dropdownStyle}
-                         />
-                    </Stack>
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                  <Icon iconName='ChevronRight' style={{fontSize:'80px'}} onClick={this.nextClick}></Icon>
-                </div>
-              </div>
-            </div>                
+  //  return pickerGroupNames;
+   }
+
+
+   private loadDeptListInfo():void{
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items?$select=*,Author/Title,AttachmentFiles&$expand=Author,AttachmentFiles &$filter=Department eq '${this.props.passGroupName}' and Status eq 'Pending' &$orderby=ID desc`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+           this.setState({
+             loading: false,
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        if (res.value == 0) {
+
+          this.setState({
+            loading: false
+          });
+          return;
+        }
+        let createdDateFormat = new Date('').toLocaleDateString();
+        this.setState({
+          ticketCount:res.value.length,
+          deptDetails:res.value.map((r,index)=>{
+            return{
+              ticketNumber:`INC_${r.Department}_000${r.ID}`,
+              supportDeptName:r.DepartmentGroup,
+              raisedBy:r.Author.Title,
+              issueDate:r.Created,
+              description:r.Description,
+              category:r.Category,
+              department:r.Department,
+              status:r.Status,
+              dispatcherDeptName:r.AssignedTo,
+              reAssignedTo:r.ReAssignTo,
+              dataId:r.ID,
+              // attachmentFileName:r.AttachmentFiles.length?r.AttachmentFiles:null,
+              attachmentFileName:r.AttachmentFiles.map((r,i)=>{
+                return{
+                FileName:r.FileName,
+                ServerRelativeUrl:r.ServerRelativeUrl
+                }
+              }),
+              getAttachmentData:r.AttachmentFiles.length?r.AttachmentFiles[0].ServerRelativeUrl:'',
+              requesterAttachmentCheck:r.AttachmentFiles.length
+            }
+          }) 
+        })
+        console.log("deptDetail = " + this.state.deptDetails[0].supportDeptName);
+  
+    if(this.state.deptDetails.length>0){
+    this.setState({
+      loading:false,
+    });
+    }
+  }, (error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    this.setState({
+      loading: false,
+      errorMessage: error
+    });
+  });
+   }
+
+   private loadNewGrpName(val,indexId){
+     grpName = val;
+     console.log("grpName = " +  val);
+     console.log("index = " +  indexId);
+     this.setState({
+      //  loadPeoplePicker: 1,
+       idSelect:indexId
+
+      //  homeButton:1
+     })
+     this.loadDepartmentOptions();
+    console.log("object = " + this.state.deptDetails[indexId].reAssignedTo);
+   }
+
+
+   addMultipleAttachmentLoop(result){
+    let promiseUploadAllRequesterAttachments = [];
+    let file = this.state.dispatcherFileAddition;
+      for(let i=0;i<file.length;++i){
+        promiseUploadAllRequesterAttachments.push(this.addAttachementInList(result,file[i]));
+      }
+  }
+
+
+  addAttachementInList(result,eachFile){
+    const headers: HeadersInit = new Headers();
+    // suppress metadata to minimize the amount of data loaded from SharePoint
+    headers.append("accept", "application/json;odata.metadata=none");
+    this.props.spHttpClient
+      .get(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/Id`,
+      SPHttpClient.configurations.v1, {
+        headers: headers
+      })
+      .then((res: SPHttpClientResponse): Promise<any> => {
+        return res.json();
+      })
+      .then((res: any): void => {
+        if (res.error) {
+           this.setState({
+             errorMessage: res.error.message,
+              });
+          return;
+        }
+        else{
+         var Guid = res.value;
+          console.log('res = ' + res);
+          let ID = result;
+          console.log('');
+          // let file = (document.querySelector("#FileAttachment") as HTMLInputElement).files[0];   
+          // let file = this.state.dispatcherFileAddition;     
+              if (eachFile) { 
+                  let fileName = `DISP_${eachFile.name}`;
+                  let spOpts : ISPHttpClientOptions  = {
+                    headers: {
+                      "Accept": "application/json",
+                      "Content-Type": "application/json"
+                    },
+                    body: eachFile       
+                  };
+                  // var url = `${this.props.webUrl}/_api/web/lists('${Guid}')/items('${ID}')/AttachmentFiles/add('${file.name}')`;
+                  var url = this.props.webUrl + `/_api/web/lists(guid'` + Guid + `')/items` + `('` + ID + `')` + `/AttachmentFiles/add(FileName='` + fileName +`')`;
+                  // var url = `${this.props.webUrl}/_api/${oData}/AttachmentFiles/add('${file.name}')`;
+                  this.props.spHttpClient.post(url, SPHttpClient.configurations.v1, spOpts).then((response: SPHttpClientResponse) => {
+                    console.log(`Status code: ${response.status}`);
+                    console.log(`Status text: ${response.statusText}`);
+                    if(Number(`${response.status}`) >300)
+                    {
+                      alert('Error Uploading file, Try again or contact IT');
+                      // this._closeDialog();
+                      return;
+                    }
+                    response.json().then((responseJSON: JSON) => {
+                      console.log(responseJSON);        
+                      this.setState({
+                        indexSelect: result
+                      })         
+                    });
+                  });            
               }
-
-          {(this.state.count === 2) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please select the Department category</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName="ChevronLeft" style={{fontSize:'80px'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
-                  {/* <DefaultButton>Select Department</DefaultButton> */}
-                  <Stack tokens={stackTokens}>
-                     <Dropdown
-                           placeholder="Select Department Category"
-                          //  label="Select Category"
-                           options={departmentCategoryOptions}
-                           defaultSelectedKey={" "}
-                           onChange={(e,selectedDeptCategory)=>this.onChangeDeptCategoryHandle(selectedDeptCategory)}
-                           //styles={dropdownStyles}
-                           styles={{ dropdown: { width: 350 } }}
-                         />
-                     </Stack>
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName='ChevronRight' style={{fontSize:'80px'}} onClick={this.nextClick}></Icon>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 3) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please type your issue</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName="ChevronLeft" style={{fontSize:'80px'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
-                <TextField label="Type your issue" multiline rows={3}
-                      //  onChange={e => this.setState({
-                      //    requestDescription:e.currentTarget.value
-                      //  })} 
-                           onChange={(requestDescription)=>this.onChangeRequestDescriptionHandle(requestDescription)}
-                        />
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName='ChevronRight' style={{fontSize:'80px'}} onClick={this.nextClick}></Icon>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 4) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please add file if any</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName="ChevronLeft" style={{fontSize:'80px'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg8 ms-sm12">
-                 <input type="file"/>
-                </div>
-                <div className="ms-Grid-col ms-lg2 ms-sm12">
-                <Icon iconName='ChevronRight' style={{fontSize:'80px'}} onClick={this.nextClickWithNotCompulsary}></Icon>
-                </div>
-              </div>
-            </div>       
-          }
-          {(this.state.count === 5) &&
-            <div className="ms-Grid" dir="ltr">
-            <h1>Please add file if any</h1>
-              <div className="ms-Grid-row">
-                <div className="ms-Grid-col ms-lg6 ms-sm12">
-                <Icon iconName="ChevronLeft" style={{fontSize:'80px'}} onClick={this.previousClick}></Icon>
-                </div>
-                <div className="ms-Grid-col ms-lg6 ms-sm12">
-                  <DefaultButton style={{backgroundColor:this.state.bgColorRaiseRequest, color:this.state.colorRaiseRequest,border:'1px solid #ddd', top:'8px', bottom:'100px'}} onClick={()=>this.addEmployeeRequest(this.state.requestDescription, this.state.selectedDept,this.state.selectedDeptCategory,departmentFAQ_ArchiveTimeSpan)}>Submit</DefaultButton>
-                </div>
-              </div>
-            </div>       
-          }
-          {/* My Issue page display operation */}
-
-          {
-            (this.state.myIssueUnlock === 1) &&
-            <div>
-              <MyRequestedIssues msGraphClientFactory={this.props.msGraphClientFactory} issueDataList={issueData} archiveIssueDataList={issueData} emailType={this.props.emailType} description={this.props.description} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} currentUserId={this.props.currentUserId}/> 
-            </div>
-
-          }
-      </div>
-    );
+        }
+  }, (error: any): void => {
+    this.setState({
+      errorMessage: error
+    });
+  })
+  .catch((error: any): void => {
+    this.setState({
+      errorMessage: error
+    });
+    });      
   }
-}
+
+   onSubmitDropDownHandle(newPeoplePicker:any,idRequest:number,assignedToUser,ticketNumberCheck){
+  //  await this.setState({
+  //     newPeoplePickerUser: newPeoplePicker[0].text
+  //     //loadPeoplePicker:0
+  //       },()=> this.addReAssignedToData(this.state.newPeoplePickerUser,idRequest))
+        if(this.state.deleteSelectedTicket === ticketNumberCheck){
+        // this.addAttachementInList(idRequest);
+        this.addMultipleAttachmentLoop(idRequest);
+        this.addReAssignedToData(assignedToUser,idRequest);
+        }
+  }
+
+  addReAssignedToData(newReAssignedToUser:any,idRequest:number){
+      console.log("newReAssignedToUser = " + newReAssignedToUser + idRequest);
+      console.log("newReAssignedToUser = " + newReAssignedToUser);
+
+      const headers: HeadersInit = new Headers();
+      // suppress metadata to minimize the amount of data loaded from SharePoint
+      headers.append("accept", "application/json;odata.metadata=none");
+      this.props.spHttpClient
+        .get(`${this.props.webUrl}/_api/web/lists/getbytitle('EmployeeRequest')/items('${idRequest}')?$select=*,ReAssignTo/Id&$expand=ReAssignTo`,
+        SPHttpClient.configurations.v1, {
+          headers: headers
+        })
+        .then((res: SPHttpClientResponse): Promise<any> => {
+          return res.json();
+        })
+        .then((res: any): void => {
+          if (res.error) {
+             this.setState({
+               loading: false,
+               errorMessage: res.error.message,
+                });
+            return;
+          }
+          if (res.value == 0) {
+            // No results were found. Notify the user that loading data is finished
+            this.setState({
+              loading: false
+            });
+            return;
+          }
+
+          var metaTest ={
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            'ReAssignToId': newReAssignedToUser.id
+          }
+          const spOpts: string = JSON.stringify({
+            // metaTest
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            'Status': "In Process",
+            'ReAssignToId': newReAssignedToUser.id
+                // 'Comment': 'Comment is working'
+                // OnOffBoardTask:1
+          })
+      
+          this.props.spHttpClient.post(`${this.props.webUrl}/_api/web/lists/GetByTitle('EmployeeRequest')/items(${res.Id})`, SPHttpClient.configurations.v1, 
+          {
+            // __metadata: { 'type': 'SP.Data.EmployeeRequestListItem' },
+            headers: {  
+              'Accept': 'application/json;odata=nometadata',  
+              'Content-type': 'application/json;odata=nometadata',  
+              'odata-version': '',  
+              'IF-MATCH': '*',  
+              'X-HTTP-Method': 'MERGE',
+              // "X-RequestDigest": $("#__REQUESTDIGEST").val()
+            },  
+            // body:spOpts
+            body:spOpts
+          })
+              .then((response: SPHttpClientResponse) => {
+                // Access properties of the response object. 
+                console.log(`Status code: ${response.status}`);
+                console.log(`Status text: ${response.statusText}`);
+                
+                //response.json() returns a promise so you get access to the json in the resolve callback.
+
+              })
+                .then((responseJSON: any) => {
+                  var items = this.state.deptDetails.filter(item=> item.dataId !==idRequest);
+                  this.setState({
+                    deptDetails:items,
+                    deptListDropDown:[],
+                    ticketCount: this.state.ticketCount - 1,
+                    passAssignedToUser:{
+                      id:null,
+                      text:''
+                    }
+
+                  })
+                });
+
+
+    }, (error: any): void => {
+      // An error has occurred while loading the data. Notify the user
+      // that loading data is finished and return the error message.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+    })
+    .catch((error: any): void => {
+      // An exception has occurred while loading the data. Notify the user
+      // that loading data is finished and return the exception.
+      this.setState({
+        loading: false,
+        errorMessage: error
+      });
+      });
+  }
+
+
+  getUserByDept(control,reAssignTo,department,idNumber){
+    grpName= department;
+    // this.loadDepartmentOptions();
+    this.loadDepartmentOptionsByGroupName(department)
+    .then(
+      data=>{
+          console.log(data);
+          this.setState({
+            deptListDropDown:data,
+            idSelect:idNumber
+          },()=>console.log(this.state.deptListDropDown[0].id))
+      }
+    )
   
+  }
+
+  homeButtonClick(){
+    this.setState({
+      homeButton:1,
+    })
+  }
+
+  onUserSelect(userName,selectedName, ticketNumber){
+    this.setState({
+      passAssignedToUser:selectedName,
+      deleteSelectedTicket:ticketNumber
+    },()=> console.log(this.state.passAssignedToUser.id))
+    console.log(userName,selectedName);
+  }
+
+//   onInputFileClickHandle(ticketNumber){
+//     // textInput.current.focus();
+//   this.setState({
+//     indexSelect:ticketNumber,
+//     commonFile:null
+//   })
+// }
+
+  onDispatcherFileAddition = (dispatcherFileAdd) => {
+    let allFiles = [];
+    for(let i=0;i<dispatcherFileAdd.length;++i){
+      allFiles.push(dispatcherFileAdd[i]);
+  }
+  this.setState({
+        dispatcherFileAddition: allFiles
+      })
+  }
+
+  public render(): React.ReactElement<IDispatcherViewProps> {
+  return (
+    <div className={styles.dispatcherView}>
+  
+      {(this.state.homeButton === 0) && (this.state.ticketCount > 0) &&
+      <div className="ms-Grid">
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg12">
+             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+          </div>
+        </div>
+      {/* {(this.state.deptDetails.length > 0) && */}
+      <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12 ms-sm12">
+      <div style={{overflowX:'auto'}}>
+      <table className={styles.tableSet} >
+          <thead>
+            <tr>
+              <th>Ticket Number</th>
+              <th>Raised By</th>
+              <th>Issue Date</th>
+              <th>Description</th>
+              <th>Assign To</th>
+              <th>Attachment from Requester</th>
+              <th>Attachment from Dispatcher</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+             this.state.deptDetails.map((res,index)=>{
+             var issuedDate = new Date(res.issueDate).toLocaleDateString();
+                return(
+                  <tr>
+                    <td>{res.ticketNumber}</td>
+                    <td>{res.raisedBy}</td>
+                    <td>{issuedDate}</td>
+                    <td>{res.description}</td>
+                    <td>
+                      <Dropdown
+                       id={res.ticketNumber + '_dropDown'} 
+                       placeholder='Select option'
+                       defaultSelectedKey={" "}
+                      onClick={(e)=>this.getUserByDept(res.ticketNumber + '_dropDown',res.reAssignedTo,res.supportDeptName,res.dataId)} 
+                      options={this.state.deptListDropDown}
+                      onChange={(e,selectedName)=>this.onUserSelect(e,selectedName,res.ticketNumber)}>
+                      </Dropdown>
+                    </td>
+                    <td key={index}>
+                      {
+                      res.attachmentFileName.map((r,i)=>{
+                        return(
+                          <a href={r.ServerRelativeUrl}> {`${r.FileName}\n`}</a>
+                        )
+                      })
+                      }
+                    </td>
+                    <td>
+                       <input multiple type="file" style={{border:'1px solid #ddd',paddingTop:'10px', paddingBottom:'10px' }}
+                        // defaultValue=''
+                      // onClick={()=>this.onInputFileClickHandle(res.dataId)}
+                        // value={'Something'}
+                        // value={(this.state.indexSelect === res.dataId)?'Something ':'nothing'}
+                        // onChange={(e)=> this.onDispatcherFileAddition(e.target.files) }
+                        key={this.state.indexSelect}
+                        onChange={(e)=>this.onDispatcherFileAddition(e.target.files)}
+                       />
+                    </td>
+                    <td>
+                    <Icon iconName="Save" style={{fontSize:'20px', cursor:'pointer'}} onClick={(e)=>this.onSubmitDropDownHandle(e,res.dataId,this.state.passAssignedToUser,res.ticketNumber)}></Icon>
+                    </td>
+                  </tr>
+                )
+              })
+            }
+          </tbody>
+          </table>
+         </div>
+        </div>
+      </div> 
+    </div>
+  }
+  {
+    (this.state.ticketCount <= 0) && (this.state.homeButton === 0) &&
+    <div className="ms-Grid">
+       <div className="ms-Grid-row">
+          <div className="ms-Grid-col ms-lg12">
+             <Icon iconName='NavigateBack' style={{fontSize:'25px', cursor:'pointer'}} onClick={()=>this.homeButtonClick()} ></Icon>
+          </div>
+        </div>
+    <div className="ms-Grid-row">
+      <div className="ms-Grid-col ms-lg12">
+        <h2>No ticket to be dispatched</h2>
+      </div>
+    </div>  
+  </div>
+  }
+
+  {(this.state.homeButton === 1) &&
+              <DispatcherSelect msGraphClientFactory={this.props.msGraphClientFactory} currentUserId={this.props.currentUserId} loggedInUserEmail={this.props.loggedInUserEmail} loggedInUserName={this.props.loggedInUserName} spHttpClient={this.props.spHttpClient} webUrl={this.props.webUrl} emailType={this.props.emailType} description={this.props.description} />
+  }
+    </div>
+  );
+}
+}
+
