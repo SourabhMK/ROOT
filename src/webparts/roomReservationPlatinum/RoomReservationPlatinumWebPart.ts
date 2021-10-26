@@ -6,7 +6,10 @@ import {
   PropertyPaneTextField,
   PropertyPaneDropdown,
   IPropertyPaneDropdownOption,
-  PropertyPaneLabel
+  PropertyPaneLabel,
+  PropertyPaneLink,
+  PropertyPaneButtonType,
+  PropertyPaneButton
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
@@ -18,9 +21,19 @@ import { PropertyFieldDateTimePicker, DateConvention, TimeConvention, IDateTimeF
 import spservices from '../../services/spservices';
 import * as moment from 'moment';
 
+import { Logger, ConsoleListener, ILogEntry, LogLevel} from "@pnp/logging";
+import AppListener from '../../services/appListner';
+import { IListInfo } from '../../models/IListInfo';
+import spServiceEnsureLists from '../../services/spServiceEnsureLists';
+
 export interface IRoomReservationPlatinumWebPartProps {
   title: string;
   siteUrl: string;
+  locationListName: string;
+  areaListName: string;
+  categoryListName:string;
+  masterListName: string;
+  calendarListName: string;
   list: string;
   eventStartDate: IDateTimeFieldValue ;
   eventEndDate: IDateTimeFieldValue;
@@ -30,9 +43,19 @@ export interface IRoomReservationPlatinumWebPartProps {
 
 export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPart<IRoomReservationPlatinumWebPartProps> {
   private lists: IPropertyPaneDropdownOption[] = [];
+  
+  // Ensure Lists are present 
+  private isLocationListAvailable: boolean = false;
+  private isAreaListAvailable: boolean = false;
+  private isCategoryListAvailable: boolean = false;
+  private isMasterListAvailable: boolean = false;
+  private isCalendarListAvailable: boolean = false;
+
   private listsDropdownDisabled: boolean = true;
   private spService: spservices = null;
+  private spEnsureListsService: spServiceEnsureLists = null;
   private errorMessage: string;
+  private appListner: AppListener = new AppListener();
 
   public constructor() {
     super();
@@ -44,6 +67,11 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
       {
         title: this.properties.title,
         siteUrl: this.properties.siteUrl,
+        locationListName: this.properties.locationListName,
+        areaListName: this.properties.areaListName,
+        categoryListName: this.properties.categoryListName,
+        masterListName: this.properties.masterListName,
+        calendarListName:this.properties.calendarListName,
         list: this.properties.list,
         displayMode: this.displayMode,
         updateProperty: (value: string) => {
@@ -59,6 +87,8 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
   }
 
   public  async onInit(): Promise<void> {
+    this.appListner.setAppLogger();
+    this.spEnsureListsService = new spServiceEnsureLists(this.context);
     this.spService = new spservices(this.context);
     this.properties.siteUrl = this.properties.siteUrl ? this.properties.siteUrl : this.context.pageContext.site.absoluteUrl;
     if (!this.properties.eventStartDate){
@@ -67,13 +97,21 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
     if (!this.properties.eventEndDate){
       this.properties.eventEndDate = { value: moment().add(20,'years').endOf('month').toDate(), displayValue: moment().format('ddd MMM MM YYYY')};
     }
-    if (this.properties.siteUrl && !this.properties.list) {
-     const _lists = await this.loadLists();
-     if ( _lists.length > 0 ){
-      this.lists = _lists;
-      this.properties.list = this.lists[0].key.toString();
-     }
+    // if (this.properties.siteUrl && !this.properties.list) {
+    //  const _lists = await this.loadLists();
+    //  if ( _lists.length > 0 ){
+    //   this.lists = _lists;
+    //   this.properties.list = this.lists[0].key.toString();
+    //  }
+    // }
+    if(this.properties.siteUrl) {
+      this.properties.locationListName = "RoomLocation";
+      this.properties.areaListName = "RoomArea";
+      this.properties.categoryListName = "RoomBuildingFloor";
+      this.properties.masterListName = "RoomSize";
+      this.properties.calendarListName = "RoomCalendar";
     }
+    Logger.write("Init() method triggered.", LogLevel.Info);
     return Promise.resolve();
   }
 
@@ -88,8 +126,8 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
   protected async onPropertyPaneConfigurationStart() {
     try {
       if (this.properties.siteUrl) {
-        const _lists = await this.loadLists();
-        this.lists = _lists;
+        // const _lists = await this.loadLists();
+        // this.lists = _lists;
         this.listsDropdownDisabled = false;
         //  await this.loadFields(this.properties.siteUrl);
         this.context.propertyPane.refresh();
@@ -105,21 +143,21 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
     }
   }
 
-  private async loadLists(): Promise<IPropertyPaneDropdownOption[]> {
-    const _lists: IPropertyPaneDropdownOption[] = [];
-    try {
-      // const ensureList = await this.spService.ensureRequiredList(this.properties.siteUrl, this.properties.list);
-      const results = await this.spService.getSiteLists(this.properties.siteUrl);
-      for (const list of results) {
-        _lists.push({ key: list.Id, text: list.Title });
-      }
-      // push new item value
-    } catch (error) {
-      this.errorMessage =  `${error.message} -  please check if site url if valid.` ;
-      this.context.propertyPane.refresh();
-    }
-    return _lists;
-  }
+  // private async loadLists(): Promise<IPropertyPaneDropdownOption[]> {
+  //   const _lists: IPropertyPaneDropdownOption[] = [];
+  //   try {
+  //     // const ensureList = await this.spService.ensureRequiredList(this.properties.siteUrl, this.properties.list);
+  //     const results = await this.spService.getSiteLists(this.properties.siteUrl);
+  //     for (const list of results) {
+  //       _lists.push({ key: list.Id, text: list.Title });
+  //     }
+  //     // push new item value
+  //   } catch (error) {
+  //     this.errorMessage =  `${error.message} -  please check if site url if valid.` ;
+  //     this.context.propertyPane.refresh();
+  //   }
+  //   return _lists;
+  // }
 
   private onEventStartDateValidation(date:string){
     if (date && this.properties.eventEndDate.value){
@@ -170,8 +208,8 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
         const _oldValue = this.properties.list;
         this.onPropertyPaneFieldChanged('list', _oldValue, this.properties.list);
         this.context.propertyPane.refresh();
-        const _lists = await this.loadLists();
-        this.lists = _lists;
+       // const _lists = await this.loadLists();
+        // this.lists = _lists;
         this.listsDropdownDisabled = false;
         this.properties.list = this.lists.length > 0 ? this.lists[0].key.toString() : undefined;
         this.context.propertyPane.refresh();
@@ -184,6 +222,122 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
       this.errorMessage =  `${error.message} -  please check if site url if valid.` ;
       this.context.propertyPane.refresh();
     }
+  }
+
+  // LIST   - ROOMLOCATION 
+  // FIELDS - ID, TITLE, ISACTIVE
+  private async ensureLocationListWithFields() {
+    let listInfo: IListInfo = <IListInfo> {};
+
+    listInfo.ListName = this.properties.locationListName;
+    listInfo.ListDescription = 'Location list to hold location information';
+    listInfo.ListType = 100;
+    
+    Logger.write("Checking for " + listInfo.ListName , LogLevel.Info);
+    let res = await this.spEnsureListsService.ensureListByListInfo(this.properties.siteUrl, listInfo);
+    if(res.IsListCreated) {
+        let fieldRes = await this.spEnsureListsService.ensureLocationListFields(this.properties.siteUrl, listInfo);
+        Logger.write("List " + listInfo.ListName + " Fileds have been created" , LogLevel.Info);
+        this.isLocationListAvailable = true;
+        this.context.propertyPane.refresh();
+        Logger.write("List " + listInfo.ListName + " has been created successfully" , LogLevel.Info);
+        listInfo.ListName = this.properties.areaListName;
+    }
+  }
+
+  // LIST   - ROOMAREA 
+  // FIELDS - ID, TITLE, ISACTIVE, ROOMLOCATION 
+  private async ensureAreaListWithFields() {
+    let listInfo: IListInfo = <IListInfo> {};
+    let lookUpListInfo: IListInfo = <IListInfo>{};
+
+    listInfo.ListName = this.properties.areaListName;
+    listInfo.ListType = 100;
+    listInfo.ListDescription = 'Area list to hold asset area information';
+    Logger.write("Checking for " + listInfo.ListName , LogLevel.Info);
+    let res = await this.spEnsureListsService.ensureListByListInfo(this.properties.siteUrl, listInfo);
+    if(res.IsListCreated) {
+      lookUpListInfo.ListName = this.properties.locationListName;
+      let fieldRes = await this.spEnsureListsService.ensureRoomAreaListFields(this.properties.siteUrl, listInfo, lookUpListInfo);
+
+      Logger.write("List " + listInfo.ListName + " Fileds have been created" , LogLevel.Info);
+      this.isAreaListAvailable = true;
+      this.context.propertyPane.refresh();
+      Logger.write("List " + listInfo.ListName + " has been created successfully" , LogLevel.Info);
+      } else Logger.write("Error while creating the List :" + listInfo.ListName, LogLevel.Info);
+  }
+
+  // LIST   - ROOMBUILDINGNUMBER 
+  // FIELDS - ID, TITLE, ISACTIVE, ROOMAREA
+  private async ensureCategoryListWithFields() {
+    let listInfo: IListInfo = <IListInfo>{};
+    let lookUpListInfo: IListInfo = <IListInfo>{};
+
+    listInfo.ListName = this.properties.categoryListName;
+    listInfo.ListType = 100;
+    listInfo.ListDescription = 'Category list to hold asset category information';
+    Logger.write("Checking for " + listInfo.ListName , LogLevel.Info);
+    let res = await this.spEnsureListsService.ensureListByListInfo(this.properties.siteUrl, listInfo);
+    if(res.IsListCreated) {
+      lookUpListInfo.ListName = this.properties.areaListName;
+      this.spEnsureListsService.ensureRoombuildingFloorListFields(this.properties.siteUrl, listInfo, lookUpListInfo).then(resCategoryFields=>{
+        Logger.write("List " + listInfo.ListName + " Fileds have been created" , LogLevel.Info);
+      });
+      this.isCategoryListAvailable = true;
+      this.context.propertyPane.refresh();
+      Logger.write("List " + listInfo.ListName + " has been created successfully" , LogLevel.Info);
+    }
+  }
+
+  // LIST   - ROOMSIZE 
+  // FIELDS - ID, TITLE, ISACTIVE, ROOMBUILDINGFLOOR
+  private async ensureMasterListWithFields() { 
+    let listInfo: IListInfo = <IListInfo>{};
+    let lookUpListInfo: IListInfo = <IListInfo>{};
+
+    listInfo.ListName = this.properties.masterListName;
+    listInfo.ListType = 100;
+    listInfo.ListDescription = 'Master list to hold asset master information';
+    Logger.write("Checking for " + listInfo.ListName , LogLevel.Info);
+    let res = await this.spEnsureListsService.ensureListByListInfo(this.properties.siteUrl, listInfo);
+    if(res.IsListCreated) {
+      lookUpListInfo.ListName = this.properties.categoryListName;
+      let fieldRes = await this.spEnsureListsService.ensureRoomSizeListFields(this.properties.siteUrl, listInfo, lookUpListInfo);
+      Logger.write("List " + listInfo.ListName + " Fileds have been created" , LogLevel.Info);
+      this.isMasterListAvailable = true;
+      this.context.propertyPane.refresh();
+      Logger.write("List " + listInfo.ListName + " has been created successfully" , LogLevel.Info);
+    }
+  }
+
+  // LIST   - ASSETCALENDAR 
+  // FIELDS - ID, TITLE, ISACTIVE, ASSETMASTER
+  private async ensureCalendarListWithFields() {
+    let listInfo: IListInfo = <IListInfo>{};
+    let lookUpListInfo: IListInfo = <IListInfo>{};
+
+    listInfo.ListName = this.properties.calendarListName;
+    listInfo.ListType = 106;
+    listInfo.ListDescription = 'Calendar list to hold asset transaction information';
+    Logger.write("Checking for " + listInfo.ListName , LogLevel.Info);
+    let res = await this.spEnsureListsService.ensureListByListInfo(this.properties.siteUrl, listInfo);
+    if(res.IsListCreated) {
+      lookUpListInfo.ListName = this.properties.masterListName;
+      let fieldRes = await this.spEnsureListsService.ensureRoomCalendarListFields(this.properties.siteUrl, listInfo, lookUpListInfo);
+      Logger.write("List " + listInfo.ListName + " Fileds have been created" , LogLevel.Info);
+      this.isCalendarListAvailable = true;
+      this.context.propertyPane.refresh();
+      Logger.write("List " + listInfo.ListName + " has been created successfully" , LogLevel.Info);
+    }
+  }
+
+  private async PerformEnsureLists(oldVal: any) {
+    Logger.write("Ensure lists are presents", LogLevel.Info);
+    await this.ensureLocationListWithFields();
+    await this.ensureAreaListWithFields();
+    await this.ensureCategoryListWithFields();
+    await this.ensureMasterListWithFields();
+    await this.ensureCalendarListWithFields();
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -205,11 +359,43 @@ export default class RoomReservationPlatinumWebPart extends BaseClientSideWebPar
                   value: this.context.pageContext.site.absoluteUrl,
                   deferredValidationTime: 1200,
                 }),
-                PropertyPaneDropdown('list', {
-                  label: strings.ListFieldLabel,
-                  options: this.lists,
-                  disabled: this.listsDropdownDisabled,
+                PropertyPaneTextField('locationListName', {
+                  label: strings.LocationListName,
+                  disabled: this.isLocationListAvailable,
+                  //onGetErrorMessage: this.validateListName.bind(this),
+                  value: "AssetLocation",
                 }),
+                PropertyPaneTextField('areaListName', {
+                  label: strings.AreaListName,
+                  disabled: this.isAreaListAvailable,
+                  //onGetErrorMessage: this.validateListName.bind(this),
+                  value: "AssetArea"
+                }),
+                PropertyPaneTextField('categoryListName', {
+                  label: strings.CategoryListName,
+                  disabled: this.isCategoryListAvailable,
+                  //onGetErrorMessage: this.validateListName.bind(this),
+                  value: "RoomBuildingFloor"
+                }),
+                PropertyPaneTextField('masterListName', {
+                  label: strings.MasterListName,
+                  disabled: this.isMasterListAvailable,
+                  //onGetErrorMessage: this.validateListName.bind(this),
+                  value: "RoomSize"
+                }),
+                PropertyPaneTextField('calendarListName', {
+                  label: strings.CalendarListName,
+                  disabled: this.isCalendarListAvailable,
+                  //o +onGetErrorMessage: this.validateListName.bind(this),
+                  value: "RoomCalendar"
+                }),
+                PropertyPaneButton('EnsureList',
+                 {  
+                  text: "EnsureList",
+                  buttonType: PropertyPaneButtonType.Normal,
+                  onClick: this.PerformEnsureLists.bind(this),
+                  disabled: this.isLocationListAvailable && this.isAreaListAvailable && this.isCategoryListAvailable && this.isMasterListAvailable && this.isCalendarListAvailable
+                 }),
                 PropertyPaneLabel('eventStartDate', {
                   text: strings.eventSelectDatesLabel
                 }),

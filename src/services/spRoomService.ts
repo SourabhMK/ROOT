@@ -15,7 +15,7 @@ export default class spRoomService {
       });
     }
 
-    public async getRoomLocation(siteUrl) : Promise<{ key: string, text: string }[]> {
+    public async getRoomLocation(siteUrl, listName) : Promise<{ key: string, text: string }[]> {
         let listData: { key: string, text: string }[] = [];
         listData.push({
             key: "0",
@@ -23,7 +23,7 @@ export default class spRoomService {
           });
         try {
           const web = Web(siteUrl);
-          const results = await web.lists.getByTitle('RoomLocation').items
+          const results = await web.lists.getByTitle(listName).items
             .select("ID","Title")
             .get();
             if(results.length > 0) {
@@ -40,7 +40,7 @@ export default class spRoomService {
         return listData;
     }
 
-    public async getRoomAreaByLocation(siteUrl: string, location:string) : Promise<{ key: string, text: string }[]> {
+    public async getRoomAreaByLocation(siteUrl: string, listName:string, location:string) : Promise<{ key: string, text: string }[]> {
         let listData: { key: string, text: string }[] = [];
         listData.push({
             key: "0",
@@ -48,7 +48,7 @@ export default class spRoomService {
           });
         try {
           const web = Web(siteUrl);
-          const results = await web.lists.getByTitle('RoomArea').items.filter("ID eq " + location)
+          const results = await web.lists.getByTitle(listName).items.filter("ID eq " + location)
             .select("ID","Title")
             .getAll();
             if(results.length > 0) {
@@ -65,7 +65,7 @@ export default class spRoomService {
         return listData;
     }
 
-    public async getRoomBuildingByArea(siteUrl: string, area:string) : Promise<{ key: string, text: string }[]> {
+    public async getRoomBuildingByArea(siteUrl: string, listName:string, area:string) : Promise<{ key: string, text: string }[]> {
         let listData: { key: string, text: string }[] = [];
         listData.push({
             key: "0",
@@ -90,7 +90,7 @@ export default class spRoomService {
         return listData;
     }
 
-    public async getRoomSizeByBuilding(siteUrl: string, building:string) : Promise<{ key: string, text: string }[]> {
+    public async getRoomSizeByBuilding(siteUrl: string, listName:string, building:string) : Promise<{ key: string, text: string }[]> {
         let listData: { key: string, text: string }[] = [];
         listData.push({
             key: "0",
@@ -98,7 +98,7 @@ export default class spRoomService {
           });
         try {
           const web = Web(siteUrl);
-          const results = await web.lists.getByTitle('RoomSize').items.filter("ID eq " + building)
+          const results = await web.lists.getByTitle(listName).items.filter("ID eq " + building)
             .select("ID","Title")
             .getAll();
             if(results.length > 0) {

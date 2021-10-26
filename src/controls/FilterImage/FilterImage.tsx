@@ -1,12 +1,12 @@
 import * as React from 'react';
-import styles from './RoomImage.module.scss';
-import { IRoomImageProps } from './IRoomImageProps';
-import { IRoomImageStates } from './IRoomImageState';
-import spRoomService from '../../../../services/spRoomService';
+import styles from './FilterImage.module.scss';
+import { IFilterImageProps } from './IFilterImageProps';
+import { IFilterImageStates } from './IFilterImageState';
+import spRoomService from '../../services/spRoomService';
 
-export default class RoomImage extends React.Component<IRoomImageProps, IRoomImageStates> {
+export default class FilterImage extends React.Component<IFilterImageProps, IFilterImageStates> {
     private spRoomService: spRoomService = null;
-    constructor(props:IRoomImageProps, state:IRoomImageStates) { 
+    constructor(props:IFilterImageProps, state:IFilterImageStates) { 
         super(props);
         this.state = {
             selectedImage: '',
@@ -26,13 +26,13 @@ export default class RoomImage extends React.Component<IRoomImageProps, IRoomIma
                 imagePaths : res,
             });
          }).catch((error)=>{
-            console.log("Error getting results from RoomLoaction - " + error);
+            console.log("Error getting results from Asset Photo - " + error);
          });
     }
 
-    public render(): React.ReactElement<IRoomImageProps> {
+    public render(): React.ReactElement<IFilterImageProps> {
         return (
-            <div className={ styles.roomFilters }>
+            <div className={ styles.filterImage }>
                 <div className="ms-Grid" dir="ltr">
                     <div className="ms-Grid-row">
                         <div className="ms-Grid-col ms-u-sm12 block">

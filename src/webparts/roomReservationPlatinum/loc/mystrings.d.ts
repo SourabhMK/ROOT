@@ -106,7 +106,11 @@ declare interface IRoomReservationPlatinumWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
   SiteUrlFieldLabel: string;
-  ListFieldLabel: string;
+  LocationListName:string;
+  AreaListName:string;
+  CategoryListName:string;
+  MasterListName:string;  
+  CalendarListName: string;
   yearHeaderLabel: string;
   monthLabel: string;
   weekLabel: string;

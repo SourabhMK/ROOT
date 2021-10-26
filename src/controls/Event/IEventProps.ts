@@ -1,6 +1,7 @@
 import { IEventData } from '../../models/IEventData';
 import { IPanelModelEnum} from './IPanelModeEnum';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { FilterType } from '../../controls/Filters/filterType';
 export interface IEventProps {
   events: IEventData[]; 
   event: IEventData;
@@ -11,5 +12,11 @@ export interface IEventProps {
   endDate?: Date;
   context:WebPartContext;
   siteUrl: string;
+  locationListName: string;
+  areaListName: string;
+  categoryListName:string;
+  masterListName: string;
+  calendarListName:string;
   listId:string;
+  filterType: FilterType;
 }

@@ -74,6 +74,8 @@ This extension illustrates the following concepts:
 
 https://gns11.sharepoint.com/sites/SiriusTeams/_layouts/15/workbench.aspx
 
+https://gns11.sharepoint.com/sites/apps/SitePages/Home.aspx
+
 https://champion1.sharepoint.com/sites/newteamsitepj/_layouts/15/workbench.aspx
 
 https://champion1.sharepoint.com/sites/AppCatalog/AppCatalog/Forms/AllItems.aspx

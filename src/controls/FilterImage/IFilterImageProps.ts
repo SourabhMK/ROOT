@@ -1,4 +1,4 @@
-export interface IRoomImageProps { 
+export interface IFilterImageProps { 
     context:any;
     siteUrl: string;
     locationId: number;

@@ -24,11 +24,16 @@
     "group": { "default": "Other" },
     "title": { "default": "Room-Reservation-Platinum" },
     "description": { "default": "Fully functional Room Reservation" },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "CalendarWorkWeek",
     "properties": {
       "title": "RoomReservationCalendar",
       "siteUrl": "",
-      "list": "",
+      "locationListName": "RoomLocation",
+      "areaListName": "RoomArea",
+      "categoryListName": "RoomCategory",
+      "masterListName": "RoomMaster",
+      "calendarListName": "RoomCalendar",
+      "list": "RoomCalendar",
       "eventStartDate": "",
       "eventEndDate": ""
     }

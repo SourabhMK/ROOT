@@ -6,6 +6,11 @@ export interface IRoomReservationPlatinumProps {
   title: string;
   siteUrl: string;
   list: string;
+  locationListName: string;
+  areaListName: string;
+  categoryListName:string;
+  masterListName: string;
+  calendarListName:string;
   displayMode: DisplayMode;
   updateProperty: (value: string) => void;
   context: WebPartContext;

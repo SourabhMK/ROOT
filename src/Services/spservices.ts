@@ -1,5 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { sp, Web, PermissionKind, IFieldInfo } from '@pnp/sp/presets/all';
+import { sp, Web, PermissionKind, IItem, IFieldInfo } from '@pnp/sp/presets/all';
 // import { siteUsers } from '@pnp/sp/site-users/web'
 import { graph } from "@pnp/graph";
 import * as $ from 'jquery';
@@ -76,7 +76,7 @@ export default class spservices {
     try {
       const web = Web(siteUrl);
 
-      results = await web.lists.getById(listId).items.add({
+      results = await web.lists.getByTitle(listId).items.add({
         Title: newEvent.title,
         Description: newEvent.Description,
         Geolocation: newEvent.geolocation,
@@ -87,6 +87,7 @@ export default class spservices {
         fAllDayEvent: newEvent.fAllDayEvent,
         fRecurrence: newEvent.fRecurrence,
         Category: newEvent.Category,
+        AssetCategory: newEvent.AssetCategory,
         EventType: newEvent.EventType,
         UID: newEvent.UID,
         RecurrenceData: newEvent.RecurrenceData ? await this.deCodeHtmlEntities(newEvent.RecurrenceData) : "",
@@ -113,15 +114,14 @@ export default class spservices {
    * @memberof spservices
    */
   public async getEvent(siteUrl: string, listId: string, eventId: number): Promise<IEventData> {
-    debugger;
     Logger.write("Getting events", LogLevel.Info);
     let returnEvent: IEventData = undefined;
     try {
       const web = Web(siteUrl);
 
       //"Title","fRecurrence", "fAllDayEvent","EventDate", "EndDate", "Description","ID", "Location","Geolocation","ParticipantsPickerId"
-      const event = await web.lists.getById(listId).items.usingCaching().getById(eventId)
-        .select("RecurrenceID", "MasterSeriesItemID", "Id", "ID", "ParticipantsPickerId", "EventType", "Title", "Description", "EventDate", "EndDate", "Location", "Author/SipAddress", "Author/Title", "Geolocation", "fAllDayEvent", "fRecurrence", "RecurrenceData", "RecurrenceData", "Duration", "Category", "UID")
+      const event = await web.lists.getByTitle(listId).items.usingCaching().getById(eventId)
+        .select("RecurrenceID", "MasterSeriesItemID", "Id", "ID", "ParticipantsPickerId", "EventType", "Title", "Description", "EventDate", "EndDate", "Location", "Author/SipAddress", "Author/Title", "Geolocation", "fAllDayEvent", "fRecurrence", "RecurrenceData", "RecurrenceData", "Duration", "Category", "AssetCategory", "UID")
         .expand("Author")
         .get();
 
@@ -146,6 +146,7 @@ export default class spservices {
         fAllDayEvent: event.fAllDayEvent,
         geolocation: { Longitude: event.Geolocation ? event.Geolocation.Longitude : 0, Latitude: event.Geolocation ? event.Geolocation.Latitude : 0 },
         Category: event.Category,
+        AssetCategory: event.AssetCategory,
         Duration: event.Duration,
         UID: event.UID,
         RecurrenceData: event.RecurrenceData ? await this.deCodeHtmlEntities(event.RecurrenceData) : "",
@@ -153,7 +154,6 @@ export default class spservices {
         RecurrenceID: event.RecurrenceID,
         MasterSeriesItemID: event.MasterSeriesItemID,
       };
-      debugger;
       Logger.log({message:"Success", level: LogLevel.Info, data:returnEvent});
     } 
     catch (error) {
@@ -193,6 +193,7 @@ export default class spservices {
         fAllDayEvent: updateEvent.fAllDayEvent,
         fRecurrence: updateEvent.fRecurrence,
         Category: updateEvent.Category,
+        AssetCategory: updateEvent.AssetCategory,
         RecurrenceData: updateEvent.RecurrenceData ? await this.deCodeHtmlEntities(updateEvent.RecurrenceData) : "",
         EventType: updateEvent.EventType,
       };
@@ -204,7 +205,7 @@ export default class spservices {
         newItem.MasterSeriesItemID = updateEvent.MasterSeriesItemID;
       }
 
-      results = await web.lists.getById(listId).items.getById(updateEvent.Id).update(newItem);
+      results = await web.lists.getByTitle(listId).items.getById(updateEvent.Id).update(newItem);
     } 
     catch (error) {
       return Promise.reject(error);
@@ -216,13 +217,13 @@ export default class spservices {
     let results = null;
     try {
       const web = Web(siteUrl);
-      results = await web.lists.getById(listId).items
+      results = await web.lists.getByTitle(listId).items
         .select('Id')
         .filter(`EventType eq '3' or EventType eq '4' and MasterSeriesItemID eq '${event.Id}' `)
         .get();
       if (results && results.length > 0) {
         for (const recurrenceException of results) {
-          await web.lists.getById(listId).items.getById(recurrenceException.Id).delete();
+          await web.lists.getByTitle(listId).items.getById(recurrenceException.Id).delete();
         }
       }
     } catch (error) {
@@ -246,7 +247,7 @@ export default class spservices {
       // Exception Recurrence eventtype = 4 ?  update to deleted Recurrence eventtype=3
       switch (event.EventType.toString()) {
         case '4': // Exception Recurrence Event
-          results = await web.lists.getById(listId).items.getById(event.Id).update({
+          results = await web.lists.getByTitle(listId).items.getById(event.Id).update({
             Title: `Deleted: ${event.title}`,
             EventType: '3',
           });
@@ -256,7 +257,7 @@ export default class spservices {
           if (recurrenceSeriesEdited) {
             // delete execptions if exists before delete recurrence event
             await this.deleteRecurrenceExceptions(event, siteUrl, listId);
-            await web.lists.getById(listId).items.getById(event.Id).delete();
+            await web.lists.getByTitle(listId).items.getById(event.Id).delete();
           } else {
             //Applying the Standard funactionality of SharePoint When deleting for deleting one occurrence of recurrent event by
            // 1) adding prefix "Deleted" to event title  2) Set RecurrenceID to event Date 3) Set MasterSeriesItemID to event ID 4)Set fRecurrence to true 5) Set event type to 3
@@ -270,7 +271,7 @@ export default class spservices {
 
           break;
         case '0': // normal Event
-          await web.lists.getById(listId).items.getById(event.Id).delete();
+          await web.lists.getByTitle(listId).items.getById(event.Id).delete();
           break;
       }
 
@@ -355,14 +356,12 @@ export default class spservices {
     let userPermissions: IUserPermissions = undefined;
     try {
       const web = Web(siteUrl);
-      const userEffectivePermissions = await web.lists.getById(listId).effectiveBasePermissions.get();
-      // ...
-      hasPermissionAdd = sp.web.lists.getById(listId).hasPermissions(userEffectivePermissions, PermissionKind.AddListItems);
-      hasPermissionDelete = sp.web.lists.getById(listId).hasPermissions(userEffectivePermissions, PermissionKind.DeleteListItems);
-      hasPermissionEdit = sp.web.lists.getById(listId).hasPermissions(userEffectivePermissions, PermissionKind.EditListItems);
-      hasPermissionView = sp.web.lists.getById(listId).hasPermissions(userEffectivePermissions, PermissionKind.ViewListItems);
+      const userEffectivePermissions = await web.lists.getByTitle(listId).effectiveBasePermissions.get();
+      hasPermissionAdd = sp.web.lists.getByTitle(listId).hasPermissions(userEffectivePermissions, PermissionKind.AddListItems);
+      hasPermissionDelete = sp.web.lists.getByTitle(listId).hasPermissions(userEffectivePermissions, PermissionKind.DeleteListItems);
+      hasPermissionEdit = sp.web.lists.getByTitle(listId).hasPermissions(userEffectivePermissions, PermissionKind.EditListItems);
+      hasPermissionView = sp.web.lists.getByTitle(listId).hasPermissions(userEffectivePermissions, PermissionKind.ViewListItems);
       userPermissions = { hasPermissionAdd: hasPermissionAdd, hasPermissionEdit: hasPermissionEdit, hasPermissionDelete: hasPermissionDelete, hasPermissionView: hasPermissionView };
-
     } catch (error) {
       return Promise.reject(error);
     }
@@ -391,19 +390,6 @@ export default class spservices {
     }
     return results;
   }
-
-  // public async ensureRequiredList(siteUrl: string, listName: string) {
-  //   debugger;
-  //   let results :any = false;
-  //   try {
-  //     const web = Web(siteUrl);
-  //     // this will create a list with template 106 (Calendar), content types enabled and hide it on the quick launch (using additionalSettings)
-  //     results = await web.lists.ensure(listName, "Calendar list to hold reservation information", 106, true, { OnQuickLaunch: false });
-  //   } catch (error) {
-  //     return Promise.reject(error);
-  //   }
-  //   return result;
-  // }
 
   /**
    *
@@ -473,30 +459,54 @@ export default class spservices {
    *
    * @param {string} siteUrl
    * @param {string} listId
+   * @returns {Promise<{ key: string, text: string }[]>}
+   * @memberof spservices
+   */
+   public async getMasterRefFieldOptions(siteUrl: string, listId: string): Promise<IItem[]> {
+    try {
+      const web = Web(siteUrl);
+      return web.lists.getByTitle(listId).items
+        .select("ID", "Title", "Count", "HexColor")
+        .getAll();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   *
+   * @param {string} siteUrl
+   * @param {string} listId
    * @param {Date} eventStartDate
    * @param {Date} eventEndDate
    * @returns {Promise< IEventData[]>}
    * @memberof spservices
    */
-  public async getEvents(siteUrl: string, listId: string, eventStartDate: Date, eventEndDate: Date): Promise<IEventData[]> {
-
+  public async getEvents(siteUrl: string, masterList:string, listId: string, eventStartDate: Date, eventEndDate: Date): Promise<IEventData[]> {
     let events: IEventData[] = [];
     if (!siteUrl) {
       return [];
     }
     try {
-      // Get Category Field Choices
-      const categoryDropdownOption = await this.getChoiceFieldOptions(siteUrl, listId, 'Category');
-      let categoryColor: { category: string, color: string }[] = [];
-      for (const cat of categoryDropdownOption) {
-        categoryColor.push({ category: cat.text, color: await this.colorGenerate() });
-      }
+      const categoryColor = await this.getMasterRefFieldOptions(siteUrl, masterList).then(res=>{
+        debugger;
+        if(res != null && res.length > 0) {
+          let fieldOptions: { category: string, color: string }[] = [];
+          for(let index=0;index<res.length; index++) {
+            fieldOptions.push({
+              category: res[index]["Title"],
+              color: res[index]["HexColor"]
+            });
+          }
+          return fieldOptions;
+        }
+      });
 
       const web = Web(siteUrl);
-      const results = await web.lists.getById(listId).usingCaching().renderListDataAsStream(
+      const results = await web.lists.getByTitle(listId).usingCaching().renderListDataAsStream(
         {
           DatesInUtc: true,
-          ViewXml: `<View><ViewFields><FieldRef Name='RecurrenceData'/><FieldRef Name='Duration'/><FieldRef Name='Author'/><FieldRef Name='Category'/><FieldRef Name='Description'/><FieldRef Name='ParticipantsPicker'/><FieldRef Name='Geolocation'/><FieldRef Name='ID'/><FieldRef Name='EndDate'/><FieldRef Name='EventDate'/><FieldRef Name='ID'/><FieldRef Name='Location'/><FieldRef Name='Title'/><FieldRef Name='fAllDayEvent'/><FieldRef Name='EventType'/><FieldRef Name='UID' /><FieldRef Name='fRecurrence' /></ViewFields>
+          ViewXml: `<View><ViewFields><FieldRef Name='RecurrenceData'/><FieldRef Name='Duration'/><FieldRef Name='Author'/><FieldRef Name='Category'/><FieldRef Name='AssetCategory'/><FieldRef Name='Description'/><FieldRef Name='ParticipantsPicker'/><FieldRef Name='Geolocation'/><FieldRef Name='ID'/><FieldRef Name='EndDate'/><FieldRef Name='EventDate'/><FieldRef Name='ID'/><FieldRef Name='Location'/><FieldRef Name='Title'/><FieldRef Name='fAllDayEvent'/><FieldRef Name='EventType'/><FieldRef Name='UID' /><FieldRef Name='fRecurrence' /></ViewFields>
           <Query>
           <Where>
             <And>
@@ -531,6 +541,7 @@ export default class spservices {
               const geo = event.Geolocation.substring(first, last);
               const geolocation = geo.split(' ');
               const CategoryColorValue: any[] = categoryColor.filter((value) => {
+                debugger;
                 return value.category == event.Category;
               });
               const isAllDayEvent: boolean = event["fAllDayEvent.value"] === "1";
@@ -558,6 +569,7 @@ export default class spservices {
                 fAllDayEvent: isAllDayEvent,
                 geolocation: { Longitude: parseFloat(geolocation[0]), Latitude: parseFloat(geolocation[1]) },
                 Category: event.Category,
+                AssetCategory: event.AssetCategory,
                 Duration: event.Duration,
                 RecurrenceData: event.RecurrenceData ? await this.deCodeHtmlEntities(event.RecurrenceData) : "",
                 fRecurrence: event.fRecurrence,

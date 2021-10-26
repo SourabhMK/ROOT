@@ -16,6 +16,7 @@ export interface IEventData {
     attendes?: number[];
     geolocation?: { Longitude: number, Latitude: number };
     Category?: string;
+    AssetCategory?: string;
     Duration?: number;
     RecurrenceData?: string;
     fRecurrence?: string | boolean;

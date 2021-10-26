@@ -123,7 +123,7 @@ export default class Calendar extends React.Component<ICalendarProps, ICalendarS
 
       this.userListPermissions = await this.spService.getUserPermissions(this.props.siteUrl, this.props.list);
       
-      const eventsData: IEventData[] = await this.spService.getEvents(escape(this.props.siteUrl), escape(this.props.list), this.props.eventStartDate.value, this.props.eventEndDate.value);
+      const eventsData: IEventData[] = await this.spService.getEvents(escape(this.props.siteUrl), escape(this.props.masterListName), escape(this.props.list), this.props.eventStartDate.value, this.props.eventEndDate.value);
 
       this.setState({ eventData: eventsData, hasError: false, errorMessage: "" });
       debugger;
@@ -393,7 +393,13 @@ export default class Calendar extends React.Component<ICalendarProps, ICalendarS
               endDate={this.state.endDateSlot}
               context={this.props.context}
               siteUrl={this.props.siteUrl}
+              locationListName= {this.props.locationListName}
+              areaListName = {this.props.areaListName}
+              categoryListName = {this.props.categoryListName}
+              masterListName = {this.props.masterListName}
+              calendarListName = {this.props.calendarListName}
               listId={this.props.list}
+              filterType={this.props.filterType}
             />
           }
         </div>

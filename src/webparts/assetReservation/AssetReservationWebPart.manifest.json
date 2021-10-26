@@ -24,11 +24,16 @@
     "group": { "default": "Other" },
     "title": { "default": "AssetReservation" },
     "description": { "default": "Asset Reservation for booking Assets" },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "CalendarWeek",
     "properties": {
-      "title": "AssetReservationCalendar",
+      "title": "Asset Reservation System",
       "siteUrl": "",
-      "list": "",
+      "locationListName": "AssetLocation",
+      "areaListName": "AssetArea",
+      "categoryListName": "AssetCategory",
+      "masterListName": "AssetMaster",
+      "calendarListName": "AssetCalendar",
+      "list": "AssetCalendar",
       "eventStartDate": "",
       "eventEndDate": ""
     }

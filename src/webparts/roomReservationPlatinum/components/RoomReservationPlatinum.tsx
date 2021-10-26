@@ -2,9 +2,9 @@ import * as React from 'react';
 import styles from './RoomReservationPlatinum.module.scss';
 import { IRoomReservationPlatinumProps } from './IRoomReservationPlatinumProps';
 import { IRoomReservationPlatinumState } from './IRoomReservationPlatinumState';
-import { escape } from '@microsoft/sp-lodash-subset';
-import RoomFilters from '../components/RoomFilters/RoomFilters';
-import RoomImage from '../components/RoomImage/RoomImage';
+import { FilterType } from '../../../controls/Filters/filterType';
+import Filters from '../../../controls/Filters/Filters';
+import FilterImage from '../../../controls/FilterImage/FilterImage';
 import Calendar from '../../../controls/Calendar/Calendar';
 
 export default class RoomReservationPlatinum extends React.Component<IRoomReservationPlatinumProps, IRoomReservationPlatinumState> {
@@ -41,24 +41,29 @@ export default class RoomReservationPlatinum extends React.Component<IRoomReserv
         <div className="ms-Grid" dir="ltr">
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-u-sm6 block">
-              <RoomFilters
+              <Filters 
                 siteUrl= {this.props.siteUrl}
                 context={this.props.context}
+                locationListName= {this.props.locationListName}
+                areaListName ={this.props.areaListName}
+                categoryListName={this.props.categoryListName}
+                masterListName={this.props.masterListName}
+                calendarListName={this.props.calendarListName}
+                filterType = {FilterType.Asset}
                 EventKeySelection={this.EventKeySelectionHandler}
-                > 
-              </RoomFilters>
+                />
             </div>
             <div className="ms-Grid-col ms-u-sm6 block">
               {this.state.sizeId <= 0 && <div>Image will be loaded for the selected options</div>}
               {this.state.sizeId > 0 &&
-                <RoomImage
+                <FilterImage
                   siteUrl= {this.props.siteUrl}
                   context={this.props.context}
                   locationId = {this.state.locationId}
                   areaId = {this.state.areaId}
                   buildingId = {this.state.buildingId}
                   sizeId = {this.state.sizeId}
-                  ></RoomImage>
+                  ></FilterImage>
                 }
             </div>
           </div>
@@ -71,7 +76,13 @@ export default class RoomReservationPlatinum extends React.Component<IRoomReserv
                 <Calendar 
                    title= {this.props.title}
                    siteUrl= {this.props.siteUrl}
-                   list = {this.props.list}
+                   locationListName= {this.props.locationListName}
+                   areaListName = {this.props.areaListName}
+                   categoryListName = {this.props.categoryListName}
+                   masterListName = {this.props.masterListName}
+                   calendarListName = {this.props.calendarListName}
+                   list = {this.props.calendarListName}
+                   filterType = {FilterType.Asset}
                    displayMode = {this.props.displayMode}
                    context ={ this.props.context}
                    eventStartDate = {this.props.eventStartDate}

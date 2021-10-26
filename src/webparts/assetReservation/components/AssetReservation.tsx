@@ -2,11 +2,10 @@ import * as React from 'react';
 import styles from './AssetReservation.module.scss';
 import { IAssetReservationProps } from './IAssetReservationProps';
 import { IAssetReservationState } from './IAssetReservationState';
-import { escape } from '@microsoft/sp-lodash-subset';
-import AssetFilter from '../components/AssetFilter/AssetFilter';
-import AssetImage from '../components/AssetImage/AssetImage';
+import { FilterType } from '../../../controls/Filters/filterType';
+import Filters from '../../../controls/Filters/Filters';
+import FilterImage from '../../../controls/FilterImage/FilterImage';
 import Calendar from '../../../controls/Calendar/Calendar';
-import { IAssetInfo } from '../../../models/IAssetInfo';
 import { Logger, LogLevel} from "@pnp/logging";
 
 export default class AssetReservation extends React.Component<IAssetReservationProps, IAssetReservationState> {
@@ -15,22 +14,28 @@ export default class AssetReservation extends React.Component<IAssetReservationP
     super(props);
     
     this.state = {
-      assetInfo: null
+      locationId: 0,
+      areaId:0,
+      buildingId: 0,
+      sizeId: 0,
     };
     this.EventKeySelectionHandler = this.EventKeySelectionHandler.bind(this);
     Logger.write("AssetReservation class triggered.", LogLevel.Info);
   }
 
      // Get event once the all drop boxes have been selected. Get keys for all drop down here :)
-    private EventKeySelectionHandler(assetInfo: IAssetInfo) {
-      this.setState ({
-       assetInfo: assetInfo
-      });
-    }
+  private EventKeySelectionHandler(locationId: number, areaId: number, buildingId:number, sizeId:number) {
+    this.setState ({
+      locationId: locationId,
+      areaId: areaId,
+      buildingId: buildingId,
+      sizeId: sizeId
+    });
+  }
 
-    private updatePropertyHandler() {
-      this.props.updateProperty("");
-    }
+  private updatePropertyHandler() {
+    this.props.updateProperty("");
+  }
 
   public render(): React.ReactElement<IAssetReservationProps> {
     return (
@@ -38,19 +43,27 @@ export default class AssetReservation extends React.Component<IAssetReservationP
         <div className="ms-Grid" dir="ltr">
           <div className="ms-Grid-row">
             <div className="ms-Grid-col ms-u-sm6 block">
-              <AssetFilter
+              <Filters 
                 siteUrl= {this.props.siteUrl}
                 context={this.props.context}
+                locationListName= {this.props.locationListName}
+                areaListName ={this.props.areaListName}
+                categoryListName={this.props.categoryListName}
+                masterListName={this.props.masterListName}
+                calendarListName={this.props.calendarListName}
+                filterType = {FilterType.Asset}
                 EventKeySelection={this.EventKeySelectionHandler}
-                > 
-              </AssetFilter>
+                />
             </div>
             <div className="ms-Grid-col ms-u-sm6 block">
-            <AssetImage
+            <FilterImage
                   siteUrl= {this.props.siteUrl}
                   context={this.props.context}
-                  assetInfo={ this.state.assetInfo }
-                ></AssetImage>
+                  locationId = {this.state.locationId}
+                  areaId = {this.state.areaId}
+                  buildingId = {this.state.buildingId}
+                  sizeId = {this.state.sizeId}
+                ></FilterImage> 
             </div>
           </div>
         </div>
@@ -60,7 +73,13 @@ export default class AssetReservation extends React.Component<IAssetReservationP
                 <Calendar 
                    title= {this.props.title}
                    siteUrl= {this.props.siteUrl}
-                   list = {this.props.list}
+                   locationListName= {this.props.locationListName}
+                   areaListName = {this.props.areaListName}
+                   categoryListName = {this.props.categoryListName}
+                   masterListName = {this.props.masterListName}
+                   calendarListName = {this.props.calendarListName}
+                   list = {this.props.calendarListName}
+                   filterType = {FilterType.Asset}
                    displayMode = {this.props.displayMode}
                    context ={ this.props.context}
                    eventStartDate = {this.props.eventStartDate}

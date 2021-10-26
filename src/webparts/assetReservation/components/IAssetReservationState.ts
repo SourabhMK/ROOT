@@ -1,5 +1,8 @@
-import { IAssetInfo } from "../../../models/IAssetInfo";
+// import { IAssetInfo } from "../../../models/IAssetInfo";
 
 export interface IAssetReservationState {
-  assetInfo: IAssetInfo;
+  locationId: number;
+  areaId:number;
+  buildingId: number;
+  sizeId: number;
 }

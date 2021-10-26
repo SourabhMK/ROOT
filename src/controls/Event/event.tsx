@@ -48,6 +48,7 @@ import { toLocaleShortDateString } from '../../utils/dateUtils';
 //const format = require('string-format');
 import { format } from 'react-string-format';
 import { Logger, LogLevel} from "@pnp/logging";
+import { FilterType } from '../Filters/filterType';
 
 const DayPickerStrings: IDatePickerStrings = {
   months: [strings.January, strings.February, strings.March, strings.April, strings.May, strings.June, strings.July, strings.August, strings.September, strings.October, strings.November, strings.December],
@@ -156,7 +157,6 @@ export class Event extends React.Component<IEventProps, IEventState> {
    * @memberof Event
    */
   private async onSave() {
-    debugger;
     Logger.write("Event => Performing Save", LogLevel.Info);
     let eventData: IEventData = this.state.eventData;
     let panelMode = this.props.panelMode;
@@ -311,7 +311,18 @@ export class Event extends React.Component<IEventProps, IEventState> {
     // chaeck User list Permissions
     const userListPermissions: IUserPermissions = await this.spService.getUserPermissions(this.props.siteUrl, this.props.listId);
     // Load Categories
-    this.categoryDropdownOption = await this.spService.getChoiceFieldOptions(this.props.siteUrl, this.props.listId, 'Category');
+    await this.spService.getMasterRefFieldOptions(this.props.siteUrl, this.props.masterListName).then(results => {
+      if(results != null && results.length > 0) {
+        let fieldOptions: { key: string, text: string }[] = [];
+        for(let index=0;index<results.length; index++) {
+          fieldOptions.push({
+            key: results[index]["Title"],
+            text: results[index]["Title"]
+          });
+        }
+        this.categoryDropdownOption = fieldOptions;
+      }
+    });
     // Edit Mode ?
     if (this.props.panelMode == IPanelModelEnum.edit && event) {
 
@@ -467,6 +478,7 @@ export class Event extends React.Component<IEventProps, IEventState> {
    * @memberof Event
    */
   private onCategoryChanged(ev: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void {
+    debugger;
     this.setState({ eventData: { ...this.state.eventData, Category: item.text } });
   }
 
