@@ -5,6 +5,7 @@ import { IListInfo } from '../models/IListInfo';
 import { IListEnsureResult, IList, IListAddResult,  IListUpdateResult  } from "@pnp/sp/lists";
 import { Fields, IFields, IFieldAddResult } from "@pnp/sp/fields";
 import { UrlFieldFormatType } from "@pnp/sp/fields/types";
+import { sizeBoolean } from "@microsoft/office-ui-fabric-react-bundle";
 // Class Services
 export default class spServiceEnsureLists {
     constructor(private context: WebPartContext) {
@@ -234,8 +235,8 @@ export default class spServiceEnsureLists {
         try{
             const web = Web(siteUrl);
             await web.lists.getByTitle(listInfo.ListName).fields.addBoolean("IsActive");
-            const list = await sp.web.lists.getByTitle(lookUpList.ListName)();
-            await web.lists.getByTitle(listInfo.ListName).fields.addLookup("MasterRef", list.Id, "Title");
+            // TODO: DIPAL - CLEAR ALL CHOICE FIELDS
+            await this.updateCalendarChoiceFieldOptions(siteUrl, listInfo.ListName, 'Choices', []);
         } catch (error) {
             listInfo.ListError = error;
             return Promise.reject(error);
@@ -254,14 +255,38 @@ export default class spServiceEnsureLists {
         try{
             const web = Web(siteUrl);
             await web.lists.getByTitle(listInfo.ListName).fields.addBoolean("IsActive");
-            const list = await sp.web.lists.getByTitle(lookUpList.ListName)();
-            await web.lists.getByTitle(listInfo.ListName).fields.addLookup("MasterRef", list.Id, "Title");
+            // TODO: DIPAL - CLEAR ALL CHOICE FIELDS
+            await this.updateCalendarChoiceFieldOptions(siteUrl, listInfo.ListName, 'Choices', []);
         } catch (error) {
             listInfo.ListError = error;
             return Promise.reject(error);
         }
         return isFieldCreated;
     }
+
+    /**
+   * @param {string} siteUrl
+   * @param {string} listId
+   * @param {string} fieldInternalName
+   * @returns {Promise<boolean>}
+   * @memberof spservices
+   */
+   public async updateCalendarChoiceFieldOptions(siteUrl: string, listId: string, fieldInternalName: string, options: string[]): Promise<boolean> {
+    try {
+      const web = Web(siteUrl);
+      await web.lists.getByTitle(listId)
+      .fields
+      .getByInternalNameOrTitle(fieldInternalName)
+      .update({
+        Choices: {
+          results: options
+        }
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    return true;
+  }
 
     /* 
     *  Create the list by listInfo

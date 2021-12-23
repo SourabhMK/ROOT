@@ -26,6 +26,8 @@ declare interface IRoomReservationPlatinumWebPartStrings {
   HttpErrorMessage: string;
   CategoryPlaceHolder: string;
   CategoryLabel: string;
+  AssetCategoryLabel:string;
+  RoomCategoryLabel: string;
   EnDateValidationMessage: string;
   SartDateValidationMessage: string;
   eventSelectDatesLabel: string;

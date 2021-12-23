@@ -87,7 +87,6 @@ export default class spservices {
         fAllDayEvent: newEvent.fAllDayEvent,
         fRecurrence: newEvent.fRecurrence,
         Category: newEvent.Category,
-        AssetCategory: newEvent.AssetCategory,
         EventType: newEvent.EventType,
         UID: newEvent.UID,
         RecurrenceData: newEvent.RecurrenceData ? await this.deCodeHtmlEntities(newEvent.RecurrenceData) : "",
@@ -121,7 +120,7 @@ export default class spservices {
 
       //"Title","fRecurrence", "fAllDayEvent","EventDate", "EndDate", "Description","ID", "Location","Geolocation","ParticipantsPickerId"
       const event = await web.lists.getByTitle(listId).items.usingCaching().getById(eventId)
-        .select("RecurrenceID", "MasterSeriesItemID", "Id", "ID", "ParticipantsPickerId", "EventType", "Title", "Description", "EventDate", "EndDate", "Location", "Author/SipAddress", "Author/Title", "Geolocation", "fAllDayEvent", "fRecurrence", "RecurrenceData", "RecurrenceData", "Duration", "Category", "AssetCategory", "UID")
+        .select("RecurrenceID", "MasterSeriesItemID", "Id", "ID", "ParticipantsPickerId", "EventType", "Title", "Description", "EventDate", "EndDate", "Location", "Author/SipAddress", "Author/Title", "Geolocation", "fAllDayEvent", "fRecurrence", "RecurrenceData", "RecurrenceData", "Duration", "Category", "UID")
         .expand("Author")
         .get();
 
@@ -146,7 +145,6 @@ export default class spservices {
         fAllDayEvent: event.fAllDayEvent,
         geolocation: { Longitude: event.Geolocation ? event.Geolocation.Longitude : 0, Latitude: event.Geolocation ? event.Geolocation.Latitude : 0 },
         Category: event.Category,
-        AssetCategory: event.AssetCategory,
         Duration: event.Duration,
         UID: event.UID,
         RecurrenceData: event.RecurrenceData ? await this.deCodeHtmlEntities(event.RecurrenceData) : "",
@@ -193,7 +191,6 @@ export default class spservices {
         fAllDayEvent: updateEvent.fAllDayEvent,
         fRecurrence: updateEvent.fRecurrence,
         Category: updateEvent.Category,
-        AssetCategory: updateEvent.AssetCategory,
         RecurrenceData: updateEvent.RecurrenceData ? await this.deCodeHtmlEntities(updateEvent.RecurrenceData) : "",
         EventType: updateEvent.EventType,
       };
@@ -420,35 +417,41 @@ export default class spservices {
    * @returns {Promise<{ key: string, text: string }[]>}
    * @memberof spservices
    */
-  public async getChoiceFieldOptions(siteUrl: string, listId: string, fieldInternalName: string): Promise<{ key: string, text: string }[]> {
+  public async getChoiceFieldOptions(siteUrl: string, masterListName:string, listId: string, fieldInternalName: string): Promise<{ key: string, text: string }[]> {
     let fieldOptions: { key: string, text: string }[] = [];
     try {
-      const web = Web(siteUrl);
-      const results:IFieldInfo = await web.lists.getById(listId)
-        .fields
-        .getByInternalNameOrTitle(fieldInternalName)
-        .select("Title", "InternalName", "Choices")
-        .get();
-        if(results) {
-          var choiceOptions = results["Choices"];
-          if (choiceOptions && choiceOptions.length > 0) {
-            for (const option of choiceOptions) {
-              fieldOptions.push({
-                key: option,
-                text: option
-              });
-            }
-          }
-        }
-        /*
-        if (results && results.Choices.length > 0) {
-          for (const option of results.Choices) {
+      // TODO: DIPAL - Very Dangerous - CLEAR ALL CATEGORY && GET SELECTED CATEGORY FROM LOOKUP && UPDATE THE CATEGORY - EVERYTIME => ??? NOT ACCEPTABLE ATALL
+      // await this.updateChoiceFieldOptions(siteUrl, listId, fieldInternalName, chOptions);
+      await this.getMasterRefFieldOptions(siteUrl, masterListName).then(res=>{
+        if(res != null && res.length > 0) {
+          for (const option of res) {
+            let str:string = option["Title"];
             fieldOptions.push({
-              key: option,
-              text: option
+              key: str,
+              text: str
             });
           }
-        }*/
+        }
+      });
+     
+      // await this.updateChoiceFieldOptions(siteUrl, listId, fieldInternalName, chOptions);
+      // const web = Web(siteUrl);
+      // const results:IFieldInfo = await web.lists.getByTitle(listId)
+      //   .fields
+      //   .getByInternalNameOrTitle(fieldInternalName)
+      //   .select("Title", "InternalName", "Choices")
+      //   .get();
+      //   if(results) {
+      //     var choiceOptions = results["Choices"];
+      //     if (choiceOptions && choiceOptions.length > 0) {
+      //       for (const option of choiceOptions) {
+      //         fieldOptions.push({
+      //           key: option,
+      //           text: option
+      //         });
+      //       }
+      //     }
+      //   }
     } catch (error) {
       return Promise.reject(error);
     }
@@ -471,6 +474,30 @@ export default class spservices {
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  /**
+   * @param {string} siteUrl
+   * @param {string} listId
+   * @param {string} fieldInternalName
+   * @returns {Promise<boolean>}
+   * @memberof spservices
+   */
+   public async updateChoiceFieldOptions(siteUrl: string, listId: string, fieldInternalName: string, options: string[]): Promise<boolean> {
+    try {
+      const web = Web(siteUrl);
+      await web.lists.getByTitle(listId)
+      .fields
+      .getByInternalNameOrTitle(fieldInternalName)
+      .update({
+        Choices: {
+          results: options
+        }
+      });
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    return true;
   }
 
   /**
@@ -506,7 +533,7 @@ export default class spservices {
       const results = await web.lists.getByTitle(listId).usingCaching().renderListDataAsStream(
         {
           DatesInUtc: true,
-          ViewXml: `<View><ViewFields><FieldRef Name='RecurrenceData'/><FieldRef Name='Duration'/><FieldRef Name='Author'/><FieldRef Name='Category'/><FieldRef Name='AssetCategory'/><FieldRef Name='Description'/><FieldRef Name='ParticipantsPicker'/><FieldRef Name='Geolocation'/><FieldRef Name='ID'/><FieldRef Name='EndDate'/><FieldRef Name='EventDate'/><FieldRef Name='ID'/><FieldRef Name='Location'/><FieldRef Name='Title'/><FieldRef Name='fAllDayEvent'/><FieldRef Name='EventType'/><FieldRef Name='UID' /><FieldRef Name='fRecurrence' /></ViewFields>
+          ViewXml: `<View><ViewFields><FieldRef Name='RecurrenceData'/><FieldRef Name='Duration'/><FieldRef Name='Author'/><FieldRef Name='Category'/><FieldRef Name='Description'/><FieldRef Name='ParticipantsPicker'/><FieldRef Name='Geolocation'/><FieldRef Name='ID'/><FieldRef Name='EndDate'/><FieldRef Name='EventDate'/><FieldRef Name='ID'/><FieldRef Name='Location'/><FieldRef Name='Title'/><FieldRef Name='fAllDayEvent'/><FieldRef Name='EventType'/><FieldRef Name='UID' /><FieldRef Name='fRecurrence' /></ViewFields>
           <Query>
           <Where>
             <And>
@@ -569,7 +596,6 @@ export default class spservices {
                 fAllDayEvent: isAllDayEvent,
                 geolocation: { Longitude: parseFloat(geolocation[0]), Latitude: parseFloat(geolocation[1]) },
                 Category: event.Category,
-                AssetCategory: event.AssetCategory,
                 Duration: event.Duration,
                 RecurrenceData: event.RecurrenceData ? await this.deCodeHtmlEntities(event.RecurrenceData) : "",
                 fRecurrence: event.fRecurrence,

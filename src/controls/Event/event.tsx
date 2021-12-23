@@ -223,13 +223,13 @@ export class Event extends React.Component<IEventProps, IEventState> {
 
     // Get Descript from RichText Compoment
     eventData.Description = draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()));
-
+    
     try {
       for (const user of this.attendees) {
         const userInfo: any = await this.spService.getUserByLoginName(user.id, this.props.siteUrl);
         eventData.attendes.push(Number(userInfo.Id));
       }
-
+      debugger;
       // Perform to check in case it overlap
       let res = this.isEventOverlap(eventData, this.props.events);
       if(!res) {
@@ -310,19 +310,9 @@ export class Event extends React.Component<IEventProps, IEventState> {
     const siteRegionalSettings = await this.spService.getSiteRegionalSettingsTimeZone(this.props.siteUrl);
     // chaeck User list Permissions
     const userListPermissions: IUserPermissions = await this.spService.getUserPermissions(this.props.siteUrl, this.props.listId);
+    
     // Load Categories
-    await this.spService.getMasterRefFieldOptions(this.props.siteUrl, this.props.masterListName).then(results => {
-      if(results != null && results.length > 0) {
-        let fieldOptions: { key: string, text: string }[] = [];
-        for(let index=0;index<results.length; index++) {
-          fieldOptions.push({
-            key: results[index]["Title"],
-            text: results[index]["Title"]
-          });
-        }
-        this.categoryDropdownOption = fieldOptions;
-      }
-    });
+    this.categoryDropdownOption = await this.spService.getChoiceFieldOptions(this.props.siteUrl, this.props.masterListName, this.props.listId, 'Category');
     // Edit Mode ?
     if (this.props.panelMode == IPanelModelEnum.edit && event) {
 
